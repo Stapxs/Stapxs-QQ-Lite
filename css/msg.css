@@ -1,0 +1,77 @@
+.message {
+    display: flex;
+    margin-bottom: 5px;
+    width: 100%;
+}
+.message > img {
+    width: 35px;
+    height: 35px;
+    border-radius: 100%;
+    margin: 5px 15px 0 15px;
+}
+.message-body {
+    color: var(--color-font);
+    max-width: 60%;
+}
+.message-body > a {
+    color: var(--color-font-1);
+    font-size: 0.9rem;
+    display: inline-block;
+    margin: 0 5px;
+}
+.message-body > div {
+    background: var(--color-card-1);
+    padding: 10px;
+    border-radius: 7px;
+    width: fit-content;
+}
+.message-space {
+    flex: 1;
+}
+
+.msg-img {
+    border-radius: 7px;
+    max-height: 35vh;
+    cursor: pointer;
+    display: block;
+    width: calc(100% - 10px);
+    margin: 5px;
+}
+
+.msg-face {
+    width: 1.2rem;
+    height: 1.2rem;
+    image-rendering: pixelated;
+    margin: -5px 2px 0 2px;
+}
+
+.msg-unknow {
+    color: var(--color-font-2) !important;
+    font-style: italic;
+}
+
+.msg-at {
+    color: var(--color-main) !important;
+    cursor: pointer;
+}
+
+.msg-replay {
+    background: var(--color-card-2);
+    padding: 10px;
+    border-radius: 7px;
+    font-size: 0.9rem;
+}
+
+.note-base {
+    text-align: center;
+    margin: 40px 0 10px 0;
+}
+
+.note-time {
+    width: 100%;
+    background: var(--color-card-1);
+    padding: 5px 20px;
+    border-radius: 100vh;
+    font-size: 0.8rem;
+    color: var(--color-font-2) !important;
+}

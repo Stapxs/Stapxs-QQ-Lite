@@ -1,0 +1,23 @@
+{
+    "name": "QQ Web Lite",
+    "short_name": "QQ Web",
+    "description": "这是个兼容 OICQ/OneBot 的 QQ 网页版。",
+    "lang": "zh_CN",
+    "theme_color": "#99B3DB",
+    "background_color": "#F8F9FA",
+    "display": "standalone",
+    "start_url": "./",
+    "icons": [
+        {
+            "src": "src/icon.svg",
+            "sizes": "1080x1080"
+        }
+    ],
+    "related_applications": [
+        {
+          "platform": "play",
+          "url": "https://play.google.com/store/apps/details?id=com.tencent.mobileqq",
+          "id": "com.tencent.mobileqq"
+        }
+    ]
+}
