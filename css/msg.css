@@ -75,3 +75,18 @@
     font-size: 0.8rem;
     color: var(--color-font-2) !important;
 }
+
+.msg-xml {
+    padding: 5px 15px;
+}
+.msg-xml p {
+    margin-bottom: 2px;
+}
+.msg-xml-summary {
+    display: block;
+    font-size: 0.9rem;
+    background: var(--color-card-2);
+    margin: 0 -25px -15px -25px;
+    padding: 5px 5px 5px 10px;
+    border-radius: 0 0 7px 7px;
+}

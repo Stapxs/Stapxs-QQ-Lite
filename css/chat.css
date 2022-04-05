@@ -47,15 +47,16 @@
 }
 
 .friend-list {
-    width: 30%;
     background: var(--color-card-1);
     border-radius: 7px;
+    width: calc(30% - 10px);
 }
 
 
 .msg-box {
     flex: 1;
     padding: 0;
+    background: var(--color-card-1);
 }
 .msg-box input {
     width: 100%;
@@ -73,6 +74,7 @@
 
 .sender {
     justify-content: flex-start;
+    margin-top: 20px;
 }
 
 .login-pan {

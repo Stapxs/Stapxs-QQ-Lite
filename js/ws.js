@@ -78,7 +78,7 @@ function runNotice(msg) {
                 findMsgInList(msg.message_id).style.display = "none"
             }
             // 尝试撤回通知
-            let notification = new Notification("消息被撤回", {"tag": msg.message_id})
+            // let notification = new Notification("消息被撤回", {"tag": msg.message_id})
         }
     }
 }
@@ -232,6 +232,7 @@ function printMsg(obj, addTo) {
                     case "image": body = body + printImg(obj.message[i].data.url); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                     case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq); break
+                    case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
                     case "pass": break
                     default: {
                         nowBreak = true

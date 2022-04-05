@@ -37,6 +37,8 @@ function openImgView(url) {
 
 function runConnect() {
     showLoginPan(false)
+    // 啊吧啊吧
+    document.getElementById("referrer").content = "no-referrer"
     // 隐藏底栏
     document.getElementById("footer").style.transform = "translate(0,137px)"
     document.getElementById("main-view").style.height  = "100vh"
@@ -147,7 +149,7 @@ function sendMsg() {
             msg  = "[CQ:image,file=base64://" + window.cacheImg.substring(window.cacheImg.indexOf("base64") + 7)  + "]" + msg
             // 清除图片缓存
             document.getElementById("btn-img").title = "发送图片"
-            document.getElementById("btn-img").style.background = "var(--color-card)"
+            document.getElementById("btn-img").style.background = "var(--color-card-1)"
             document.getElementById("btn-img").children[1].style.fill = "var(--color-font)"
             window.cacheImg = ""
             document.getElementById("btn-img").dataset.select = "false"
@@ -184,7 +186,7 @@ function selectImg() {
     if(btn.dataset.select === "true") {
         // 取消发送图片
         document.getElementById("btn-img").title = "发送图片"
-        document.getElementById("btn-img").style.background = "var(--color-card)"
+        document.getElementById("btn-img").style.background = "var(--color-card-1)"
         document.getElementById("btn-img").children[1].style.fill = "var(--color-font)"
         window.cacheImg = ""
         document.getElementById("btn-img").dataset.select = "false"
