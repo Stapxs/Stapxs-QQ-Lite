@@ -1,7 +1,8 @@
 .message {
     display: flex;
-    margin-bottom: 5px;
+    padding: 10px;
     width: 100%;
+    border-radius: 7px;
 }
 .message > img {
     width: 35px;
@@ -89,4 +90,25 @@
     margin: 0 -25px -15px -25px;
     padding: 5px 5px 5px 10px;
     border-radius: 0 0 7px 7px;
+}
+.msg-xml-img {
+    width: 70%;
+    margin-left: 50%;
+    margin-bottom: 10px;
+    transform: translate(-50%);
+}
+
+.msg-record {
+    display: flex;
+    margin: 0 5px;
+}
+.msg-record > i {
+    display: inline-block;
+    font-size: 2rem;
+}
+.msg-record > div {
+    margin-left: 10px;
+}
+.msg-record > div a {
+    line-height: 2rem;
 }

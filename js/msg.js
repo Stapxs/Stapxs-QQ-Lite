@@ -33,20 +33,29 @@ function printReplay(msgid) {
     return "<div class='msg-replay'>这是条回复消息但是我还没写完</div>"
 }
 
+function printRecord(url) {
+    // TODO：前端无法解析语音文件，待后端参与
+    // URL 为文件地址
+    return "<div class='msg-record'><i class='fa fa-play-circle' aria-hidden='true'></i><div><a>不支持播放语音消息</a></div></div>"
+}
+
 function printXML(xml, type) {
     // 尝试渲染 xml 消息
     // <msg> 标签内的为本体
     let item = xml.substring(xml.indexOf("<item"), xml.indexOf("</msg>"))
     // 尝试转换标签为 html
+    // item = item.replaceAll("/>", ">")
     item = item.replaceAll("item", "div")                                                       // item
     item = item.replaceAll("<div", "<div class='msg-xml'")
     item = item.replaceAll("title", "p")                                                        // title
     item = item.replaceAll("summary", "a")                                                      // summary
     item = item.replaceAll("<a", "<a class='msg-xml-summary'")
+    item = item.replaceAll("<picture", "<img class='msg-xml-img'")                              // picture
     // 将不正确的参数改为 dataset
     item = item.replaceAll("color=", "data-color=")
     item = item.replaceAll("size=", "data-size=")
     item = item.replaceAll("linespace=", "data-linespace=")
+    item = item.replaceAll("cover=", "src=")
     console.log(item)
     // 处理错误的 style 位置
     const div = document.createElement("div")
@@ -59,6 +68,7 @@ function printXML(xml, type) {
                 div.children[0].children[i].style.color = div.children[0].children[i].dataset.color
                 div.children[0].children[i].style.fontSize = Number(div.children[0].children[i].dataset.size) / 30 + "rem"
                 div.children[0].children[i].style.marginBottom = Number(div.children[0].children[i].dataset.size) / 5 + "px"
+                break
             }
         }
     }

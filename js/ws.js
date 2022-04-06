@@ -53,7 +53,13 @@ function runJSON(json) {
             case "get_chat_history_fist": firstLoadingMsg(msg); break                                       // 首次获取历史消息（20）
             case "get_chat_history": loadingMoreMsg(msg); break                                             // 获取更多历史消息
             case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
-            case "get_send_msg": if(msg.retcode ===0){printMsg(msg.data[0], null)} break                    // 打印发送回调消息
+            case "get_send_msg": {                                                                          // 打印发送回调消息
+                                    if(msg.retcode ===0) {
+                                        printMsg(msg.data[0], null)
+                                        document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
+                                    }
+                                    break
+                                 }
         }
     } else {
         switch(msg.post_type) {
@@ -65,7 +71,6 @@ function runJSON(json) {
 
 // 处理通知消息
 function runNotice(msg) {
-    console.log(msg.sub_type)
     switch(msg.sub_type) {
         case "recall": {
             // 撤回消息
@@ -74,7 +79,6 @@ function runNotice(msg) {
             console.log(id + " / " + document.getElementById("msg-hander").dataset.id)
             if(Number(id) == Number(document.getElementById("msg-hander").dataset.id)) {
                 // 隐藏消息
-                console.log(msg.message_id)
                 findMsgInList(msg.message_id).style.display = "none"
             }
             // 尝试撤回通知
@@ -87,15 +91,26 @@ function runNotice(msg) {
 function updateMsg(msg) {
     const list = document.getElementById("friend-list-body")
     const id = msg.message_type == "group" ? msg.group_id:msg.user_id
+    const raw = getMsgRawTxt(msg.message)
     // 刷新列表显示消息
-    findBodyInList(null, id).children[2].children[1].innerText = msg.raw_message.replaceAll("<br>", " ")
+    findBodyInList(null, id).children[2].children[1].innerText = raw==""?msg.raw_message:raw
     // 获取当前打开的窗口 ID
     const nowSee = document.getElementById("msg-hander").dataset.id
     // 刷新当前打开的窗口
     if(nowSee == id) {
-            printMsg(msg)
-            // 显示边框高亮
-            lightChatBorder()
+        // 如果消息本来就在底部就准备下滚
+        let scroll = false
+        const body = document.getElementById("msg-body")
+        if(body.scrollHeight - body.scrollTop === body.clientHeight) {
+            scroll = true
+        }
+        printMsg(msg)
+        // 显示边框高亮
+        lightChatBorder()
+        // 滚动屏幕
+        if(scroll == true) {
+            body.scrollTop = body.scrollHeight
+        }
     }
     // 刷新列表
     findBodyInList(null, id).style.transform = "translate(0, -50%)"
@@ -148,7 +163,8 @@ function showNotice(msg) {
             return
         }
         // 显示通知，不管之前有没有同意，反正我是发了（大声
-        let notification = new Notification(msg.sender.nickname, {"body": msg.raw_message, "tag": msg.message_id, "icon": "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + msg.user_id})
+        const raw = getMsgRawTxt(msg.message)
+        let notification = new Notification(msg.sender.nickname, {"body": raw==""?msg.raw_message:raw, "tag": msg.message_id, "icon": "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + msg.user_id})
     }
     catch(e) {
         console.log(e)
@@ -227,12 +243,13 @@ function printMsg(obj, addTo) {
             for(let i=0; i<obj.message.length; i++) {
                 let nowBreak = false
                 switch(obj.message[i].type) {
-                    case "reply": { obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id) + body; break }
+                    case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id) + body; break }
                     case "text": body = body + printText(obj.message[i].data.text); break
                     case "image": body = body + printImg(obj.message[i].data.url); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                     case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq); break
                     case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
+                    case "record": body = body + printRecord(obj.message[i].data.url); break
                     case "pass": break
                     default: {
                         nowBreak = true
@@ -245,12 +262,18 @@ function printMsg(obj, addTo) {
             }
             html = html.replace("{body}", body)
             div.innerHTML = html
+            div.oncontextmenu = function()                  { return false; }                               // 阻止右击菜单
+            div.onmousedown = function()                    { msgMouseDown(div, event); }                   // 右击判定
+            div.addEventListener("touchstart", function()   { msgTouchDown(div, event); }, false)           // 长按判定（开始）
+            div.addEventListener("touchend", function()     { msgTouchEnd(event); }, false)                 // 长按判定（结束）
+            div.addEventListener("touchmove", function()     { msgTouchMove(event); }, false)                // 长按判定（结束）
+
+            const raw = getMsgRawTxt(obj.message)
+            div.dataset.raw = raw == ""?obj.raw_message:raw
             // 添加到消息列表内
             if(addTo == null) {
                 document.getElementById("msg-body").appendChild(div)
-                setTimeout(() => {
-                    document.getElementById('msg-body').scrollTop = document.getElementById('msg-body').scrollHeight
-                }, 100)
+                // TODO：显示新消息标志
             } else {
                 document.getElementById("msg-body").insertBefore(div, addTo)
             }
@@ -300,6 +323,17 @@ function findMsgInList(id) {
         }
     }
     return null
+}
+
+// 获取消息有效文本
+function getMsgRawTxt(message) {
+    let back = ""
+    for(let i=0; i<message.length; i++) {
+        if(message[i].type == "text")  {
+            back += message[i].data.text + " "
+        }
+    }
+    return back
 }
 
 function firstLoadingMsg(msg) {
@@ -499,47 +533,4 @@ function noticeMsg() {
     setTimeout(() => {
         document.getElementById("msg-view").style.border = "2px solid transparent"
     }, 500)
-}
-
-// 链接预览
-function runURLShow(url, msgId) {
-    fetch(url)
-        .then(response => response.text())
-        .then(response => {
-            const header = response.substring(response.indexOf("<head>"), response.indexOf("</head>") + 7)
-            // 解析 header
-            const domparser = new DOMParser()
-            const doc = domparser.parseFromString(header, "text/html")
-            const name = doc.head.querySelector("[property~='og:site_name'][content]").content
-            const sub = doc.head.querySelector("[property~='og:title'][content]").content
-            const info = doc.head.querySelector("[property~='og:description'][content]").content
-            try {
-                // TODO: img 暂未支持
-
-                const img = doc.head.querySelector("[property~='og:image'][content]").content
-            } catch (ex) {
-                //<div class="link-view">
-                //  <div></div>
-                //  <div>
-                //      <p>林槐的杂货铺</p>
-                //      <a>林槐语录</a>
-                //      <a>这是林槐语录！</a>
-                //  </div>
-                //</div>
-                const div = document.createElement("div")
-                div.classList.add("link-view")
-                div.innerHTML = "<div></div><div><p>" + name + "</p><a>" + sub + "</a><a>" + info + "</a></div>"
-                // 寻找消息
-                const child = document.getElementById("msg-body").children
-                for(let i=0; i<child.length; i++) {
-                    if(Number(child[i].dataset.id) === msgId) {
-                        console.log("1")
-                        const msg = child[i].getElementsByTagName("div")[0].firstChild
-                        // 添加连接预览
-                        msg.appendChild(div)
-                    }
-                }
-            }
-        })
-        .catch(console.error)
 }

@@ -144,6 +144,11 @@ function sendMsg() {
         const type = document.getElementById("msg-hander").dataset.type
         const id = document.getElementById("msg-hander").dataset.id
         // 构建消息体
+        if(document.getElementById("replyer").dataset.id != undefined && document.getElementById("replyer").dataset.id != "") {
+            // 构建回复 CQ 码
+            msg = "[CQ:reply,id=" + document.getElementById("replyer").dataset.id + "]" + msg
+            cancelReply()
+        }
         if(window.cacheImg != undefined && window.cacheImg != "") {
             // 构建图片 CQ 码
             msg  = "[CQ:image,file=base64://" + window.cacheImg.substring(window.cacheImg.indexOf("base64") + 7)  + "]" + msg
@@ -213,4 +218,136 @@ function showSelView(statue) {
             view.style.display = "none"
         }, 300)
     }
+}
+
+function searchInList() {
+    // 清空搜索结果
+    const body = document.getElementById("friend-search-body")
+    while(body.children.length > 0) {
+        document.getElementById("friend-list-body").appendChild(body.children[0])
+    }
+    const what = document.getElementById("seach-input").value
+    if(what != null && what != "") {
+        const childs =  document.getElementById("friend-list-body").children
+        for(let i=0; i<childs.length; i++) {
+            if(childs[i].dataset.id == what || childs[i].dataset.name.indexOf(what) >= 0) {
+                document.getElementById("friend-search-body").style.display = "block"
+                // 将对象复制到搜索结果框内
+                document.getElementById("friend-search-body").append(childs[i])
+            }
+        }
+    }
+}
+
+function cancelSearch() {
+    const what = document.getElementById("seach-input").value
+    if(what == null || what == "") {
+        // 清空搜索结果
+        const body = document.getElementById("friend-search-body")
+        while(body.children.length > 0) {
+            document.getElementById("friend-list-body").append(body.children[0])
+        }
+    }
+}
+
+function msgMouseDown(sender, e) {
+    // 右击事件
+    if(e.which == 3) {
+        // 阻止点击传递
+        e.stopPropagation()
+        // 显示菜单
+        showMsgMenu(sender)
+    }
+}
+
+function msgTouchDown(sender, event) {
+    showLog("b573f7", "fff", "UI", "消息触屏点击事件开始 ……")
+    window.msgOnTouchDown = true
+    window.msgTouchX = event.targetTouches[0].pageX
+    window.msgTouchY = event.targetTouches[0].pageY
+    // 消息长按事件，计时 500ms 判定长按
+    setTimeout(() => {
+        showLog("b573f7", "fff", "UI", "消息触屏长按判定：" + window.msgOnTouchDown)
+        if(window.msgOnTouchDown === true) {
+            showMsgMenu(sender, event.targetTouches[0])
+        }
+    }, 450)
+}
+
+function msgTouchMove(event) {
+    if(window.msgTouchX != null && window.msgTouchY != null && window.msgTouchX != undefined && window.msgTouchY != undefined) {
+        // 计算移动差值
+        const dx = Math.abs(window.msgTouchX - event.targetTouches[0].pageX)
+        const dy = Math.abs(window.msgTouchY - event.targetTouches[0].pageY)
+        // 如果 dy 大于 10px 则判定为用户在滚动页面，打断长按消息判定
+        if(dy > 10) {
+            if(window.msgOnTouchDown == true) {
+                showLog("b573f7", "fff", "UI", "用户正在滚动，打断长按判定。")
+                window.msgOnTouchDown = false
+            }
+        }
+    }
+}
+
+function msgTouchEnd(event) {
+    window.msgOnTouchDown = false
+    window.msgTouchX = null
+    window.msgTouchY = null
+}
+
+function showMsgMenu(sender, event) {
+    if(sender == undefined || sender == null) {
+        document.getElementById("right-click-menu").children[1].style.transform = "scaleY(0)"
+        document.getElementById("right-click-menu-bg").onmousedown = null
+        setTimeout(() => {
+            document.getElementById("right-click-menu").style.display = "none"
+        }, 150)
+        window.msgInMenu.style.background = "transparent"
+            window.msgInMenu = null
+    } else {
+        // 登记
+        window.msgInMenu = sender
+        // 修改消息的背景
+        sender.style.background = "#00000008"
+        // 获取鼠标位置
+        const pointEvent = event || window.event
+        // 修改菜单位置
+        document.getElementById("right-click-menu").children[1].style.marginLeft = pointEvent.pageX + "px"
+        document.getElementById("right-click-menu").children[1].style.marginTop = pointEvent.pageY + "px"
+        // 显示菜单
+        document.getElementById("right-click-menu").style.display = "block"
+        setTimeout(() => {
+            document.getElementById("right-click-menu").children[1].style.transform = "scaleY(1)"
+            setTimeout(() => {
+                document.getElementById("right-click-menu-bg").onmousedown = function() { showMsgMenu() }
+            }, 100)
+        }, 50)
+    }
+}
+
+function menuDelMsg() {
+    if(window.msgInMenu != undefined && window.msgInMenu != null) {
+        window.msgInMenu.style.display = "none"
+        showMsgMenu()
+    }
+}
+
+function menuReply() {
+    if(window.msgInMenu != undefined && window.msgInMenu != null) {
+        // 设置回复标志
+        document.getElementById("replyer-txt").innerText = window.msgInMenu.dataset.raw
+        document.getElementById("replyer").dataset.id = window.msgInMenu.dataset.id
+        document.getElementById("replyer").dataset.sender = window.msgInMenu.dataset.sender
+        // 显示
+        document.getElementById("replyer").style.height = "45px"
+        // 关闭菜单
+        showMsgMenu()
+    }
+}
+
+function cancelReply() {
+    document.getElementById("replyer-txt").innerText = ""
+    document.getElementById("replyer").dataset.id = ""
+    
+    document.getElementById("replyer").style.height = "0"
 }

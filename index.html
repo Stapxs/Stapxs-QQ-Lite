@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="https://api.stapxs.cn/css/color-light.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://api.stapxs.cn/css/prism-light.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/font/fira_code.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/css/style.css">
 
@@ -25,6 +24,7 @@
     <link rel="stylesheet" href="css/view.css">
     <link rel="stylesheet" href="css/msg.css">
 
+    <script src="src/js/protobuf.min.js"></script>
     <script src="https://api.stapxs.cn/js/main.js"></script>
     <script src="js/msg.js"></script>
     <script src="js/chat.js"></script>
@@ -59,7 +59,12 @@
                             <svg style="fill: var(--color-font-1-r);width: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M362.7 19.32C387.7-5.678 428.3-5.678 453.3 19.32L492.7 58.75C517.7 83.74 517.7 124.3 492.7 149.3L444.3 197.7L314.3 67.72L362.7 19.32zM421.7 220.3L188.5 453.4C178.1 463.8 165.2 471.5 151.1 475.6L30.77 511C22.35 513.5 13.24 511.2 7.03 504.1C.8198 498.8-1.502 489.7 .976 481.2L36.37 360.9C40.53 346.8 48.16 333.9 58.57 323.5L291.7 90.34L421.7 220.3z"/></svg>
                         </div>
                     </div>
-                    <div id="friend-list-body" style="overflow-y: scroll;overflow-x: hidden;height: calc(100% - 104px);margin: 7px;"></div>
+                    <div class="friend-search">
+                        <input id="seach-input" placeholder="搜索列表 ……" oninput="cancelSearch()">
+                        <div onclick="searchInList();"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z"/></svg></div>
+                    </div>
+                    <div id="friend-search-body" class="friend-search-body" style="display: none;"></div>
+                    <div id="friend-list-body" style="overflow-y: scroll;overflow-x: hidden;flex: 1;margin: 7px;"></div>
                 </div>
                 <div style="flex: 1;display: flex;flex-direction: column;padding: 0 0 0 20px;">
                     <div class="msg-hander" style="display: none;" id="msg-hander">
@@ -74,19 +79,28 @@
                         </div>
                     </div>
                     <div class="msg-body" id="msg-body" onscroll="msgBodyScroll()"></div>
-                    <div class="sender controller">
-                        <div title="发送图片" onmouseout="showSelView(false);" onmouseover="showSelView(true);" class="ss-card" id="btn-img" data-select="false" onclick="selectImg();" style="transition: background .3s;cursor: pointer;background: var(--color-card-1);padding: 20px;min-height: unset;">
-                            <div class="btn-img-hover" id="btn-img-hover" style="opacity: 0;display: none;"><img></div>
-                            <svg style="transition: fill .3s;pointer-events: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M224 128L224 0H48C21.49 0 0 21.49 0 48v416C0 490.5 21.49 512 48 512h288c26.51 0 48-21.49 48-48V160h-127.1C238.3 160 224 145.7 224 128zM96 224c17.67 0 32 14.33 32 32S113.7 288 96 288S64 273.7 64 256S78.33 224 96 224zM318.1 439.5C315.3 444.8 309.9 448 304 448h-224c-5.9 0-11.32-3.248-14.11-8.451c-2.783-5.201-2.479-11.52 .7949-16.42l53.33-80C122.1 338.7 127.1 336 133.3 336s10.35 2.674 13.31 7.125L160 363.2l45.35-68.03C208.3 290.7 213.3 288 218.7 288s10.35 2.674 13.31 7.125l85.33 128C320.6 428 320.9 434.3 318.1 439.5zM256 0v128h128L256 0z"/></svg>
-                        </div>
-                        <form id="send-box-form" style="display: flex;flex: 1;height: 60px;margin-left: 20px;" onsubmit="return sendMsg();">
-                            <div class="ss-card msg-box">
-                                <input id="send-box" type="text" autocomplete="off">
+                    <div class="sender">
+                        <div class="replyer" id="replyer">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M8.31 189.9l176-151.1c15.41-13.3 39.69-2.509 39.69 18.16v80.05C384.6 137.9 512 170.1 512 322.3c0 61.44-39.59 122.3-83.34 154.1c-13.66 9.938-33.09-2.531-28.06-18.62c45.34-145-21.5-183.5-176.6-185.8v87.92c0 20.7-24.31 31.45-39.69 18.16l-176-151.1C-2.753 216.6-2.784 199.4 8.31 189.9z"/></svg>
+                            <a id="replyer-txt"></a>
+                            <div onclick="cancelReply()">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/></svg>
                             </div>
-                            <button class="ss-card" title="发送" style="width: 60px;height: 60px;border: 0;margin-left: 20px;background: var(--color-main);">
-                                <svg style="fill: var(--color-font-r);width: 20px;height: 20px;margin-top: -4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M511.6 36.86l-64 415.1c-1.5 9.734-7.375 18.22-15.97 23.05c-4.844 2.719-10.27 4.097-15.68 4.097c-4.188 0-8.319-.8154-12.29-2.472l-122.6-51.1l-50.86 76.29C226.3 508.5 219.8 512 212.8 512C201.3 512 192 502.7 192 491.2v-96.18c0-7.115 2.372-14.03 6.742-19.64L416 96l-293.7 264.3L19.69 317.5C8.438 312.8 .8125 302.2 .0625 289.1s5.469-23.72 16.06-29.77l448-255.1c10.69-6.109 23.88-5.547 34 1.406S513.5 24.72 511.6 36.86z"/></svg>
-                            </button>
-                        </form>
+                        </div>
+                        <div style="display: flex;" class="controller">
+                            <div title="发送图片" onmouseout="showSelView(false);" onmouseover="showSelView(true);" class="ss-card" id="btn-img" data-select="false" onclick="selectImg();" style="transition: background .3s;cursor: pointer;background: var(--color-card-1);padding: 20px;min-height: unset;">
+                                <div class="btn-img-hover" id="btn-img-hover" style="opacity: 0;display: none;"><img></div>
+                                <svg style="transition: fill .3s;pointer-events: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M224 128L224 0H48C21.49 0 0 21.49 0 48v416C0 490.5 21.49 512 48 512h288c26.51 0 48-21.49 48-48V160h-127.1C238.3 160 224 145.7 224 128zM96 224c17.67 0 32 14.33 32 32S113.7 288 96 288S64 273.7 64 256S78.33 224 96 224zM318.1 439.5C315.3 444.8 309.9 448 304 448h-224c-5.9 0-11.32-3.248-14.11-8.451c-2.783-5.201-2.479-11.52 .7949-16.42l53.33-80C122.1 338.7 127.1 336 133.3 336s10.35 2.674 13.31 7.125L160 363.2l45.35-68.03C208.3 290.7 213.3 288 218.7 288s10.35 2.674 13.31 7.125l85.33 128C320.6 428 320.9 434.3 318.1 439.5zM256 0v128h128L256 0z"/></svg>
+                            </div>
+                            <form id="send-box-form" style="display: flex;flex: 1;height: 60px;margin-left: 20px;" onsubmit="return sendMsg();">
+                                <div class="ss-card msg-box">
+                                    <input id="send-box" type="text" autocomplete="off">
+                                </div>
+                                <button class="ss-card" title="发送" style="width: 60px;height: 60px;border: 0;margin-left: 20px;background: var(--color-main);">
+                                    <svg style="fill: var(--color-font-r);width: 20px;height: 20px;margin-top: -4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M511.6 36.86l-64 415.1c-1.5 9.734-7.375 18.22-15.97 23.05c-4.844 2.719-10.27 4.097-15.68 4.097c-4.188 0-8.319-.8154-12.29-2.472l-122.6-51.1l-50.86 76.29C226.3 508.5 219.8 512 212.8 512C201.3 512 192 502.7 192 491.2v-96.18c0-7.115 2.372-14.03 6.742-19.64L416 96l-293.7 264.3L19.69 317.5C8.438 312.8 .8125 302.2 .0625 289.1s5.469-23.72 16.06-29.77l448-255.1c10.69-6.109 23.88-5.547 34 1.406S513.5 24.72 511.6 36.86z"/></svg>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,24 +142,48 @@
             </div>
         </div>
         <div>
-                <span>
-                    <a href="https://icp.gov.moe" target="_blank">萌ICP备 </a><a
-                        href="https://icp.gov.moe/?keyword=20202320" target="_blank"> 20202320号</a>
-                </span>
+            <span>
+                <a href="https://icp.gov.moe" target="_blank">萌ICP备 </a><a
+                    href="https://icp.gov.moe/?keyword=20202320" target="_blank"> 20202320号</a>
+            </span>
         </div>
     </footer>
+    <!-- 登录弹窗 -->
     <div class="login-pan" id="login-pan" style="display: none;opacity: 0;">
         <div class="login-pan-bg" onclick="showLoginPan(false)"></div>
         <div class="login-pan-card ss-card">
             <p>连接到 OICQ/OneBot</p>
-            <a>连接到 QQ Http 服务后端以开始使用</a>
+            <a>连接到 WebSocket 服务开始使用</a>
             <input placeholder="连接地址" class="ss-input" id="sev_address">
             <input placeholder="许可令牌" class="ss-input" style="margin-top: 10px;" id="access_token">
             <button class="ss-button" onclick="runConnect();">连接</button>
         </div>
     </div>
+    <!-- 图片预览器 -->
     <div class="img-view" id="img-view">
         <div></div><div onclick="openImgView();"><img></div>
+    </div>
+    <!-- 右击菜单 -->
+    <div class="right-click-menu" id="right-click-menu" style="display: none;" oncontextmenu="return false;">
+        <div id="right-click-menu-bg"></div>
+        <div class="ss-card">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M503.7 226.2l-176 151.1c-15.38 13.3-39.69 2.545-39.69-18.16V272.1C132.9 274.3 66.06 312.8 111.4 457.8c5.031 16.09-14.41 28.56-28.06 18.62C39.59 444.6 0 383.8 0 322.3c0-152.2 127.4-184.4 288-186.3V56.02c0-20.67 24.28-31.46 39.69-18.16l176 151.1C514.8 199.4 514.8 216.6 503.7 226.2z"/></svg>
+                <a>转发</a>
+            </div>
+            <div onclick="menuReply()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M511.1 63.1v287.1c0 35.25-28.75 63.1-64 63.1h-144l-124.9 93.68c-7.875 5.75-19.12 .0497-19.12-9.7v-83.98h-96c-35.25 0-64-28.75-64-63.1V63.1c0-35.25 28.75-63.1 64-63.1h384C483.2 0 511.1 28.75 511.1 63.1z"/></svg>
+                <a>回复</a>
+            </div>
+            <div onclick="menuDelMsg()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M135.2 17.69C140.6 6.848 151.7 0 163.8 0H284.2C296.3 0 307.4 6.848 312.8 17.69L320 32H416C433.7 32 448 46.33 448 64C448 81.67 433.7 96 416 96H32C14.33 96 0 81.67 0 64C0 46.33 14.33 32 32 32H128L135.2 17.69zM394.8 466.1C393.2 492.3 372.3 512 346.9 512H101.1C75.75 512 54.77 492.3 53.19 466.1L31.1 128H416L394.8 466.1z"/></svg>
+                <a>删除</a>
+            </div>
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M318.4 304.5c-3.531 9.344-12.47 15.52-22.45 15.52h-105l45.15 94.82c9.496 19.94 1.031 43.8-18.91 53.31c-19.95 9.504-43.82 1.035-53.32-18.91L117.3 351.3l-75 88.25c-4.641 5.469-11.37 8.453-18.28 8.453c-2.781 0-5.578-.4844-8.281-1.469C6.281 443.1 0 434.1 0 423.1V56.02c0-9.438 5.531-18.03 14.12-21.91C22.75 30.26 32.83 31.77 39.87 37.99l271.1 240C319.4 284.6 321.1 295.1 318.4 304.5z"/></svg>
+                <a>多选</a>
+            </div>
+        </div>
     </div>
 </div>
 </body>
