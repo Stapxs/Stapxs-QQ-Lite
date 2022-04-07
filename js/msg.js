@@ -20,8 +20,12 @@ function printAt(txt, id) {
     return "<a class='msg-at' data-id='" + id  + "'>" + txt + "</a>"
 }
 
-function printImg(url) {
-    return "<img onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+function printImg(url, num) {
+     if(num == 1) {
+        return "<img style='width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+     } else {
+        return "<img onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+     }
 }
 
 function printFace(id, name) {
@@ -29,6 +33,12 @@ function printFace(id, name) {
 }
 
 function printReplay(msgid) {
+    // 尝试在消息队列里寻找这个消息
+    const msg = findMsgInList(msgid)
+    if(msg != null) {
+        const svg = String.raw`<svg style="height: 1rem;display: inline-block;margin-right: 5px;fill: var(--color-font-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M8.31 189.9l176-151.1c15.41-13.3 39.69-2.509 39.69 18.16v80.05C384.6 137.9 512 170.1 512 322.3c0 61.44-39.59 122.3-83.34 154.1c-13.66 9.938-33.09-2.531-28.06-18.62c45.34-145-21.5-183.5-176.6-185.8v87.92c0 20.7-24.31 31.45-39.69 18.16l-176-151.1C-2.753 216.6-2.784 199.4 8.31 189.9z"></path></svg>`
+        return "<div class='msg-replay' onclick='jumpToMsg(\"" + msgid + "\")'>" + svg +  msg.dataset.raw + "</div>"
+    }
     // TODO: 回复消息（还没写完）
     return "<div class='msg-replay'>这是条回复消息但是我还没写完</div>"
 }
@@ -37,6 +47,10 @@ function printRecord(url) {
     // TODO：前端无法解析语音文件，待后端参与
     // URL 为文件地址
     return "<div class='msg-record'><i class='fa fa-play-circle' aria-hidden='true'></i><div><a>不支持播放语音消息</a></div></div>"
+}
+
+function printVideo(url) {
+    return "<div class='msg-video'><video controls><source src='" + url + "' type='video/mp4'></video></div>"
 }
 
 function printXML(xml, type) {

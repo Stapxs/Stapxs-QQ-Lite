@@ -57,10 +57,11 @@
 }
 
 .msg-replay {
-    background: var(--color-card-2);
     padding: 10px;
     border-radius: 7px;
     font-size: 0.9rem;
+    background: #00000017;
+    cursor: pointer;
 }
 
 .note-base {
@@ -111,4 +112,15 @@
 }
 .msg-record > div a {
     line-height: 2rem;
+}
+
+.msg-video {
+    margin: -10px;
+    border-radius: 7px;
+    overflow: hidden;
+}
+.msg-video video {
+    width: 100%;
+    max-height: 50vh;
+    margin-bottom: -7px;
 }

@@ -72,14 +72,19 @@ function runJSON(json) {
 // 处理通知消息
 function runNotice(msg) {
     switch(msg.sub_type) {
+        // 撤回消息
         case "recall": {
-            // 撤回消息
             // 判断目标
             const id = msg.notice_type == "group"?msg.group_id:msg.user_id
             console.log(id + " / " + document.getElementById("msg-hander").dataset.id)
             if(Number(id) == Number(document.getElementById("msg-hander").dataset.id)) {
-                // 隐藏消息
-                findMsgInList(msg.message_id).style.display = "none"
+                // 如果是自己的消息则只降低透明的不隐藏
+                if(Number(msg.user_id) == Number(window.login_id)) {
+                    findMsgInList(msg.message_id).style.opacity = "0.4"
+                } else {
+                    // 隐藏消息
+                    findMsgInList(msg.message_id).style.display = "none"
+                }
             }
             // 尝试撤回通知
             // let notification = new Notification("消息被撤回", {"tag": msg.message_id})
@@ -245,11 +250,12 @@ function printMsg(obj, addTo) {
                 switch(obj.message[i].type) {
                     case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id) + body; break }
                     case "text": body = body + printText(obj.message[i].data.text); break
-                    case "image": body = body + printImg(obj.message[i].data.url); break
+                    case "image": body = body + printImg(obj.message[i].data.url, obj.message.length); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                     case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq); break
                     case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
                     case "record": body = body + printRecord(obj.message[i].data.url); break
+                    case "video": body = body + printVideo(obj.message[i].data.url); break
                     case "pass": break
                     default: {
                         nowBreak = true

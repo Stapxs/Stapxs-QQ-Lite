@@ -109,7 +109,7 @@ function onListClick(sender) {
 
 function scrollToMsg(obj) {
     let wrapper = document.getElementById("msg-body")
-    wrapper.scrollTo(0 , obj.offsetTop);
+    wrapper.scrollTo(0 , obj.offsetTop - 89*2);
 }
 
 function msgBodyScroll() {
@@ -250,6 +250,15 @@ function cancelSearch() {
     }
 }
 
+function jumpToMsg(id) {
+    const msg = findMsgInList(id)
+    if(msg != null) {
+        scrollToMsg(msg)
+    } else {
+        setStatue("err", "消息未被显示在窗口内。")
+    }
+}
+
 function msgMouseDown(sender, e) {
     // 右击事件
     if(e.which == 3) {
@@ -301,9 +310,14 @@ function showMsgMenu(sender, event) {
         document.getElementById("right-click-menu-bg").onmousedown = null
         setTimeout(() => {
             document.getElementById("right-click-menu").style.display = "none"
+            // 恢复被隐藏的菜单
+            const body = document.getElementById("right-click-menu-body")
+            for(let i=0; i<body.children.length; i++) {
+                body.children[i].style.display = "flex"
+            }
         }, 150)
         window.msgInMenu.style.background = "transparent"
-            window.msgInMenu = null
+        window.msgInMenu = null
     } else {
         // 登记
         window.msgInMenu = sender
@@ -314,6 +328,18 @@ function showMsgMenu(sender, event) {
         // 修改菜单位置
         document.getElementById("right-click-menu").children[1].style.marginLeft = pointEvent.pageX + "px"
         document.getElementById("right-click-menu").children[1].style.marginTop = pointEvent.pageY + "px"
+        // 判断是不是自己的消息
+        if(Number(sender.dataset.sender) != Number(window.login_id)) {
+            document.getElementById("menuCancel").style.display = "none"
+        }
+        // 特判已经被撤回的自己的消息。只显示复制菜单
+        if(sender.style.opacity === "0.4") {
+            const body = document.getElementById("right-click-menu-body")
+            for(let i=0; i<body.children.length; i++) {
+                body.children[i].style.display = "none"
+            }
+            document.getElementById("menuCopy").style.display = "flex"
+        }
         // 显示菜单
         document.getElementById("right-click-menu").style.display = "block"
         setTimeout(() => {
@@ -322,13 +348,6 @@ function showMsgMenu(sender, event) {
                 document.getElementById("right-click-menu-bg").onmousedown = function() { showMsgMenu() }
             }, 100)
         }, 50)
-    }
-}
-
-function menuDelMsg() {
-    if(window.msgInMenu != undefined && window.msgInMenu != null) {
-        window.msgInMenu.style.display = "none"
-        showMsgMenu()
     }
 }
 
@@ -342,12 +361,20 @@ function menuReply() {
         document.getElementById("replyer").style.height = "45px"
         // 关闭菜单
         showMsgMenu()
+        // 将光标聚焦到输入框
+        document.getElementById("send-box").focus()
     }
 }
 
 function cancelReply() {
     document.getElementById("replyer-txt").innerText = ""
     document.getElementById("replyer").dataset.id = ""
-    
     document.getElementById("replyer").style.height = "0"
+}
+
+function menuCancel() {
+    if(window.msgInMenu != undefined && window.msgInMenu != null) {
+        sendWs(createAPI("delete_msg", {"message_id": window.msgInMenu.dataset.id}))
+        showMsgMenu()
+    }
 }
