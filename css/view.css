@@ -1,3 +1,8 @@
+/*
+    view.css - 主框架外的全部样式以及通用样式
+    2022/04/05 - Stapx Steve [林槐]
+*/
+
 .friend-body {
     display: flex;
     flex-direction: row;

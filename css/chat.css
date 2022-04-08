@@ -1,3 +1,8 @@
+/*
+    chat.css - 主框架 (除了消息区) 的样式
+    2022/04/05 - Stapx Steve [林槐]
+*/
+
 input::-webkit-input-placeholder {
     color: var(--color-font-2);
     font-size: 0.9rem;

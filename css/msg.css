@@ -1,3 +1,8 @@
+/*
+    msg.css - 消息的样式
+    2022/04/03 - Stapx Steve [林槐]
+*/
+
 .message {
     display: flex;
     padding: 10px;
