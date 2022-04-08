@@ -4,12 +4,10 @@
     <p>一个兼容 oicq-http 的 QQ 网页版</p><br>
     <div>
         <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Stapxs/QQ-Web-Lite?style=for-the-badge">
-        <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/Stapxs/QQ-Web-Lite?style=for-the-badge">
+        <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/Stapxs/QQ-Web-Lite?include_prereleases&style=for-the-badge">
         <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Stapxs/QQ-Web-Lite?style=for-the-badge">
     </div>
 </div>
-<br>
-<br>
 <br>
 <br>
 
