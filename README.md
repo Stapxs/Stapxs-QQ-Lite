@@ -1,7 +1,7 @@
 <div align="center">
-    <img src="src/icon.svg" width="20%" alt="logo">
-    <font style="display: block;font-size: 2rem;">QQ Web Lite</font>
-    <p>一个兼容 oicq-http 的 QQ 网页版</p>
+    <img src="src/icon.svg" width="10%" alt="logo"><br>
+    <h1>QQ Web Lite</h1>
+    <p>一个兼容 oicq-http 的 QQ 网页版</p><br>
     <div>
         <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Stapxs/QQ-Web-Lite?style=for-the-badge">
         <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/Stapxs/QQ-Web-Lite?style=for-the-badge">
