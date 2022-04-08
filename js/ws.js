@@ -6,7 +6,7 @@ function runWs() {
     const address = document.getElementById("sev_address").value
     window.token = document.getElementById("access_token").value
 
-    window.ws = new WebSocket(address + "?access_token=" + token)
+    window.ws = new WebSocket("ws://" + address + "?access_token=" + token)
 
     window.ws.onopen = function (evt) {
         setStatue("ok", "成功连接 ……")
