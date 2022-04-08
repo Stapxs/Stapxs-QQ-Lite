@@ -39,7 +39,7 @@ function runWs() {
         window.connect = false
         // 显示底栏
             document.getElementById("footer").style.display = "block"
-            document.getElementById("main-view").style.height  = "calc(100vh - 137px)"
+            document.getElementById("main-view").style.height  = "calc(100vh - 100px)"
         setTimeout(() => {
             document.getElementById("footer").style.transform = "translate(0)"
         }, 100)
@@ -60,7 +60,7 @@ function runJSON(json) {
             case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
             case "get_send_msg": {                                                                          // 打印发送回调消息
                                     if(msg.retcode ===0) {
-                                        printMsg(msg.data[0], null)
+                                        printMsg(msg.data, null)
                                         document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
                                     }
                                     break
@@ -69,7 +69,8 @@ function runJSON(json) {
                 // 处理其他特殊的返回
                 if(msg.echo.indexOf("get_rep_msg_") >= 0) {
                     // 刷新回复原消息体
-
+                    const raw = getMsgRawTxt(msg.data.message)
+                    updateReplyBody(msg.echo, raw==null?msg.raw_message:raw)
                 }
             }
         }
@@ -84,7 +85,6 @@ function runJSON(json) {
 // 将消息发送为浏览器通知
 function showNotice(msg) {
     try {
-        console.log(Notification.permission)
         // 检查通知权限，注意 “老旧” 浏览器不支持这个功能
         if(Notification.permission == "default") {
             // 还没有请求过权限

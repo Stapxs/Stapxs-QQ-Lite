@@ -10,7 +10,7 @@ input::-webkit-input-placeholder {
 
 .main-view {
     width: 100%;
-    height: calc(100vh - 137px);
+    height: calc(100vh - 100px);
     padding: 20px 0;
     display: flex;
     flex-direction: column;
@@ -38,7 +38,7 @@ input::-webkit-input-placeholder {
 
 .msg-view {
     flex: 1;
-    margin: 20px 0;
+    margin: 20px 0 0 0;
     display: flex;
     flex-direction: row;
     border: 2px solid transparent;
@@ -320,4 +320,26 @@ input::-webkit-input-placeholder {
 .right-click-menu > div:nth-child(2) div a {
     line-height: 1rem;
     user-select: none;
+}
+
+.resend-tips {
+    display: flex;
+    height: 45px;
+    background: var(--color-card-2);
+    transition: height .3s;
+}
+.resend-tips div {
+    width: 45px;
+    height: 45px;
+    padding: 14px;
+}
+.resend-tips div svg {
+    fill: var(--color-font-1);
+    margin-top: -9px;
+}
+.resend-tips a {
+    line-height: 45px;
+    font-size: 0.9rem;
+    color: var(--color-font-1);
+    flex: 1;
 }

@@ -53,14 +53,16 @@ function printMsg(obj, addTo) {
             for(let i=0; i<obj.message.length; i++) {
                 let nowBreak = false
                 switch(obj.message[i].type) {
-                    case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
+                    case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id) + body; break }
                     case "text": body = body + printText(obj.message[i].data.text); break
                     case "image": body = body + printImg(obj.message[i].data.url, obj.message.length); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
+                    case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
                     case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq); break
                     case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
                     case "record": body = body + printRecord(obj.message[i].data.url); break
                     case "video": body = body + printVideo(obj.message[i].data.url); break
+                    case "file": body = body + printFile(obj.message[i].data); break
                     case "pass": break
                     default: {
                         nowBreak = true
@@ -104,6 +106,10 @@ function printText(txt) {
     return "<a style='overflow-wrap: anywhere;'>" + txt + "</a>"
 }
 
+function printBface(txt) {
+    return printText(txt).replace("style='", "style='font-style: italic;opacity: 0.7;")
+}
+
 function printAt(txt, id) {
     txt = txt.replaceAll(" ", "&nbsp;")
     txt = txt.replaceAll("<", "&lt;")
@@ -123,7 +129,7 @@ function printFace(id, name) {
     return "<img class='msg-face' src='src/qq-face/" + id + ".gif' title='" + name + "'>"
 }
 
-function printReplay(msgid, rawid) {
+function printReplay(msgid) {
     // 尝试在消息队列里寻找这个消息
     const msg = findMsgInList(msgid)
     if(msg != null) {
@@ -132,10 +138,11 @@ function printReplay(msgid, rawid) {
     } else {
         // 如果消息队列里没有这个消息，尝试向服务器获取此条消息
         sendWs(createAPI(
-            "get_chat_history",
-            {"message_id":msgId, "count": 1},
-            "get_rep_msg_" + rawid
+            "get_msg",
+            {"message_id":msgid},
+            "get_rep_msg_" + msgid
         ))
+        return "<div class='msg-replay' id='get_rep_msg_" + msgid + "' onclick='jumpToMsg(\"" + msgid + "\")'><a style='font-style: italic;opacity: 0.7;'>加载回复消息失败 ……</a></div>"
     }
 }
 
@@ -147,6 +154,19 @@ function printRecord(url) {
 
 function printVideo(url) {
     return "<div class='msg-video'><video controls><source src='" + url + "' type='video/mp4'></video></div>"
+}
+
+function printFile(data) {
+    let html = String.raw`<div class="msg-file">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M0 64C0 28.65 28.65 0 64 0H224V128C224 145.7 238.3 160 256 160H384V448C384 483.3 355.3 512 320 512H64C28.65 512 0 483.3 0 448V64zM256 128V0L384 128H256z"/></svg>
+    <div><div><p>{name}</p><a>（{size}）</a></div><i>{md5}</i></div>
+    <div onclick="window.open('{url}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"/></svg></div>
+</div>`
+    html = html.replace("{name}", data.name)
+    html = html.replace("{size}", formatBytes(data.size))
+    html = html.replace("{url}", data.url)
+    html = html.replace("{md5}", data.md5)
+    return html
 }
 
 function printXML(xml, type) {
