@@ -5,9 +5,10 @@
 
 .message {
     display: flex;
-    padding: 10px;
+    padding: 5px 10px;
     width: 100%;
     border-radius: 7px;
+    margin: 5px 0;
 }
 .message > img {
     width: 35px;
@@ -35,13 +36,22 @@
     flex: 1;
 }
 
+.message-mine {
+    background: var(--color-main) !important;
+    color: var(--color-font-r) !important;
+}
+.message-mine svg {
+    fill: var(--color-font-r) !important;
+}
+
 .msg-img {
     border-radius: 7px;
     max-height: 35vh;
     cursor: pointer;
     display: block;
-    width: calc(100% - 10px);
-    margin: 5px;
+    max-width: calc(100% - 10px);
+    margin: 5px 5px 5px 50%;
+    transform: translate(-50%);
 }
 
 .msg-face {

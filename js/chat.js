@@ -119,6 +119,13 @@ function onListClick(sender) {
     document.getElementById("msg-hander").dataset.id = sender.dataset.id
     document.getElementById("msg-hander").dataset.type = sender.dataset.type
     document.getElementById("msg-hander").style.display = "flex"
+    // 加载菜单
+    for(let i=0; i<document.getElementById("groupMenu").children.length; i++) {
+        document.getElementById("groupMenu").children[i].style.display = "flex"
+    }
+    if(sender.dataset.type != "group") {
+        document.getElementById("groupFile").style.display = "none"
+    }
     // 清空聊天记录框
     document.getElementById("msg-body").innerHTML = ""
     // 加载历史消息
@@ -162,6 +169,31 @@ function onListClick(sender) {
         )
     } else {
         return false
+    }
+    // 执行转发
+    if(document.getElementById("resend-tips").dataset.onresend == "true") {
+        // 关闭提示控件
+        document.getElementById("resend-tips").style.height = "0"
+        document.getElementById("resend-tips").dataset.onresend = "false"
+        // 执行转发
+        if(window.resendList != undefined && window.resendList.length > 0) {
+            if(window.resendList.length == 1) {
+                // 单条转发
+                // 直接发送消息
+                // 构建 JSON
+                const doms = window.resendList[0].children
+                const readyMsg = doms[doms.length - 1].innerText
+                switch(sender.dataset.type) {
+                    case "group": json = createAPI("send_msg", {"group_id": sender.dataset.id, "message": readyMsg}, null); break
+                    case "friend": json = createAPI("send_msg", {"user_id": sender.dataset.id, "message": readyMsg}, null); break
+                }
+                if(json != null) {
+                    sendWs(json)
+                }
+            }
+        }
+        // 清空转发列队
+        window.resendList = []
     }
 }
 
@@ -216,7 +248,15 @@ function sendMsg() {
             document.getElementById("btn-img").children[1].style.fill = "var(--color-font)"
             window.cacheImg = ""
             document.getElementById("btn-img").dataset.select = "false"
-            
+            setTimeout(() => {
+                // 添加 input
+                var input = document.createElement("input")
+                input.id = "choice-pic"
+                input.type = "file"
+                input.style.display = "none"
+                input.onchange = function() { selectImgFile() }
+                document.getElementById("btn-img").append(input)
+            }, 100)
         }
         if(msg != "" && msg != undefined && msg != null && type != undefined && id != undefined && window.connect) {
             // 构建 JSON
@@ -354,8 +394,20 @@ function jumpToMsg(id) {
 }
 
 function msgMouseDown(sender, e) {
+    showLog("b573f7", "fff", "UI", "消息被点击：" + e.which)
+    // 单击事件
+    if(e.which == 1) {
+        // 判断是否多选
+        if(document.getElementById("resender").dataset.onchoice == "true") {
+            sender.style.background = "#00000008"
+            if(window.resendList == undefined) {
+                window.resendList = []
+            }
+            window.resendList.push(sender)
+        }
+    }
     // 右击事件
-    if(e.which == 3) {
+    else if(e.which == 3) {
         // 阻止点击传递
         e.stopPropagation()
         // 显示菜单
@@ -466,9 +518,77 @@ function cancelReply() {
     document.getElementById("replyer").style.height = "0"
 }
 
+function menuResend() {
+    if(window.msgInMenu != undefined && window.msgInMenu != null) {
+        // 显示提示控件
+        document.getElementById("resend-tips").style.height = "45px"
+        document.getElementById("resend-tips").dataset.onresend = "true"
+        // 存储转发内容
+        if(window.resendList == undefined) {
+            window.resendList = []
+        }
+        window.resendList.push(window.msgInMenu)
+        showMsgMenu()
+    }
+}
+
+function cancelResend() {
+    document.getElementById("resend-tips").style.height = "0"
+    document.getElementById("resend-tips").dataset.onresend = "false"
+    window.resendList = []
+}
+
 function menuCancel() {
     if(window.msgInMenu != undefined && window.msgInMenu != null) {
         sendWs(createAPI("delete_msg", {"message_id": window.msgInMenu.dataset.id}))
         showMsgMenu()
     }
+}
+
+function menuChoice() {
+    // 显示控件
+    document.getElementById("resender").style.height = "90px"
+    document.getElementById("resender").dataset.onchoice = "true"
+    // 添加列表
+    if(window.resendList == undefined) {
+        window.resendList = []
+    }
+    window.resendList.push(window.msgInMenu)
+    // 防止被关闭菜单撤回
+    window.msgInMenu = null
+    // 关闭菜单
+    showMsgMenu()
+}
+
+function cancelChoice() {
+    // 关闭
+    document.getElementById("resender").style.height = "0"
+    document.getElementById("resender").dataset.onchoice = "false"
+    // 清空选中背景
+    for(let i=0; i<window.resendList.length; i++) {
+        window.resendList[i].style.background = "transparent"
+    }
+    // 清空列表
+    window.resendList = []
+}
+
+function choiceMsg() {
+
+}
+
+function noticeOnClick(event) {
+    event.preventDefault()
+    const openId = event.target.tag.split("/")[0]
+    // 打开界面
+    const dom = findBodyInList(null, openId)
+    if(dom != null) {
+        dom.click()
+    }
+}
+
+function noticeOnClose(event) {
+    event.preventDefault()
+    const openId = event.target.tag.split("/")[0]
+    // 删除消息体缓存
+    delete window.notices[openId]
 }

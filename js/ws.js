@@ -46,45 +46,13 @@ function runWs() {
     }
 }
 
-// 分发指令
-function runJSON(json) {
-    const msg = JSON.parse(json)
-    if(msg.echo != undefined) {
-        // 触发事件
-        switch(msg.echo) {
-            case "get_friend_list": setFriendList(msg.data); break                                          // 获取好友列表
-            case "get_group_list": setGroupList(msg.data); break                                            // 获取群列表
-            case "get_login_info": setUserInfo(msg.data); break                                             // 获取用户信息
-            case "get_chat_history_fist": firstLoadingMsg(msg); break                                       // 首次获取历史消息（20）
-            case "get_chat_history": loadingMoreMsg(msg); break                                             // 获取更多历史消息
-            case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
-            case "get_send_msg": {                                                                          // 打印发送回调消息
-                                    if(msg.retcode ===0) {
-                                        printMsg(msg.data, null)
-                                        document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
-                                    }
-                                    break
-                                 }
-            default: {
-                // 处理其他特殊的返回
-                if(msg.echo.indexOf("get_rep_msg_") >= 0) {
-                    // 刷新回复原消息体
-                    const raw = getMsgRawTxt(msg.data.message)
-                    updateReplyBody(msg.echo, raw==null?msg.raw_message:raw)
-                }
-            }
-        }
-    } else {
-        switch(msg.post_type) {
-            case "message": updateMsg(msg); break                                                           // 通知消息
-            case "notice": runNotice(msg); break                                                            // 服务端通知
-        }
-    }
-}
-
 // 将消息发送为浏览器通知
 function showNotice(msg) {
     try {
+        // 初始化记录数组
+        if(window.notices == undefined) {
+            window.notices = {}
+        }
         // 检查通知权限，注意 “老旧” 浏览器不支持这个功能
         if(Notification.permission == "default") {
             // 还没有请求过权限
@@ -97,10 +65,23 @@ function showNotice(msg) {
         } else if(Notification.permission == "denied") {
             // 用户拒绝了权限
             return
-        } else {        
+        } else {     
             // 显示通知，不管之前有没有同意，反正我是发了（大声
-            const raw = getMsgRawTxt(msg.message)
-            let notification = new Notification(msg.sender.nickname, {"body": raw==""?msg.raw_message:raw, "tag": msg.message_id, "icon": "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + msg.user_id})
+            let raw = getMsgRawTxt(msg.message)
+            raw = raw==""?msg.raw_message:raw
+            if(msg.message_type == "group") {
+                const msgOut = msg.sender.nickname + ":" + raw
+                console.log(msgOut)
+                let notification = new Notification(msg.group_name, {"body": msgOut, "tag": msg.group_id + "/" + msg.message_id, "icon": "https://p.qlogo.cn/gh/" + msg.group_id + "/" + msg.group_id + "/0"})
+                window.notices[msg.message_id] = notification
+                notification.onclick = function() { noticeOnClick(event) }
+                notification.onclose = function() { noticeOnClose(event) }
+            } else {
+                let notification = new Notification(msg.sender.nickname, {"body": raw, "tag": msg.user_id + "/" + msg.message_id, "icon": "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + msg.user_id})
+                window.notices[msg.message_id] = notification
+                notification.onclick = function() { noticeOnClick(event) }
+                notification.onclose = function() { noticeOnClose(event) }
+            }
         }
     }
     catch(e) {
@@ -111,25 +92,26 @@ function showNotice(msg) {
 // 加载基础数据
 function loadInfo() {
     // 加载用户信息
-    let json = createAPI(
+    sendWs(createAPI(
         "get_login_info",
         null, null
-    )
-    sendWs(json)
+    ))
+    sendWs(createAPI(
+        "get_csrf_token",
+        null, null
+    ))
     // 清空列表
     document.getElementById("friend-list-body").innerHTML = ""
     // 加载好友列表
-    json = createAPI(
+    sendWs(createAPI(
         "get_friend_list",
         null, null
-    )
-    sendWs(json)
+    ))
     // 加载群列表
-    json = createAPI(
+    sendWs(createAPI(
         "get_group_list",
         null, null
-    )
-    sendWs(json)
+    ))
 }
 
 // ----------------------------------------
@@ -155,18 +137,6 @@ function findMsgInList(id) {
     }
     return null
 }
-
-// 获取消息有效文本
-function getMsgRawTxt(message) {
-    let back = ""
-    for(let i=0; i<message.length; i++) {
-        if(message[i].type == "text")  {
-            back += message[i].data.text + " "
-        }
-    }
-    return back
-}
-
 
 // ----------------------------------------
 // 功能辅助函数

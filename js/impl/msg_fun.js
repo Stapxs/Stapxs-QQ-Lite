@@ -37,8 +37,9 @@ function printMsg(obj, addTo) {
         <div class="message-space" style="{space}"></div>
         <div class="message-body">
             <a style="{hidden}">{name}</a>
-            <div style="{mine}">{body}</div>
-        </div>`
+            <div class="{mine}">{body}</div>
+        </div>
+        <a style="display: none;">{raw}</a>`
             html = html.replace("{id}", obj.sender.user_id)
             let name = obj.sender.nickname
             if(obj.message_type=="group" && obj.sender.card!=obj.sender.nickname && obj.sender.card!="") {
@@ -47,13 +48,14 @@ function printMsg(obj, addTo) {
             html = html.replace("{name}", name)
             html = html.replace("{space}", obj.sender.user_id==window.login_id?"":"flex:unset;")
             html = html.replaceAll("{hidden}", obj.sender.user_id==window.login_id?"display:none;":"")
-            html = html.replace("{mine}", obj.sender.user_id==window.login_id?"background: var(--color-main);color: var(--color-font-r);":"")
+            html = html.replace("{mine}", obj.sender.user_id==window.login_id?"message-mine":"")
+            html = html.replace("{raw}", obj.raw_message)
             // 遍历消息体
             let body = ""
             for(let i=0; i<obj.message.length; i++) {
                 let nowBreak = false
                 switch(obj.message[i].type) {
-                    case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id) + body; break }
+                    case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
                     case "text": body = body + printText(obj.message[i].data.text); break
                     case "image": body = body + printImg(obj.message[i].data.url, obj.message.length); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
@@ -79,7 +81,7 @@ function printMsg(obj, addTo) {
             div.onmousedown = function()                    { msgMouseDown(div, event); }                   // 右击判定
             div.addEventListener("touchstart", function()   { msgTouchDown(div, event); }, false)           // 长按判定（开始）
             div.addEventListener("touchend", function()     { msgTouchEnd(event); }, false)                 // 长按判定（结束）
-            div.addEventListener("touchmove", function()     { msgTouchMove(event); }, false)                // 长按判定（结束）
+            div.addEventListener("touchmove", function()    { msgTouchMove(event); }, false)                // 长按判定（移动）
             // 添加到消息列表内
             if(addTo == null) {
                 document.getElementById("msg-body").appendChild(div)
@@ -92,6 +94,24 @@ function printMsg(obj, addTo) {
         showLog("ff5370", "fff", "CORE", "显示消息错误：" + JSON.stringify(obj))
         console.error(e)
     }
+}
+
+// 获取消息有效文本
+function getMsgRawTxt(message) {
+    let back = ""
+    for(let i=0; i<message.length; i++) {
+        switch(message[i].type) {
+            case "at":
+            case "text": back += message[i].data.text;break
+            case "face": 
+            case "bface": back += "[表情]";break
+            case "image": back += "[图片]";break
+            case "record": back += "[语音]";break
+            case "video": back += "[视频]";break
+            case "file": back += "[文件]";break
+        }
+    }
+    return back
 }
 
 // --------------------------------------------------------------
@@ -119,7 +139,7 @@ function printAt(txt, id) {
 
 function printImg(url, num) {
      if(num == 1) {
-        return "<img style='width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        return "<img style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      } else {
         return "<img onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      }
@@ -129,7 +149,7 @@ function printFace(id, name) {
     return "<img class='msg-face' src='src/qq-face/" + id + ".gif' title='" + name + "'>"
 }
 
-function printReplay(msgid) {
+function printReplay(msgid, rawid) {
     // 尝试在消息队列里寻找这个消息
     const msg = findMsgInList(msgid)
     if(msg != null) {
@@ -140,9 +160,9 @@ function printReplay(msgid) {
         sendWs(createAPI(
             "get_msg",
             {"message_id":msgid},
-            "get_rep_msg_" + msgid
+            "get_rep_msg_" + rawid
         ))
-        return "<div class='msg-replay' id='get_rep_msg_" + msgid + "' onclick='jumpToMsg(\"" + msgid + "\")'><a style='font-style: italic;opacity: 0.7;'>加载回复消息失败 ……</a></div>"
+        return "<div class='msg-replay' id='get_rep_msg_" + rawid + "' onclick='jumpToMsg(\"" + msgid + "\")'><a style='font-style: italic;opacity: 0.7;'>加载回复消息失败 ……</a></div>"
     }
 }
 

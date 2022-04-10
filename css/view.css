@@ -146,3 +146,39 @@
     line-height: 45px;
     margin-left: 10px;
 }
+
+.resender {
+    height: 90px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background: var(--color-card-1);
+    border-radius: 7px;
+    overflow: hidden;
+    transition: height .2s;
+}
+.resender > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 10%;
+}
+.resender > div div {
+    height: 40px;
+    width: 40px;
+    background: var(--color-card-2);
+    border-radius: 100%;
+    padding: 10px;
+}
+.resender > div svg {
+    fill: var(--color-font-2);
+    margin-top: -8px;
+}
+.resender > div a {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    width: 100%;
+    text-align: center;
+    color: var(--color-font-2);
+}

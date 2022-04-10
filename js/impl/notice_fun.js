@@ -3,6 +3,47 @@
     2022/04/08 - Stapx Steve [林槐]
 */
 
+
+// 分发指令
+function runJSON(json) {
+    const msg = JSON.parse(json)
+    if(msg.echo != undefined) {
+        // 触发事件
+        switch(msg.echo) {
+            case "get_friend_list": setFriendList(msg.data); break                                          // 获取好友列表
+            case "get_group_list": setGroupList(msg.data); break                                            // 获取群列表
+            case "get_login_info": setUserInfo(msg.data); break                                             // 获取用户信息
+            case "get_csrf_token": window.utoken = msg.data.token; break                                     // 获取 token
+            case "get_cookies": window.ucookies = msg.data.cookies;break                                    // 获取 Cookies
+            case "get_chat_history_fist": firstLoadingMsg(msg); break                                       // 首次获取历史消息（20）
+            case "get_chat_history": loadingMoreMsg(msg); break                                             // 获取更多历史消息
+            case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
+            case "get_send_msg": {                                                                          // 打印发送回调消息
+                                    if(msg.retcode === 0) {
+                                        printMsg(msg.data, null)
+                                        document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
+                                    }
+                                    break
+                                 }
+            default: {
+                // 处理其他特殊的返回
+                if(msg.echo.indexOf("get_rep_msg_") >= 0) {
+                    // 刷新回复原消息体
+                    const raw = getMsgRawTxt(msg.data.message)
+                    updateReplyBody(msg.echo, raw==null?msg.raw_message:raw)
+                }
+            }
+        }
+    } else {
+        switch(msg.post_type) {
+            case "message": updateMsg(msg); break                                                           // 通知消息
+            case "notice": runNotice(msg); break                                                            // 服务端通知
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------------
+
 function setFriendList(data) {
     // 遍历列表
     // <div class="friend-body" data-id="1007028430" data-type="friend">
@@ -176,7 +217,7 @@ function runNotice(msg) {
                 }
             }
             // 尝试撤回通知
-            // let notification = new Notification("消息被撤回", {"tag": msg.message_id})
+            window.notices[msg.message_id].close()
         }
     }
 }
