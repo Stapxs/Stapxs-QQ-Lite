@@ -18,19 +18,37 @@ function runJSON(json) {
             case "get_chat_history_fist": firstLoadingMsg(msg); break                                       // 首次获取历史消息（20）
             case "get_chat_history": loadingMoreMsg(msg); break                                             // 获取更多历史消息
             case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
-            case "get_send_msg": {                                                                          // 打印发送回调消息
-                                    if(msg.retcode === 0) {
-                                        printMsg(msg.data, null)
-                                        document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
-                                    }
-                                    break
-                                 }
             default: {
                 // 处理其他特殊的返回
                 if(msg.echo.indexOf("get_rep_msg_") >= 0) {
                     // 刷新回复原消息体
                     const raw = getMsgRawTxt(msg.data.message)
                     updateReplyBody(msg.echo, raw==null?msg.raw_message:raw)
+                }
+                if(msg.echo.indexOf("get_send_msg_") >= 0) {
+                    // 打印消息回调
+                    if(msg.retcode === 0) {
+                        printMsg(msg.data, null)
+                        document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
+                    } else {
+                        // 再次尝试请求
+                        const list = msg.echo.split("_")
+                        const msgId = list[list.length - 2]
+                        const times = Number(list[list.length - 1]) + 1
+                        if(times < 5) {
+                            setTimeout(() => {
+                                setStatue("load", "重试获取发送的消息(" + times + ") ……")
+                                // 请求消息内容
+                                sendWs(createAPI(
+                                    "get_msg",
+                                    {"message_id":msgId},
+                                    "get_send_msg_" + msgId + "_" + times
+                                ))
+                            }, 1000)
+                        } else {
+                            setStatue("err", "获取发送的消息失败，可能是消息发送失败。")
+                        }
+                    }
                 }
             }
         }
@@ -134,9 +152,8 @@ function sendMsgBack(msgId) {
             sendWs(createAPI(
                 "get_msg",
                 {"message_id":msgId},
-                "get_send_msg"
+                "get_send_msg_" + msgId + "_0"
             ))
-            setStatue("ok", "发送消息完成！")
         }, 500)
     }
 }

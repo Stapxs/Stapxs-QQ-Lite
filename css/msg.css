@@ -178,3 +178,9 @@
     height: 20px;
     margin-top: -7px;
 }
+
+@media (max-width: 768px) {
+    .message-body {
+        max-width: 100%;
+    }
+}

@@ -42,10 +42,12 @@
         <div class="main-view" id="main-view">
             <!-- 顶部控制组件 -->
             <div class="controller">
+                <div class="ss-card back-btn" title="返回" id="change-view-btn" data-icon="right" onclick="changeView()">
+                    <svg style="transition: transform .3s;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/></svg>
+                </div>
                 <div class="ss-card" title="登录" onclick="showLoginPan(true)" id="login-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M344.7 238.5l-144.1-136C193.7 95.97 183.4 94.17 174.6 97.95C165.8 101.8 160.1 110.4 160.1 120V192H32.02C14.33 192 0 206.3 0 224v64c0 17.68 14.33 32 32.02 32h128.1v72c0 9.578 5.707 18.25 14.51 22.05c8.803 3.781 19.03 1.984 26-4.594l144.1-136C354.3 264.4 354.3 247.6 344.7 238.5zM416 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c17.67 0 32 14.33 32 32v256c0 17.67-14.33 32-32 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c53.02 0 96-42.98 96-96V128C512 74.98 469 32 416 32z"/></svg>
                 </div>
-                <div class="ss-card" title="状态指示器" id="stat-icon" style="width: auto;min-width: 60px;opacity: 0;transition: unset;"></div>
                 <div style="flex: 1"></div>
                 <div class="ss-card" title="白色模式" id="color-changer" data-color="light" onclick="btnChangeColor()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1S202.1 351.1 256 351.1s95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347L446.1 255.1l63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7l-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89L164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6L12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256l-63.15 91.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7l19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109l109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1c0-70.69 57.31-127.1 127.1-127.1s127.1 57.3 127.1 127.1C383.1 326.7 326.7 383.1 256 383.1z"/></svg>
@@ -91,6 +93,8 @@
                             <a style="font-size: 10px;margin-left: 5px;margin-right: 10px;margin-top: 6px;display: inline-block;">回到底部</a>
                         </div>
                     </div>
+                    <!-- 状态提示区 -->
+                    <div class="run-statue" id="run-statue"></div>
                     <!-- 消息显示区 -->
                     <div class="msg-body" id="msg-body" onscroll="msgBodyScroll()"></div>
                     <!-- 发送控件区 -->

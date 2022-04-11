@@ -57,7 +57,7 @@ function printMsg(obj, addTo) {
                 switch(obj.message[i].type) {
                     case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
                     case "text": body = body + printText(obj.message[i].data.text); break
-                    case "image": body = body + printImg(obj.message[i].data.url, obj.message.length); break
+                    case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, obj.sender.user_id); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                     case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
                     case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq); break
@@ -137,11 +137,16 @@ function printAt(txt, id) {
     return "<a class='msg-at' data-id='" + id  + "'>" + txt + "</a>"
 }
 
-function printImg(url, num) {
+function printImg(url, num, sender) {
+    const body = document.getElementById("msg-body")
+    let loaded = ""
+    if(window.login_id == sender || body.scrollHeight - body.scrollTop === body.clientHeight) {
+        loaded = "imgLoaded()"
+    }
      if(num == 1) {
-        return "<img style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        return "<img onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      } else {
-        return "<img onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        return "<img onload='" + loaded + "' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      }
 }
 

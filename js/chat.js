@@ -10,9 +10,10 @@ function showLog(bg, fg, head, info) {
 
 // 设置状态消息
 function setStatue(type, msg) {
-    document.getElementById("stat-icon").style.transition = "unset"
-    document.getElementById("stat-icon").style.opacity = "1"
-    document.getElementById("stat-icon").title = msg
+    const body = document.getElementById("run-statue")
+    const div = document.createElement("div")
+    div.style.height = "0"
+    let html = "{svg}<a>{msg}</a>"
     let icon = ""
     switch (type) {
         case "load": {
@@ -28,11 +29,21 @@ function setStatue(type, msg) {
             break
         }
     }
-    document.getElementById("stat-icon").innerHTML = icon
+    html = html.replace("{svg}", icon)
+    html = html.replace("{msg}", msg)
+    div.innerHTML = html
+    body.append(div)
     setTimeout(() => {
-        document.getElementById("stat-icon").style.transition = "opacity 1s"
-        document.getElementById("stat-icon").style.opacity = "0"
-    }, 3000)
+        div.style.height = "35px"
+    }, 100)
+    setTimeout(() => {
+        div.style.height = "0"
+        div.style.opacity = "0"
+        div.style.margin = "0"
+        setTimeout(() => {
+            body.removeChild(div)
+        }, 350)
+    }, 1500)
 }
 
 // 显示新消息提醒
@@ -119,13 +130,8 @@ function onListClick(sender) {
     document.getElementById("msg-hander").dataset.id = sender.dataset.id
     document.getElementById("msg-hander").dataset.type = sender.dataset.type
     document.getElementById("msg-hander").style.display = "flex"
-    // 加载菜单
-    for(let i=0; i<document.getElementById("groupMenu").children.length; i++) {
-        document.getElementById("groupMenu").children[i].style.display = "flex"
-    }
-    if(sender.dataset.type != "group") {
-        document.getElementById("groupFile").style.display = "none"
-    }
+    // 切换位置
+    changeView()
     // 清空聊天记录框
     document.getElementById("msg-body").innerHTML = ""
     // 加载历史消息
@@ -226,7 +232,6 @@ function lightChatBorder() {
 }
 
 function sendMsg() {
-    setStatue("load", "正在发送消息 ……")
     let json = null
     try {
         // 发送消息
@@ -591,4 +596,21 @@ function noticeOnClose(event) {
     const openId = event.target.tag.split("/")[0]
     // 删除消息体缓存
     delete window.notices[openId]
+}
+
+function imgLoaded() {
+    document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
+}
+
+function changeView() {
+    const btn = document.getElementById("change-view-btn")
+    if(btn.dataset.icon == "left") {
+        btn.dataset.icon = "right"
+        btn.children[0].style.transform = "rotate(0deg)"
+        document.getElementById("msg-view").className = "msg-view ss-card"
+    } else {
+        btn.dataset.icon = "left"
+        btn.children[0].style.transform = "rotate(180deg)"
+        document.getElementById("msg-view").className = "msg-view-right ss-card"
+    }
 }
