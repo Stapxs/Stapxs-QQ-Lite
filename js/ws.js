@@ -17,6 +17,12 @@ function runWs() {
         setStatue("ok", "成功连接 ……")
         showLog("7abb7e", "fff", "WS", "成功连接 ……")
         window.connect = true
+        // 保存输入框
+        var date = new Date()
+        date.setDate(date.getDate() + 30)
+        const cookie = "address=" + address + "; expires=" + date.toUTCString()
+        console.log(cookie)
+        document.cookie = cookie
         // 清空消息历史
         document.getElementById("msg-body").innerHTML = ""
         // 修改按钮

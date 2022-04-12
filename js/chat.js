@@ -131,7 +131,7 @@ function onListClick(sender) {
     document.getElementById("msg-hander").dataset.type = sender.dataset.type
     document.getElementById("msg-hander").style.display = "flex"
     // 切换位置
-    changeView()
+    changeView(true)
     // 清空聊天记录框
     document.getElementById("msg-body").innerHTML = ""
     // 加载历史消息
@@ -528,6 +528,8 @@ function menuResend() {
         // 显示提示控件
         document.getElementById("resend-tips").style.height = "45px"
         document.getElementById("resend-tips").dataset.onresend = "true"
+        // 切换视图
+        changeView(false)
         // 存储转发内容
         if(window.resendList == undefined) {
             window.resendList = []
@@ -538,6 +540,7 @@ function menuResend() {
 }
 
 function cancelResend() {
+    changeView(true)
     document.getElementById("resend-tips").style.height = "0"
     document.getElementById("resend-tips").dataset.onresend = "false"
     window.resendList = []
@@ -602,15 +605,48 @@ function imgLoaded() {
     document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
 }
 
-function changeView() {
+function changeView(statue) {
     const btn = document.getElementById("change-view-btn")
-    if(btn.dataset.icon == "left") {
-        btn.dataset.icon = "right"
-        btn.children[0].style.transform = "rotate(0deg)"
-        document.getElementById("msg-view").className = "msg-view ss-card"
-    } else {
+    if(statue == undefined) {
+        if(btn.dataset.icon == "left") {
+            btn.dataset.icon = "right"
+            btn.children[0].style.transform = "rotate(0deg)"
+            document.getElementById("msg-view").className = "msg-view ss-card"
+            document.getElementById("msg-view-mask").style.display = "block"
+        } else {
+            btn.dataset.icon = "left"
+            btn.children[0].style.transform = "rotate(180deg)"
+            document.getElementById("msg-view").className = "msg-view-right ss-card"
+            document.getElementById("msg-view-mask").style.display = "none"
+        }
+    } else if(statue == true) {
         btn.dataset.icon = "left"
         btn.children[0].style.transform = "rotate(180deg)"
         document.getElementById("msg-view").className = "msg-view-right ss-card"
+        document.getElementById("msg-view-mask").style.display = "none"
+    } else {
+        btn.dataset.icon = "right"
+        btn.children[0].style.transform = "rotate(0deg)"
+        document.getElementById("msg-view").className = "msg-view ss-card"
+        document.getElementById("msg-view-mask").style.display = "block"
     }
+}
+
+function showOpt(statue) {
+    if(statue == true) {
+        document.getElementById("opt-body").style.display = "block"
+        setTimeout(() => {
+            document.getElementById("opt-body").style.opacity = "1"
+        }, 10)
+    } else {
+        document.getElementById("opt-body").style.opacity = "0"
+        setTimeout(() => {
+            document.getElementById("opt-body").style.display = "none"
+        }, 300)
+    }
+}
+
+function moYu() {
+    showLog("99b3db", "fff", "SS", "说了不能摸鱼 ……")
+    return false
 }

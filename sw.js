@@ -1,4 +1,4 @@
-const version = 'v1.1.3'
+const version = 'v1.1.4'
 
 // 注册缓存机制
 this.addEventListener('install', function(event) {

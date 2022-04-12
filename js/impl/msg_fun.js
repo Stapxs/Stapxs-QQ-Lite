@@ -60,7 +60,7 @@ function printMsg(obj, addTo) {
                     case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, obj.sender.user_id); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                     case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
-                    case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq); break
+                    case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, obj.sender.user_id); break
                     case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
                     case "record": body = body + printRecord(obj.message[i].data.url); break
                     case "video": body = body + printVideo(obj.message[i].data.url); break
@@ -130,17 +130,21 @@ function printBface(txt) {
     return printText(txt).replace("style='", "style='font-style: italic;opacity: 0.7;")
 }
 
-function printAt(txt, id) {
+function printAt(txt, id, sender) {
     txt = txt.replaceAll(" ", "&nbsp;")
     txt = txt.replaceAll("<", "&lt;")
     txt = txt.replaceAll(">", "&gt;")
-    return "<a class='msg-at' data-id='" + id  + "'>" + txt + "</a>"
+    if(sender == window.login_id) {
+        return "<a class='msg-at' style='color: var(--color-font-r) !important;' data-id='" + id  + "'>" + txt + "</a>"
+    } else {
+        return "<a class='msg-at' data-id='" + id  + "'>" + txt + "</a>"
+    }
 }
 
 function printImg(url, num, sender) {
     const body = document.getElementById("msg-body")
     let loaded = ""
-    if(window.login_id == sender || body.scrollHeight - body.scrollTop === body.clientHeight) {
+    if((window.login_id == sender && body.scrollHeight - body.scrollTop === body.clientHeight) || body.scrollHeight - body.scrollTop === body.clientHeight) {
         loaded = "imgLoaded()"
     }
      if(num == 1) {
@@ -207,7 +211,6 @@ function printXML(xml, type) {
     item = item.replaceAll("<a", "<a class='msg-xml-summary'")
     item = item.replaceAll("<picture", "<img class='msg-xml-img'")                              // picture
     // 将不正确的参数改为 dataset
-    item = item.replaceAll("color=", "data-color=")
     item = item.replaceAll("size=", "data-size=")
     item = item.replaceAll("linespace=", "data-linespace=")
     item = item.replaceAll("cover=", "src=")
@@ -219,8 +222,6 @@ function printXML(xml, type) {
         console.log(div.children[0].children[i].nodeName)
         switch(div.children[0].children[i].nodeName) {
             case "P": {
-                console.log(div.children[0].children[i].dataset.color)
-                div.children[0].children[i].style.color = div.children[0].children[i].dataset.color
                 div.children[0].children[i].style.fontSize = Number(div.children[0].children[i].dataset.size) / 30 + "rem"
                 div.children[0].children[i].style.marginBottom = Number(div.children[0].children[i].dataset.size) / 5 + "px"
                 break

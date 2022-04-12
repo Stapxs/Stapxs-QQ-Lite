@@ -102,7 +102,7 @@
 .msg-xml-summary {
     display: block;
     font-size: 0.9rem;
-    background: var(--color-card-2);
+    background: #00000017;
     margin: 0 -25px -15px -25px;
     padding: 5px 5px 5px 10px;
     border-radius: 0 0 7px 7px;
@@ -179,7 +179,7 @@
     margin-top: -7px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .message-body {
         max-width: 100%;
     }
