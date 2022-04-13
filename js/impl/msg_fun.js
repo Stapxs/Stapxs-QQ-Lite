@@ -4,8 +4,11 @@
 */
 
 // 显示消息
-function printMsg(obj, addTo) {
+function printMsg(obj, addTo, addAt) {
     try {
+        const user_id = obj.sender == undefined ? obj.user_id : obj.sender.user_id
+        const nickname = obj.sender == undefined ? obj.nickname : obj.sender.nickname
+        const card = obj.sender == undefined ? "" : obj.sender.card
         // 消息未被屏蔽
         if(obj.block == undefined || !Boolean(obj.block)) {
             // 创建时间标记
@@ -31,7 +34,7 @@ function printMsg(obj, addTo) {
             const raw = getMsgRawTxt(obj.message)
             div.dataset.raw = raw == ""?obj.raw_message:raw     // 纯文本消息
             div.dataset.id = obj.message_id                     // 消息编号
-            div.dataset.sender = obj.sender.user_id             // 用户 ID
+            div.dataset.sender = user_id                         // 用户 ID
             div.dataset.time = obj.time                         // 消息时间
             let html = String.raw`<img src="https://q1.qlogo.cn/g?b=qq&s=0&nk={id}" style="{hidden}">
         <div class="message-space" style="{space}"></div>
@@ -40,15 +43,15 @@ function printMsg(obj, addTo) {
             <div class="{mine}">{body}</div>
         </div>
         <a style="display: none;">{raw}</a>`
-            html = html.replace("{id}", obj.sender.user_id)
-            let name = obj.sender.nickname
-            if(obj.message_type=="group" && obj.sender.card!=obj.sender.nickname && obj.sender.card!="") {
-                name = obj.sender.card
+            html = html.replace("{id}", user_id)
+            let name = nickname
+            if(obj.message_type=="group" && card!=nickname && card!="") {
+                name = card
             }
             html = html.replace("{name}", name)
-            html = html.replace("{space}", obj.sender.user_id==window.login_id?"":"flex:unset;")
-            html = html.replaceAll("{hidden}", obj.sender.user_id==window.login_id?"display:none;":"")
-            html = html.replace("{mine}", obj.sender.user_id==window.login_id?"message-mine":"")
+            html = html.replace("{space}", user_id==window.login_id?"":"flex:unset;")
+            html = html.replaceAll("{hidden}", user_id==window.login_id?"display:none;":"")
+            html = html.replace("{mine}", user_id==window.login_id?"message-mine":"")
             html = html.replace("{raw}", obj.raw_message)
             // 遍历消息体
             let body = ""
@@ -57,10 +60,10 @@ function printMsg(obj, addTo) {
                 switch(obj.message[i].type) {
                     case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
                     case "text": body = body + printText(obj.message[i].data.text); break
-                    case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, obj.sender.user_id); break
+                    case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, user_id); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                     case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
-                    case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, obj.sender.user_id); break
+                    case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, user_id); break
                     case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
                     case "record": body = body + printRecord(obj.message[i].data.url); break
                     case "video": body = body + printVideo(obj.message[i].data.url); break
@@ -83,11 +86,14 @@ function printMsg(obj, addTo) {
             div.addEventListener("touchend", function()     { msgTouchEnd(event); }, false)                 // 长按判定（结束）
             div.addEventListener("touchmove", function()    { msgTouchMove(event); }, false)                // 长按判定（移动）
             // 添加到消息列表内
+            if(addAt == undefined) {
+                addAt = document.getElementById("msg-body")
+            }
             if(addTo == null) {
-                document.getElementById("msg-body").appendChild(div)
+                addAt.appendChild(div)
                 // TODO：显示新消息标志
             } else {
-                document.getElementById("msg-body").insertBefore(div, addTo)
+                addAt.insertBefore(div, addTo)
             }
         }
     } catch(e) {
@@ -205,7 +211,7 @@ function printXML(xml, type) {
     // 尝试转换标签为 html
     // item = item.replaceAll("/>", ">")
     item = item.replaceAll("item", "div")                                                       // item
-    item = item.replaceAll("<div", "<div class='msg-xml'")
+    item = item.replaceAll("<div", "<div class='msg-xml' onclick='xmlClick(this.parentNode)'")
     item = item.replaceAll("title", "p")                                                        // title
     item = item.replaceAll("summary", "a")                                                      // summary
     item = item.replaceAll("<a", "<a class='msg-xml-summary'")
@@ -215,11 +221,12 @@ function printXML(xml, type) {
     item = item.replaceAll("linespace=", "data-linespace=")
     item = item.replaceAll("cover=", "src=")
     console.log(item)
+    // 处理出处标签
+    item = item.replace("source name=", "source data-name=")
     // 处理错误的 style 位置
     const div = document.createElement("div")
     div.innerHTML = item
     for(let i=0; i<div.children[0].children.length; i++) {
-        console.log(div.children[0].children[i].nodeName)
         switch(div.children[0].children[i].nodeName) {
             case "P": {
                 div.children[0].children[i].style.fontSize = Number(div.children[0].children[i].dataset.size) / 30 + "rem"
@@ -228,6 +235,20 @@ function printXML(xml, type) {
             }
         }
     }
+    // 解析 msg 消息体
+    let msgHeader = xml.substring(xml.indexOf("<msg"), xml.indexOf("<item")) + "</msg>"
+    msgHeader = msgHeader.replace("msg", "div")
+    msgHeader = msgHeader.replace("m_resid=", "data-resid=")
+    let header = document.createElement("div")
+    header.innerHTML = msgHeader
+    // 处理特殊的出处
+    const source = div.children[1].dataset.name
+    if(source == "聊天记录") {
+        // 合并转发消息
+        div.dataset.type = "forward"
+        div.dataset.id = header.children[0].dataset.resid
+        div.style.cursor = "pointer"
+    }
+    console.log(div)
     return div.outerHTML
-
 }

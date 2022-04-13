@@ -88,6 +88,16 @@
                 <div class="msg-view-body" style="flex: 1;display: flex;flex-direction: column;padding: 0 0 0 20px;">
                     <!-- 消息主框架遮罩 -->
                     <div style="position: fixed;height: 100%;width: 100%;" id="msg-view-mask"></div>
+                    <!-- 合并转发预览区 -->
+                    <div class="forward-msg container-lg" id="forward-msg">
+                        <div id="forward-msg-bg" class="forward-msg-bg" onclick="closeForwardBody()"></div>
+                        <div class="forward-msg-body" style="width: 0;" id="forward-msg-body">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M511.1 63.1v287.1c0 35.25-28.75 63.1-64 63.1h-144l-124.9 93.68c-7.875 5.75-19.12 .0497-19.12-9.7v-83.98h-96c-35.25 0-64-28.75-64-63.1V63.1c0-35.25 28.75-63.1 64-63.1h384C483.2 0 511.1 28.75 511.1 63.1z"></path></svg>
+                            <a>合并消息</a>
+                            <svg onclick="closeForwardBody()" style="float: right;margin: 33px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"></path></svg>
+                            <div id="forward-msg-body-inn" style="margin-right: 7px;height: calc(100vh - 220px);overflow-y: scroll;overflow-x: hidden;padding: 0 20px;"></div>
+                        </div>
+                    </div>
                     <!-- 消息顶栏 -->
                     <div class="msg-hander" style="display: none;" id="msg-hander">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M511.1 63.1v287.1c0 35.25-28.75 63.1-64 63.1h-144l-124.9 93.68c-7.875 5.75-19.12 .0497-19.12-9.7v-83.98h-96c-35.25 0-64-28.75-64-63.1V63.1c0-35.25 28.75-63.1 64-63.1h384C483.2 0 511.1 28.75 511.1 63.1z"/></svg>
@@ -237,26 +247,31 @@
                 <a class="list-group-item list-group-item-action" href="#list-item-5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M433.754 420.445c-11.526 1.393-44.86-52.741-44.86-52.741 0 31.345-16.136 72.247-51.051 101.786 16.842 5.192 54.843 19.167 45.803 34.421-7.316 12.343-125.51 7.881-159.632 4.037-34.122 3.844-152.316 8.306-159.632-4.037-9.045-15.25 28.918-29.214 45.783-34.415-34.92-29.539-51.059-70.445-51.059-101.792 0 0-33.334 54.134-44.859 52.741-5.37-.65-12.424-29.644 9.347-99.704 10.261-33.024 21.995-60.478 40.144-105.779C60.683 98.063 108.982.006 224 0c113.737.006 163.156 96.133 160.264 214.963 18.118 45.223 29.912 72.85 40.144 105.778 21.768 70.06 14.716 99.053 9.346 99.704z"/></svg>关于</a>
             </div>
             <div data-spy="scroll" data-target="#list-opt" data-offset="0" class="opt-main-body" style="flex: 1;">
-                <a style="font-size: 0.9rem;background: var(--color-card-1);display: block;margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px;margin-bottom: 20px;color: var(--color-font-1);">这个页面的功能一点都还没做哦</a>
                 <a class="opt-close-tip" style="display: none;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px;margin-bottom: 20px;color: var(--color-font-1);">点击另一个屏幕关闭</a>
                 <h4 id="list-item-1" style="margin-top: 0;">账号</h4>
-                <div class="main-body" style="margin-right: 20px;overflow: hidden;background: var(--color-main);border-radius: 7px;padding: 20px;display: flex;color: var(--color-font-1-r);">
-                    <img style="width: 50px;height: 50px;border-radius: 100%;background: var(--color-card-1);">
-                    <a style="font-size: 1.5rem;font-weight: bold;margin-left: 15px;flex: 1;margin-right: 15px;line-height: 50px;">Name</a>
-                    <div style="width: 50px;height: 50px;background: #0000002e;border-radius: 100%;padding: 13px 14px;cursor: pointer;">
-                        <svg style="fill: var(--color-font-r);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M362.7 19.32C387.7-5.678 428.3-5.678 453.3 19.32L492.7 58.75C517.7 83.74 517.7 124.3 492.7 149.3L444.3 197.7L314.3 67.72L362.7 19.32zM421.7 220.3L188.5 453.4C178.1 463.8 165.2 471.5 151.1 475.6L30.77 511C22.35 513.5 13.24 511.2 7.03 504.1C.8198 498.8-1.502 489.7 .976 481.2L36.37 360.9C40.53 346.8 48.16 333.9 58.57 323.5L291.7 90.34L421.7 220.3z"/></svg>
+                <div>
+                    <div class="main-body" style="margin-right: 20px;overflow: hidden;background: var(--color-main);border-radius: 7px;padding: 20px;display: flex;color: var(--color-font-1-r);">
+                        <img style="width: 50px;height: 50px;border-radius: 100%;background: var(--color-card-1);">
+                        <a style="font-size: 1.5rem;font-weight: bold;margin-left: 15px;flex: 1;margin-right: 15px;line-height: 50px;">Name</a>
+                        <div style="width: 50px;height: 50px;background: #0000002e;border-radius: 100%;padding: 13px 14px;cursor: pointer;">
+                            <svg style="fill: var(--color-font-r);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M362.7 19.32C387.7-5.678 428.3-5.678 453.3 19.32L492.7 58.75C517.7 83.74 517.7 124.3 492.7 149.3L444.3 197.7L314.3 67.72L362.7 19.32zM421.7 220.3L188.5 453.4C178.1 463.8 165.2 471.5 151.1 475.6L30.77 511C22.35 513.5 13.24 511.2 7.03 504.1C.8198 498.8-1.502 489.7 .976 481.2L36.37 360.9C40.53 346.8 48.16 333.9 58.57 323.5L291.7 90.34L421.7 220.3z"/></svg>
+                        </div>
                     </div>
-                </div>
-                <div class="opt-child">
-                    <div></div>
-                    <div>
-                        <p>在线状态</p>
-                        <a>看不见我，看不见我。</a>
+                    <div class="opt-child">
+                        <div></div>
+                        <div>
+                            <p>在线状态</p>
+                            <a>看不见我，看不见我。</a>
+                        </div>
+                        <select>
+                            <option value ="11">我在线上</option>
+                            <option value ="31">离开</option>
+                            <option value ="41">隐身</option>
+                            <option value ="50">忙碌</option>
+                            <option value ="60">Q 我吧</option>
+                            <option value ="70">请勿打扰</option>
+                        </select>
                     </div>
-                    <select required>
-                        <option value ="volvo">还没做</option>
-                        <option value ="volvo">还没做</option>
-                    </select>
                 </div>
                 <h4 id="list-item-2">界面</h4>
                 <div>
@@ -267,7 +282,7 @@
                             <a>Biubiu ——，自动变黑！</a>
                         </div>
                         <label class="ss-switch">
-                            <input type="checkbox" checked>
+                            <input type="checkbox" checked id="opt_auto_dark" onclick="changeOpt(this);setAutoDark();">
                             <div><div></div></div>
                         </label>
                     </div>
@@ -278,7 +293,7 @@
                             <a>不会真的有人在意一个开关长啥样子吧？</a>
                         </div>
                         <label class="ss-switch">
-                            <input type="checkbox">
+                            <input type="checkbox" id="opt_switch_style" onclick="changeOpt(this);changButton()">
                             <div><div></div></div>
                         </label>
                     </div>
@@ -290,23 +305,23 @@
                         </div>
                         <div style="display: flex;flex: 0;margin-right: 5px;">
                             <label class="ss-radio" title="坏猫黄" data-id="4">
-                                <input type="radio" name="color" onclick="setMainColor(this);">
+                                <input type="radio" name="opt_color" id="opt_color_4" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-4);"><div></div></div>
                             </label>
                             <label class="ss-radio" title="林槐蓝" data-id="3">
-                                <input type="radio" name="color" onclick="setMainColor(this);">
+                                <input type="radio" name="opt_color" id="opt_color_3" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-3);"><div></div></div>
                             </label>
                             <label class="ss-radio" title="天牧红" data-id="2">
-                                <input type="radio" name="color" onclick="setMainColor(this);">
+                                <input type="radio" name="opt_color" id="opt_color_2" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-2);"><div></div></div>
                             </label>
                             <label class="ss-radio" title="玄素黑" data-id="1">
-                                <input type="radio" name="color" onclick="setMainColor(this);">
+                                <input type="radio" name="opt_color" id="opt_color_1" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-1);"><div></div></div>
                             </label>
                             <label class="ss-radio" title="Zorin 蓝（默认）" data-id="0">
-                                <input type="radio" name="color" onclick="setMainColor(this);" checked>
+                                <input type="radio" name="opt_color" id="opt_color_0" onclick="changeOpt(this);setMainColor(this);" checked>
                                 <div style="background: var(--color-main-0);"><div></div></div>
                             </label>
                         </div>
@@ -321,7 +336,7 @@
                             <a>好嘛好嘛不烦你 ……</a>
                         </div>
                         <label class="ss-switch">
-                            <input type="checkbox">
+                            <input type="checkbox" id="opt_no_notice" onclick="changeOpt(this)">
                             <div><div></div></div>
                         </label>
                     </div>
@@ -332,7 +347,7 @@
                             <a>加特林不上战场可惜了（恼</a>
                         </div>
                         <label class="ss-switch">
-                            <input type="checkbox">
+                            <input type="checkbox" id="opt_group_no_up" onclick="changeOpt(this)">
                             <div><div></div></div>
                         </label>
                     </div>
@@ -340,10 +355,10 @@
                         <div></div>
                         <div>
                             <p>消息防撤回</p>
-                            <a>说出去的话就像是泼出去的水 ——</a>
+                            <a id="abab_1" data-say="1">说出去的话就像是泼出去的水 ——</a>
                         </div>
                         <label class="ss-switch">
-                            <input type="checkbox">
+                            <input type="checkbox" id="opt_msg_on_del" onclick="runNoBack(this)">
                             <div><div></div></div>
                         </label>
                     </div>
@@ -354,7 +369,7 @@
                             <a>这是个调试功能哦（笑）</a>
                         </div>
                         <label class="ss-switch">
-                            <input type="checkbox">
+                            <input type="checkbox" id="opt_debug_fk" onclick="changeOpt(this);runDebugFk();">
                             <div><div></div></div>
                         </label>
                     </div>
@@ -366,13 +381,46 @@
                         <p>日志等级</p>
                         <a>ReferenceError: moYu is not defined</a>
                     </div>
-                    <select>
-                        <option value ="volvo">还没做</option>
+                    <select id="opt_log_level" onchange="changeOpt(this)">
+                        <option value ="err">错误</option>
+                        <option value ="all">全部</option>
+                        <option value ="off">关闭</option>
                     </select>
                 </div>
                 <h4 id="list-item-5">关于</h4>
                 <div style="align-items: center;text-align: center;margin-right: 20px;padding-top: 25px;padding-bottom: 25px;background: var(--color-card-1);border-radius: 7px;">
-                    <img src="src/icon.svg" alt="logo" style="width: 30%;">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    	 viewBox="0 0 1080 1080" style="enable-background:new 0 0 1080 1080;width: 35%;" xml:space="preserve">
+                    <style type="text/css">
+                    	.st0{fill:var(--color-main);}
+                    	.st1{fill:#F8F9FA;}
+                    </style>
+                    <g id="圖層_2">
+                    	<circle class="st0" cx="537" cy="543" r="537"/>
+                    </g>
+                    <g id="圖層_1">
+                    	<path class="st1" d="M546.6,774.4c-46.5,0-89.1-15.5-116.6-38.8c-13.9,4.2-31.8,10.9-43,19.2c-9.6,7.1-8.4,14.4-6.7,17.3
+                    		c7.6,12.9,130.7,8.2,166.3,4.2V774.4z M546.6,774.4c46.5,0,89.1-15.5,116.6-38.8c13.9,4.2,31.8,10.9,43,19.2
+                    		c9.6,7.1,8.4,14.4,6.7,17.3c-7.6,12.9-130.7,8.2-166.3,4.2V774.4z"/>
+                    	<path class="st1" d="M546.9,496c76.7-0.5,138.2-15.4,159-21.1c5-1.4,7.6-3.8,7.6-3.8c0-0.7,0.3-12.5,0.3-18.6
+                    		c0-102.4-48.3-205.3-167.3-205.3c-118.9,0-167.3,102.9-167.3,205.3c0,6.1,0.3,17.9,0.3,18.6c0,0,2.2,2.3,6.1,3.4
+                    		c19.2,5.4,81.9,20.9,160.5,21.5H546.9z M755.4,581.3c-4.8-15.3-11.2-33.2-17.8-50.3c0,0-3.8-0.5-5.7,0.1
+                    		c-59,17.1-130.5,28.1-185,27.4h-0.6c-54.2,0.6-125.2-10.1-184-27.1c-2.2-0.6-6.7-0.4-6.7-0.4c-6.6,17.1-13.1,35-17.8,50.3
+                    		c-22.7,73-15.3,103.2-9.7,103.9c12,1.5,46.7-54.9,46.7-54.9c0,57.3,51.7,145.3,170.2,146.1h3.1c118.5-0.8,170.2-88.8,170.2-146.1
+                    		c0,0,34.7,56.4,46.7,54.9C770.7,684.5,778,654.3,755.4,581.3"/>
+                    	<path class="st1" d="M504.3,398.5c-16.1,0.7-29.9-17.6-30.8-41c-0.9-23.4,11.5-42.9,27.6-43.6c16.1-0.7,29.9,17.6,30.8,41
+                    		C532.8,378.3,520.4,397.8,504.3,398.5 M619.7,357.5c-0.9,23.4-14.6,41.7-30.8,41c-16.1-0.7-28.5-20.3-27.6-43.6
+                    		c0.9-23.4,14.6-41.7,30.8-41C608.2,314.6,620.6,334.1,619.7,357.5 M322.4,247.2"/>
+                    	<path class="st1" d="M524.1,357.9c0.7,9.2-4.3,17.4-11.3,18.3c-7,0.9-13.2-5.9-14-15.1c-0.7-9.2,4.3-17.4,11.3-18.3
+                    		C517.1,341.9,523.4,348.6,524.1,357.9 M568.4,360.9c1.4-2.6,11.1-16,31.2-11.1c5.3,1.3,7.7,3.2,8.2,3.9c0.8,1.1,1,2.7,0.2,4.8
+                    		c-1.5,4.2-4.7,4.1-6.4,3.2c-1.1-0.5-15.1-9.9-28,4.1c-0.9,1-2.5,1.3-4,0.1C568.2,364.8,567.6,362.5,568.4,360.9"/>
+                    	<path class="st1" d="M546.9,555.1h-0.6c-37.1,0.4-82-4.5-125.5-13c-3.7,21.6-6,48.7-4,81c4.9,81.7,53.4,133.1,128.3,133.8h3
+                    		c74.9-0.7,123.4-52.1,128.3-133.8c1.9-32.3-0.3-59.4-4-81C628.9,550.7,584,555.6,546.9,555.1"/>
+                    	<path class="st1" d="M441.4,548.3v80.4c0,0,36.8,7.4,73.7,2.3v-74.2C491.7,555.5,466.5,552.6,441.4,548.3"/>
+                    	<path class="st1" d="M713.6,471.1c0,0-71.6,22.6-166.7,23.3h-0.6c-94.9-0.6-166.4-23.2-166.7-23.3l-24,59.9
+                    		c60,18.1,134.4,29.8,190.6,29.1h0.6c56.2,0.7,130.6-11,190.7-29.1L713.6,471.1z"/>
+                    </g>
+                    </svg>
                     <p style="font-size: 1.5rem;margin-top: 20px;margin-bottom: 0;">QQ Web Lite</p>
                     <a style="display: block;">一个兼容 oicq-http 的 QQ 网页版</a>
                     <a style="color: var(--color-font-2);display: block;font-size: 0.9rem;margin-top: 20px;">version</a>
@@ -469,19 +517,57 @@
 
 <!-- 懒得再挪个文件出来的功能 -->
 <script>
+    // 自动暗黑模式标志
+    window.is_auto_dark = true
     // 加载 cookie
     var x = document.cookie
     x = x.split(";")
     window.cookie = {}
     for(let i=0; i<x.length; i++) {
-        window.cookie[x[i].split("=")[0]] = x[i].split("=")[1]
+        window.cookie[x[i].split("=")[0].trim()] = x[i].split("=")[1].trim()
+    }
+    // 解析设置
+    window.optCookie = {}
+    if(window.cookie["option"] != undefined) {
+        const optStr = window.cookie["option"].split("&")
+        console.log(optStr)
+        for(let i=0; i<optStr.length; i++) {
+            window.optCookie[optStr[i].split(":")[0]] = optStr[i].split(":")[1]
+        }
+    }
+    // 载入设置
+    showLog("b573f7", "fff", "UI", "正在载入设置 ……")
+    for(let i=0; i<Object.keys(window.optCookie).length; i++) {
+        let body = document.getElementById(Object.keys(window.optCookie)[i])
+        if(body == undefined) {
+            body = document.getElementById(Object.keys(window.optCookie)[i] + "_" + window.optCookie[Object.keys(window.optCookie)[i]])
+        }
+        if(body != undefined) {
+            switch(body.nodeName) {
+                case "INPUT": {
+                    if(body.type == "checkbox") {
+                        if(window.optCookie[Object.keys(window.optCookie)[i]] == "true" && body.checked == false ||
+                            window.optCookie[Object.keys(window.optCookie)[i]] == "false" && body.checked == true) {
+                            body.click()
+                        }
+                    } else if(body.type == "radio") {
+                        body.click()
+                    } else {
+                        body.value = window.optCookie[Object.keys(window.optCookie)[i]]
+                    }
+                    break
+                }
+                case "SELECT": {
+                    body.value = window.optCookie[Object.keys(window.optCookie)[i]]
+                    break
+                }
+            }
+        }
     }
     // 填充输入框
     if(window.cookie["address"] != undefined) {
-        document.getElementById("address").value = window.cookie["address"]
+        document.getElementById("sev_address").value = window.cookie["address"]
     }
-    // 自动暗黑模式标志
-    window.is_auto_dark = true
     // 初始化颜色切换按钮
     let mediaTest = window.matchMedia('(prefers-color-scheme: dark)');
     if(is_auto_dark !== false) {

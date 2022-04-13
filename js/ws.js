@@ -46,6 +46,7 @@ function runWs() {
         // 显示底栏
             document.getElementById("footer").style.display = "block"
             document.getElementById("main-view").style.height  = "calc(100vh - 100px)"
+            document.getElementById("forward-msg").style.height  = "calc(100vh - 220px)"
         setTimeout(() => {
             document.getElementById("footer").style.transform = "translate(0)"
         }, 100)
@@ -54,44 +55,46 @@ function runWs() {
 
 // 将消息发送为浏览器通知
 function showNotice(msg) {
-    try {
-        // 初始化记录数组
-        if(window.notices == undefined) {
-            window.notices = {}
-        }
-        // 检查通知权限，注意 “老旧” 浏览器不支持这个功能
-        if(Notification.permission == "default") {
-            // 还没有请求过权限
-            // 请求权限
-            Notification.requestPermission(function (status) {
-                if (Notification.permission !== status) {
-                  Notification.permission = status
+    if(window.optCookie["opt_no_notice"] == undefined || window.optCookie["opt_no_notice"] == "false") {
+        try {
+            // 初始化记录数组
+            if(window.notices == undefined) {
+                window.notices = {}
+            }
+            // 检查通知权限，注意 “老旧” 浏览器不支持这个功能
+            if(Notification.permission == "default") {
+                // 还没有请求过权限
+                // 请求权限
+                Notification.requestPermission(function (status) {
+                    if (Notification.permission !== status) {
+                      Notification.permission = status
+                    }
+                  });
+            } else if(Notification.permission == "denied") {
+                // 用户拒绝了权限
+                return
+            } else {     
+                // 显示通知，不管之前有没有同意，反正我是发了（大声
+                let raw = getMsgRawTxt(msg.message)
+                raw = raw==""?msg.raw_message:raw
+                if(msg.message_type == "group") {
+                    const msgOut = msg.sender.nickname + ":" + raw
+                    console.log(msgOut)
+                    let notification = new Notification(msg.group_name, {"body": msgOut, "tag": msg.group_id + "/" + msg.message_id, "icon": "https://p.qlogo.cn/gh/" + msg.group_id + "/" + msg.group_id + "/0"})
+                    window.notices[msg.message_id] = notification
+                    notification.onclick = function() { noticeOnClick(event) }
+                    notification.onclose = function() { noticeOnClose(event) }
+                } else {
+                    let notification = new Notification(msg.sender.nickname, {"body": raw, "tag": msg.user_id + "/" + msg.message_id, "icon": "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + msg.user_id})
+                    window.notices[msg.message_id] = notification
+                    notification.onclick = function() { noticeOnClick(event) }
+                    notification.onclose = function() { noticeOnClose(event) }
                 }
-              });
-        } else if(Notification.permission == "denied") {
-            // 用户拒绝了权限
-            return
-        } else {     
-            // 显示通知，不管之前有没有同意，反正我是发了（大声
-            let raw = getMsgRawTxt(msg.message)
-            raw = raw==""?msg.raw_message:raw
-            if(msg.message_type == "group") {
-                const msgOut = msg.sender.nickname + ":" + raw
-                console.log(msgOut)
-                let notification = new Notification(msg.group_name, {"body": msgOut, "tag": msg.group_id + "/" + msg.message_id, "icon": "https://p.qlogo.cn/gh/" + msg.group_id + "/" + msg.group_id + "/0"})
-                window.notices[msg.message_id] = notification
-                notification.onclick = function() { noticeOnClick(event) }
-                notification.onclose = function() { noticeOnClose(event) }
-            } else {
-                let notification = new Notification(msg.sender.nickname, {"body": raw, "tag": msg.user_id + "/" + msg.message_id, "icon": "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + msg.user_id})
-                window.notices[msg.message_id] = notification
-                notification.onclick = function() { noticeOnClick(event) }
-                notification.onclose = function() { noticeOnClose(event) }
             }
         }
-    }
-    catch(e) {
-        console.log(e)
+        catch(e) {
+            console.log(e)
+        }
     }
 }
 

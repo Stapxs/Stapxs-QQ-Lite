@@ -99,6 +99,9 @@
 .msg-xml p {
     margin-bottom: 2px;
 }
+.msg-xml hr {
+    display: none;
+}
 .msg-xml-summary {
     display: block;
     font-size: 0.9rem;
@@ -155,6 +158,7 @@
 .msg-file > div:nth-child(2) i {
     font-size: 0.9rem;
     font-style: normal;
+    overflow-wrap: anywhere;
 }
 .msg-file > div:nth-child(2) a {
     font-size: 0.8rem;

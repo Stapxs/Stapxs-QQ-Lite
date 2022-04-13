@@ -5,7 +5,10 @@
 
 // 样式 LOG
 function showLog(bg, fg, head, info) {
-    console.log("%c" + head + "%c " + info, "background:#" + bg + ";color:#" + fg + ";border-radius:7px 0 0 7px;display:inline-block;padding:2px 4px 2px 7px;", "")
+    const level = window.optCookie["opt_log_level"]
+    if(((level == undefined || level == "err") && bg == "ff5370") || level == "all" || head == "SS") {
+        console.log("%c" + head + "%c " + info, "background:#" + bg + ";color:#" + fg + ";border-radius:7px 0 0 7px;display:inline-block;padding:2px 4px 2px 7px;", "")
+    }
 }
 
 // 设置状态消息
@@ -98,6 +101,7 @@ function runConnect() {
     // 隐藏底栏
     document.getElementById("footer").style.transform = "translate(0, 100px)"
     document.getElementById("main-view").style.height  = "100vh"
+    document.getElementById("forward-msg").style.height  = "calc(100vh - 120px)"
     setTimeout(() => {
         document.getElementById("footer").style.display = "none"
     }, 450)
@@ -483,8 +487,8 @@ function showMsgMenu(sender, event) {
         if(Number(sender.dataset.sender) != Number(window.login_id)) {
             document.getElementById("menuCancel").style.display = "none"
         }
-        // 特判已经被撤回的自己的消息。只显示复制菜单
-        if(sender.style.opacity === "0.4") {
+        // 只显示复制菜单(已经被撤回的消息、合并转发消息)
+        if(sender.style.opacity === "0.4" || sender.parentNode.parentNode.id == "forward-msg-body") {
             const body = document.getElementById("right-click-menu-body")
             for(let i=0; i<body.children.length; i++) {
                 body.children[i].style.display = "none"
@@ -649,4 +653,120 @@ function showOpt(statue) {
 function moYu() {
     showLog("99b3db", "fff", "SS", "说了不能摸鱼 ……")
     return false
+}
+
+function xmlClick(sender) {
+    const type = sender.dataset.type
+    if(type == "forward") {
+        // 解析合并转发消息
+        sendWs(createAPI("get_forward_msg", {"id": sender.dataset.id}))
+    }
+}
+
+function closeForwardBody() {
+    document.getElementById("forward-msg-body").classList = "forward-msg-body"
+    document.getElementById("forward-msg-bg").style.opacity = "0"
+    document.getElementById("forward-msg-bg").style.pointerEvents = "none"
+}
+
+function runDebugFk() {
+    if(window.optCookie["opt_debug_fk"] == "true") {
+        const msgView = document.getElementById("msg-view")
+        const optView = document.getElementById("opt-body")
+        msgView.style.transform != "rotate(180deg)" ? msgView.style.transform = "rotate(180deg)" : msgView.style.transform = "rotate(0deg)"
+        optView.style.transform != "rotate(180deg)" ? optView.style.transform = "rotate(180deg)" : optView.style.transform = "rotate(0deg)"
+        showOpt()
+    }
+}
+
+function setAutoDark() {
+    if(window.optCookie["opt_auto_dark"] == "true") {
+        window.is_auto_dark = true
+        // 判定暗黑模式
+        let media = window.matchMedia('(prefers-color-scheme: dark)')
+        if (media.matches) {
+            changeColor("dark")
+        } else {
+            changeColor("light")
+        }
+    } else {
+        window.is_auto_dark = false
+        changeColor("light")
+    }
+}
+function changButton() {
+    if(window.optCookie["opt_switch_style"] == "true") {
+        document.documentElement.style.setProperty('--switch-dot-border-me', "4px")
+        document.documentElement.style.setProperty('--switch-dot-margin-me', "-4px")
+        document.documentElement.style.setProperty('--switch-height-me', "15px")
+        document.documentElement.style.setProperty('--switch-min-width', "40px")
+        document.documentElement.style.setProperty('--switch-top', "1rem")
+    } else {
+        document.documentElement.style.setProperty('--switch-dot-border-me', "4px")
+        document.documentElement.style.setProperty('--switch-dot-margin-me', "5px")
+        document.documentElement.style.setProperty('--switch-height-me', "30px")
+        document.documentElement.style.setProperty('--switch-min-width', "55px")
+        document.documentElement.style.setProperty('--switch-top', "0.5rem")
+    }
+}
+
+function runNoBack(sender) {
+    window.nb_times == undefined ? window.nb_times = 1 : window.nb_times++
+    if(window.nb_times > 3) {
+        sender.parentNode.style.display = "none"
+    }
+    if(document.getElementById("abab_1").dataset.say == "1") {
+        document.getElementById("abab_1").dataset.say = "2"
+        document.getElementById("abab_1").innerText = "说了不做这功能就是不做"
+    } else {
+        document.getElementById("abab_1").dataset.say = "1"
+        document.getElementById("abab_1").innerText = "说出去的话就像是泼出去的水 ——"
+    }
+    setTimeout(() => {
+        sender.checked = false
+    }, 400)
+}
+
+function setMainColor(sender) {
+    document.documentElement.style.setProperty('--color-main', "var(--color-main-" + sender.parentNode.dataset.id + ")")
+}
+
+function changeOpt(sender) {
+    // 获取设置项
+    let name = sender.id
+    let value = ""
+    switch(sender.nodeName) {
+        case "INPUT": {
+            if(sender.type == "checkbox") {
+                value = String(sender.checked)
+            } else if(sender.type = "radio") {
+                value = sender.parentNode.dataset.id
+                name = sender.name
+            } else {
+                value = sender.value
+            }
+            break
+        }
+        case "SELECT": {
+            value = sender.value
+            break
+        }
+    }
+    // 保存设置
+    if(name != undefined && name != "" && value != "") {
+        window.optCookie[name] = value
+        let outCookie = ""
+        // 构建字符串
+        for(let i=0; i<Object.keys(window.optCookie).length; i++) {
+            outCookie += Object.keys(window.optCookie)[i] + ":" + window.optCookie[Object.keys(window.optCookie)[i]] + "&"
+        }
+        outCookie = outCookie.substring(0, outCookie.length-1)
+        showLog("b573f7", "fff", "UI", outCookie)
+        var date = new Date()
+        date.setDate(date.getDate() + 30)
+        const cookie = "option=" + outCookie + "; expires=" + date.toUTCString()
+        document.cookie = cookie
+    } else {
+        showLog("ff5370", "fff", "ERR", "获取设置内容出错")
+    }
 }

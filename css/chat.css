@@ -3,6 +3,22 @@
     2022/04/05 - Stapx Steve [林槐]
 */
 
+:root {
+    --switch-dot-border-me: 4px;
+    --switch-dot-margin-me: 5px;
+    --switch-height-me: 30px;
+    --switch-min-width: 55px;
+    --switch-top: 0.5rem;
+}
+
+label[class="ss-switch"] {
+    --switch-dot-border: var(--switch-dot-border-me);
+    --switch-dot-margin: var(--switch-dot-margin-me);
+    --switch-height: var(--switch-height-me);
+    min-width: var(--switch-min-width) !important;
+    margin-top: var(--switch-top) !important;
+}
+
 input::-webkit-input-placeholder {
     color: var(--color-font-2);
     font-size: 0.9rem;
@@ -399,7 +415,7 @@ select:focus {
     position: absolute;
     width: 100%;
     height: 100%;
-    transition: opacity .3s;
+    transition: opacity .3s, transform .3s;
 }
 
 .opt-card {
@@ -584,6 +600,69 @@ select:focus {
     background: var(--color-card-2);
 }
 
+.forward-msg {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: calc(100vh - 220px);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    pointer-events: none;
+    margin-top: -22px;
+    padding-right: 50px;
+}
+.forward-msg-bg {
+    background: var(--color-shader);
+    width: calc(100% - 60px);
+    height: 100%;
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity .3s;
+    border-radius: 7px;
+    pointer-events: auto;
+}
+.forward-msg-body {
+    width: 0;
+    height: 100%;
+    pointer-events: auto;
+    background: var(--color-card-1);
+    border-radius: 0 7px 7px 0;
+    box-shadow: -5px 0 9px -5px var(--color-shader);
+    transition: width .2s;
+    overflow: hidden;
+    margin-right: -40px;
+}
+.forward-msg-body-open {
+    width: 40% !important;
+}
+.forward-msg-body > svg {
+    width: 25px;
+    height: 25px;
+    margin: 33px 10px 33px 33px;
+    fill: var(--color-font-1);
+}
+.forward-msg-body > a {
+    font-size: 1.1rem;
+    color: var(--color-font);
+}
+.forward-msg-body div > div[class="message-body"] {
+    max-width: 100%;
+}
+.forward-msg-body div > div[class="message-body"] > div {
+    background: var(--color-card-2);
+}
+.forward-msg-body div > div[class="message-body"] > a {
+    display: block !important;
+}
+.forward-msg-body div > div[class="message"] > img {
+    display: block !important;
+}
+.forward-msg-body div > div[class="message-space"] {
+    flex: 0;
+}
+
 /* 窄设备兼容 */
 @media (max-width: 992px) {
     .login-pan-card {
@@ -618,6 +697,12 @@ select:focus {
         margin-right: 20px;
         margin-top: 20px;
         transform: translate(0);
+    }
+    .forward-msg-body {
+        margin-right: -55px;
+    }
+    .forward-msg-body-open {
+        width: calc(100% - 320px) !important;
     }
 }
 
