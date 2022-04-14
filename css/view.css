@@ -15,8 +15,8 @@
     transition: background .2s, color .2s, transform .2s;
 }
 .friend-body:hover {
-    background: var(--color-main);
-    color: var(--color-font-1-r);
+    background: var(--color-main) !important;
+    color: var(--color-font-1-r) !important;
 }
 .friend-body:hover a {
     color: var(--color-font-1-r);

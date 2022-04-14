@@ -128,7 +128,9 @@ function onListClick(sender) {
     setStatue("load", "正在加载历史消息 ……")
     const type = sender.dataset.type
     // 去除未读标记
-    sender.children[0].style.transform = "scaleY(0)"
+    if(sender.dataset.alwayTop != "true") {
+        sender.children[0].style.transform = "scaleY(0)"
+    }
     // 显示顶栏
     document.getElementById("msg-hander").getElementsByTagName("a")[0].innerText = sender.dataset.name
     document.getElementById("msg-hander").dataset.id = sender.dataset.id
@@ -373,7 +375,7 @@ function searchInList() {
     if(what != null && what != "") {
         const childs =  document.getElementById("friend-list-body").children
         for(let i=0; i<childs.length; i++) {
-            if(childs[i].dataset.id == what || childs[i].dataset.name.indexOf(what) >= 0) {
+            if(childs[i].dataset.id == what || (childs[i].dataset.name.toLowerCase()).indexOf(what.toLowerCase()) >= 0) {
                 document.getElementById("friend-search-body").style.display = "block"
                 // 将对象复制到搜索结果框内
                 document.getElementById("friend-search-body").append(childs[i])
@@ -487,8 +489,8 @@ function showMsgMenu(sender, event) {
         if(Number(sender.dataset.sender) != Number(window.login_id)) {
             document.getElementById("menuCancel").style.display = "none"
         }
-        // 只显示复制菜单(已经被撤回的消息、合并转发消息)
-        if(sender.style.opacity === "0.4" || sender.parentNode.parentNode.id == "forward-msg-body") {
+        // 只显示复制菜单(已经被撤回的消息、合并转发消息、未登录)
+        if(sender.style.opacity === "0.4" || sender.parentNode.parentNode.id == "forward-msg-body" || window.connect == false) {
             const body = document.getElementById("right-click-menu-body")
             for(let i=0; i<body.children.length; i++) {
                 body.children[i].style.display = "none"
@@ -637,6 +639,10 @@ function changeView(statue) {
 }
 
 function showOpt(statue) {
+    if(document.location.protocol == "file:") {
+        // 显示文件打开方式提醒
+        document.getElementById("file-open-tip").style.display = "block"
+    }
     if(statue == true) {
         document.getElementById("opt-body").style.display = "block"
         setTimeout(() => {
@@ -671,7 +677,7 @@ function closeForwardBody() {
 
 function runDebugFk() {
     if(window.optCookie["opt_debug_fk"] == "true") {
-        const msgView = document.getElementById("msg-view")
+        const msgView = document.getElementById("main-body")
         const optView = document.getElementById("opt-body")
         msgView.style.transform != "rotate(180deg)" ? msgView.style.transform = "rotate(180deg)" : msgView.style.transform = "rotate(0deg)"
         optView.style.transform != "rotate(180deg)" ? optView.style.transform = "rotate(180deg)" : optView.style.transform = "rotate(0deg)"
@@ -729,6 +735,84 @@ function runNoBack(sender) {
 
 function setMainColor(sender) {
     document.documentElement.style.setProperty('--color-main', "var(--color-main-" + sender.parentNode.dataset.id + ")")
+}
+
+function openTopMenu() {
+    // 恢复菜单
+    for(let i=0; i<document.getElementById("msg-top-menu-body").children.length; i++) {
+        document.getElementById("msg-top-menu-body").children[i].style.display = "block"
+    }
+    // 特殊显示
+    const id = document.getElementById("msg-hander").dataset.id
+    if(window.cookie["top_bodys"] == undefined || window.cookie["top_bodys"].indexOf(id) < 0) {
+        document.getElementById("msg-untop").style.display = "none"
+    } else {
+        document.getElementById("msg-top").style.display = "none"
+    }
+    // 处理菜单
+    if(document.getElementById("msg-top-menu").style.transform == "scaleY(0)") {
+        document.getElementById("msg-top-menu").style.transform = "scaleY(1)"
+    } else {
+        document.getElementById("msg-top-menu").style.transform = "scaleY(0)"
+    }
+}
+
+function addTopBody(statue) {
+    const id = document.getElementById("msg-hander").dataset.id
+    if(statue != false) {
+        setTop(id)
+        // 保存 cookie
+        if(window.cookie["top_bodys"] == undefined || window.cookie["top_bodys"].indexOf(id) < 0) {
+            let str = ""
+            if(window.cookie["top_bodys"] == undefined) {
+                str += id + "&"
+            } else {
+                str += window.cookie["top_bodys"] + id + "&"
+            }
+            var date = new Date()
+            date.setDate(date.getDate() + 30)
+            const cookie = "top_bodys=" + str + "; expires=" + date.toUTCString()
+            window.cookie["top_bodys"] = str
+            document.cookie = cookie
+        }
+    } else {
+        setTop(id, false)
+        // 保存 cookie
+        if(window.cookie["top_bodys"].indexOf(id) >= 0) {
+            const str = window.cookie["top_bodys"].replace(id + "&", "")
+            var date = new Date()
+            date.setDate(date.getDate() + 30)
+            const cookie = "top_bodys=" + str + "; expires=" + date.toUTCString()
+            window.cookie["top_bodys"] = str
+            document.cookie = cookie
+        }
+    }
+}
+
+function setTop(id, statue) {
+    const list = document.getElementById("friend-list-body")
+    const upBody = findBodyInList(null, id)
+    if(upBody != null) {
+        if(statue != false) {
+            // 置顶
+            list.insertBefore(upBody, list.firstChild)
+            upBody.style.background = "var(--color-card-2)"
+            upBody.dataset.alwayTop = "true"
+            setTimeout(() => {
+                upBody.style.transform = "translate(0, 0)"
+            }, 10)
+            setTimeout(() => {
+                upBody.children[0].style.transform = "scaleY(0.5)"
+                upBody.children[0].style.opacity = "0"
+                upBody.style.transform = "translate(0, 0)"
+            }, 300)
+        } else {
+            // 取消置顶
+            upBody.style.background = "transparent"
+            upBody.children[0].style.transform = "scaleY(0)"
+            upBody.children[0].style.opacity = "1"
+        }
+    }
 }
 
 function changeOpt(sender) {

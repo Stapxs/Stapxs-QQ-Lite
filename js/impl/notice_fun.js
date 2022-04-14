@@ -87,6 +87,13 @@ function setFriendList(data) {
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
     }
+    // 加载置顶
+    if(window.cookie["top_bodys"] != undefined) {
+        const ids = window.cookie["top_bodys"].split("&")
+        for(let i=0; i<ids.length; i++) {
+            setTop(ids[i])
+        }
+    }
 }
 
 function setGroupList(data) {
@@ -104,12 +111,23 @@ function setGroupList(data) {
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
     }
+    // 加载置顶
+    if(window.cookie["top_bodys"] != undefined) {
+        const ids = window.cookie["top_bodys"].split("&")
+        for(let i=0; i<ids.length; i++) {
+            setTop(ids[i])
+        }
+    }
 }
 
 function setUserInfo(data) {
     window.login_id = data.user_id
     document.getElementById("main-src").src = "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + data.user_id
+    document.getElementById("opt-main-src").src = "https://q1.qlogo.cn/g?b=qq&s=0&nk=" + data.user_id
     document.getElementById("main-name").innerText = data.nickname
+    document.getElementById("opt-main-name").innerText = data.nickname
+    document.getElementById("opt-account-main").style.display = "block"
+    document.getElementById("opt-account-tip").style.display = "none"
 }
 
 function firstLoadingMsg(msg) {
@@ -187,8 +205,10 @@ function updateMsg(msg) {
     // 刷新列表
     if(msg.message_type != "group") {
         findBodyInList(null, id).style.transform = "translate(0, -50%)"
-        // 尝试通过浏览器通知用户
-        showNotice(msg)
+        if(nowSee != id) {
+            // 尝试通过浏览器通知用户
+            showNotice(msg)
+        }
         // 如果当前消息并没有打开，则置顶列表项（对群组无效）
         list.insertBefore(findBodyInList(null, id), list.firstChild)
         setTimeout(() => {
@@ -213,7 +233,7 @@ function updateMsg(msg) {
             }
         }
         //判断 at
-        if(msg.atme) {
+        if(msg.atme && nowSee != id) {
             showNotice(msg)
         }
     }
@@ -237,7 +257,9 @@ function runNotice(msg) {
                 }
             }
             // 尝试撤回通知
-            window.notices[msg.message_id].close()
+            if(window.notices[msg.message_id] != undefined) {
+                window.notices[msg.message_id].close()
+            }
         }
     }
 }

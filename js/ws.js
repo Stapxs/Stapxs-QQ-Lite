@@ -50,6 +50,9 @@ function runWs() {
         setTimeout(() => {
             document.getElementById("footer").style.transform = "translate(0)"
         }, 100)
+        // 隐藏账号设置
+        document.getElementById("opt-account-main").style.display = "none"
+        document.getElementById("opt-account-tip").style.display = "block"
     }
 }
 

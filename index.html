@@ -38,7 +38,7 @@
 
 <body style="background: var(--color-bg);color: var(--color-font)">
 <div style="display: flex;flex-direction: column;height: 100vh;overflow: hidden;">
-    <div class="container-lg main-body" style="flex: 1;">
+    <div class="container-lg main-body" style="flex: 1;" id="main-body">
         <div class="main-view" id="main-view">
             <!-- 顶部控制组件 -->
             <div class="controller">
@@ -105,6 +105,21 @@
                         <div style="width: auto;cursor: pointer;" onclick="document.getElementById('msg-body').scrollTop = document.getElementById('msg-body').scrollHeight">
                             <svg style="width: 10px;margin-top: -3px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224 416c-8.188 0-16.38-3.125-22.62-9.375l-192-192c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L224 338.8l169.4-169.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-192 192C240.4 412.9 232.2 416 224 416z"/></svg>
                             <a style="font-size: 10px;margin-left: 5px;margin-right: 10px;margin-top: 6px;display: inline-block;">回到底部</a>
+                        </div>
+                        <div style="cursor: pointer;" onclick="openTopMenu()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512"><path d="M64 360C94.93 360 120 385.1 120 416C120 446.9 94.93 472 64 472C33.07 472 8 446.9 8 416C8 385.1 33.07 360 64 360zM64 200C94.93 200 120 225.1 120 256C120 286.9 94.93 312 64 312C33.07 312 8 286.9 8 256C8 225.1 33.07 200 64 200zM64 152C33.07 152 8 126.9 8 96C8 65.07 33.07 40 64 40C94.93 40 120 65.07 120 96C120 126.9 94.93 152 64 152z"/></svg>
+                            <div class="msg-top-menu" id="msg-top-menu" style="transform: scaleY(0);">
+                                <div class="ss-card menu msg-top-menu-body" id="msg-top-menu-body">
+                                    <div onclick="addTopBody()" id="msg-top">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M352 352c-8.188 0-16.38-3.125-22.62-9.375L192 205.3l-137.4 137.4c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25C368.4 348.9 360.2 352 352 352z"/></svg>
+                                        <a>列表置顶</a>
+                                    </div>
+                                    <div onclick="addTopBody(false)" id="msg-untop">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M352 352c-8.188 0-16.38-3.125-22.62-9.375L192 205.3l-137.4 137.4c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25C368.4 348.9 360.2 352 352 352z"/></svg>
+                                        <a>取消置顶</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- 状态提示区 -->
@@ -247,12 +262,20 @@
                 <a class="list-group-item list-group-item-action" href="#list-item-5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M433.754 420.445c-11.526 1.393-44.86-52.741-44.86-52.741 0 31.345-16.136 72.247-51.051 101.786 16.842 5.192 54.843 19.167 45.803 34.421-7.316 12.343-125.51 7.881-159.632 4.037-34.122 3.844-152.316 8.306-159.632-4.037-9.045-15.25 28.918-29.214 45.783-34.415-34.92-29.539-51.059-70.445-51.059-101.792 0 0-33.334 54.134-44.859 52.741-5.37-.65-12.424-29.644 9.347-99.704 10.261-33.024 21.995-60.478 40.144-105.779C60.683 98.063 108.982.006 224 0c113.737.006 163.156 96.133 160.264 214.963 18.118 45.223 29.912 72.85 40.144 105.778 21.768 70.06 14.716 99.053 9.346 99.704z"/></svg>关于</a>
             </div>
             <div data-spy="scroll" data-target="#list-opt" data-offset="0" class="opt-main-body" style="flex: 1;">
-                <a class="opt-close-tip" style="display: none;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px;margin-bottom: 20px;color: var(--color-font-1);">点击另一个屏幕关闭</a>
+                <a class="opt-close-tip" style="display: none;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px 20px;margin-bottom: 20px;color: var(--color-font-1);">
+                    点击另一个屏幕关闭
+                </a>
+                <a id="file-open-tip" style="display: none;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px 20px;margin-bottom: 20px;color: var(--color-font-1);">
+                    你使用文件方式打开了此页面，这意味刷新或下次打开时需要保存的设置项将由于无法保存 Cookie 而全部还原默认
+                </a>
                 <h4 id="list-item-1" style="margin-top: 0;">账号</h4>
-                <div>
+                <a id="opt-account-tip" style="display: block;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px 20px;margin-bottom: 20px;color: var(--color-font-1);">
+                    请先连接
+                </a>
+                <div id="opt-account-main" style="display: none;">
                     <div class="main-body" style="margin-right: 20px;overflow: hidden;background: var(--color-main);border-radius: 7px;padding: 20px;display: flex;color: var(--color-font-1-r);">
-                        <img style="width: 50px;height: 50px;border-radius: 100%;background: var(--color-card-1);">
-                        <a style="font-size: 1.5rem;font-weight: bold;margin-left: 15px;flex: 1;margin-right: 15px;line-height: 50px;">Name</a>
+                        <img id="opt-main-src" style="width: 50px;height: 50px;border-radius: 100%;background: var(--color-card-1);">
+                        <a id="opt-main-name" style="font-size: 1.5rem;font-weight: bold;margin-left: 15px;flex: 1;margin-right: 15px;line-height: 50px;">Name</a>
                         <div style="width: 50px;height: 50px;background: #0000002e;border-radius: 100%;padding: 13px 14px;cursor: pointer;">
                             <svg style="fill: var(--color-font-r);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M362.7 19.32C387.7-5.678 428.3-5.678 453.3 19.32L492.7 58.75C517.7 83.74 517.7 124.3 492.7 149.3L444.3 197.7L314.3 67.72L362.7 19.32zM421.7 220.3L188.5 453.4C178.1 463.8 165.2 471.5 151.1 475.6L30.77 511C22.35 513.5 13.24 511.2 7.03 504.1C.8198 498.8-1.502 489.7 .976 481.2L36.37 360.9C40.53 346.8 48.16 333.9 58.57 323.5L291.7 90.34L421.7 220.3z"/></svg>
                         </div>
@@ -423,7 +446,7 @@
                     </svg>
                     <p style="font-size: 1.5rem;margin-top: 20px;margin-bottom: 0;">QQ Web Lite</p>
                     <a style="display: block;">一个兼容 oicq-http 的 QQ 网页版</a>
-                    <a style="color: var(--color-font-2);display: block;font-size: 0.9rem;margin-top: 20px;">version</a>
+                    <a id="opt-version" style="color: var(--color-font-2);display: block;font-size: 0.9rem;margin-top: 20px;">version</a>
                     <button class="ss-button" style="margin-top: 20px;width: 80%;">访问仓库</button>
                 </div>
                 <div class="ss-card" style="margin-top: 20px;margin-bottom: 20px;background: var(--color-card-1);margin-right: 20px;">
@@ -515,132 +538,7 @@
 </div>
 </body>
 
-<!-- 懒得再挪个文件出来的功能 -->
-<script>
-    // 自动暗黑模式标志
-    window.is_auto_dark = true
-    // 加载 cookie
-    var x = document.cookie
-    x = x.split(";")
-    window.cookie = {}
-    for(let i=0; i<x.length; i++) {
-        window.cookie[x[i].split("=")[0].trim()] = x[i].split("=")[1].trim()
-    }
-    // 解析设置
-    window.optCookie = {}
-    if(window.cookie["option"] != undefined) {
-        const optStr = window.cookie["option"].split("&")
-        console.log(optStr)
-        for(let i=0; i<optStr.length; i++) {
-            window.optCookie[optStr[i].split(":")[0]] = optStr[i].split(":")[1]
-        }
-    }
-    // 载入设置
-    showLog("b573f7", "fff", "UI", "正在载入设置 ……")
-    for(let i=0; i<Object.keys(window.optCookie).length; i++) {
-        let body = document.getElementById(Object.keys(window.optCookie)[i])
-        if(body == undefined) {
-            body = document.getElementById(Object.keys(window.optCookie)[i] + "_" + window.optCookie[Object.keys(window.optCookie)[i]])
-        }
-        if(body != undefined) {
-            switch(body.nodeName) {
-                case "INPUT": {
-                    if(body.type == "checkbox") {
-                        if(window.optCookie[Object.keys(window.optCookie)[i]] == "true" && body.checked == false ||
-                            window.optCookie[Object.keys(window.optCookie)[i]] == "false" && body.checked == true) {
-                            body.click()
-                        }
-                    } else if(body.type == "radio") {
-                        body.click()
-                    } else {
-                        body.value = window.optCookie[Object.keys(window.optCookie)[i]]
-                    }
-                    break
-                }
-                case "SELECT": {
-                    body.value = window.optCookie[Object.keys(window.optCookie)[i]]
-                    break
-                }
-            }
-        }
-    }
-    // 填充输入框
-    if(window.cookie["address"] != undefined) {
-        document.getElementById("sev_address").value = window.cookie["address"]
-    }
-    // 初始化颜色切换按钮
-    let mediaTest = window.matchMedia('(prefers-color-scheme: dark)');
-    if(is_auto_dark !== false) {
-        if (mediaTest.matches) {
-            document.getElementById("color-changer").dataset.color = "dark"
-            document.getElementById("color-changer").innerHTML = String.raw`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M32 256c0-123.8 100.3-224 223.8-224c11.36 0 29.7 1.668 40.9 3.746c9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3c9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480C132.1 480 32 379.6 32 256z"/></svg>`
-        }
-    }
-    // SW 特性支持
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js', { scope: './' }).then(function(reg) {
-            console.log('注册 Service Workers 服务成功：' + reg.scope);
-        }).catch(function(error) {
-            console.log('注册 Service Workers 服务失败：' + error);
-        });
-    }
-    // 覆写粘贴事件，提供粘贴图片的功能
-    document.getElementById("send-box").addEventListener("paste", function(e) {
-        // 判断粘贴类型
-        if (!(e.clipboardData && e.clipboardData.items)) {
-            return
-        }
-        for (var i = 0, len = e.clipboardData.items.length; i < len; i++) {
-            var item = e.clipboardData.items[i]
-            if (item.kind === "file") {
-                console.log("file")
-                var blob = item.getAsFile()
-                if(blob.type.indexOf("image/") >= 0 && blob.size != 0) {
-                    setStatue("load", "正在处理图片 ……")
-                    if(blob.size < 3145728) {
-                        // 转换为 Base64
-                        var reader = new FileReader();
-                        reader.readAsDataURL(blob); 
-                        reader.onloadend = function() {
-                            var base64data = reader.result
-                            // 将按钮改为选中状态
-                            document.getElementById("btn-img").style.background = "var(--color-main)"
-                            document.getElementById("btn-img").children[1].style.fill = "var(--color-font-r)"
-                            document.getElementById("btn-img").title = "取消发送图片"
-                            // 记录图片信息
-                            window.cacheImg = base64data
-                            // 设置标记
-                            document.getElementById("btn-img").dataset.select = "true"
-                            // 完成
-                            setStatue("ok", "图片处理完成！")
-                            // 删除 input
-                            document.getElementById("btn-img").removeChild(document.getElementById("choice-pic"))
-                        }
-                    } else {
-                        // 图片过大
-                        setStatue("err", "图片过大！")
-                    }
-                }
-                //阻止默认行为
-                e.preventDefault();
-            }
-        }
-    })
-    // 复制消息
-    var clipboard = new ClipboardJS(document.getElementById("menuCopy"), {
-        text: function(trigger) {
-            return (window.msgInMenu != undefined && window.msgInMenu != null)?window.msgInMenu.dataset.raw:""
-        }
-    });
-    clipboard.on('success', function(e) {
-        showMsgMenu()
-    });
-    clipboard.on('error', function(e) {
-        console.error('Action:', e.action);
-        console.error('Trigger:', e.trigger);
-        setStatue("err", "复制消息失败！")
-    });
-</script>
+<script src="main.js"></script>
 
 <!-- 外部附加功能依赖 -->
 <script src="https://api.stapxs.cn/js/util/jquery-1.12.4.js"></script>
