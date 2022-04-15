@@ -120,10 +120,10 @@
     display: flex;
     overflow: hidden;
     background: var(--color-card-1);
-    margin-bottom: 10px;
+    margin-bottom: 0;
     border-radius: 7px;
     height: 0;
-    transition: height .3s;
+    transition: height .3s, margin-bottom .6s;
 }
 .replyer > svg {
     fill: var(--color-font-1);
@@ -154,9 +154,10 @@
     flex-direction: row;
     justify-content: center;
     background: var(--color-card-1);
+    margin-bottom: 0;
     border-radius: 7px;
     overflow: hidden;
-    transition: height .2s;
+    transition: height .2s, margin-bottom .4s;
 }
 .resender > div {
     display: flex;
@@ -182,4 +183,57 @@
     width: 100%;
     text-align: center;
     color: var(--color-font-2);
+}
+
+.sender-view-box {
+    margin-bottom: 0;
+    max-height: 30vh;
+    height: 0;
+    background: var(--color-card-1);
+    border-radius: 7px;
+    transition: margin-bottom .6s;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.sender-view-box:hover {
+    outline: none;
+    border: 0;
+}
+.sender-view-box::-webkit-scrollbar {
+    width: 0;
+}
+
+.at-mb-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    margin: 2px 0;
+    border-radius: 7px;
+    transition: background .3s;
+}
+.at-mb-body:hover {
+    background: var(--color-main);
+    color: var(--color-font-1-r);
+}
+.at-mb-body:hover a {
+    color: var(--color-font-1-r);
+}
+.at-mb-body img {
+    height: 2rem;
+    width: 2rem;
+    border-radius: 100%;
+    margin-right: 20px;
+    margin-left: 10px;
+}
+.at-mb-body i {
+    flex: 1;
+    line-height: 2rem;
+    font-style: normal;
+}
+.at-mb-body a {
+    line-height: 2rem;
+    color: var(--color-font-2);
+    font-size: 0.9rem;
+    margin-right: 10px;
 }

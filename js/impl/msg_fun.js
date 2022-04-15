@@ -115,6 +115,12 @@ function getMsgRawTxt(message) {
             case "record": back += "[语音]";break
             case "video": back += "[视频]";break
             case "file": back += "[文件]";break
+            case "xml": {
+                let name = message[i].data.data.substring(message[i].data.data.indexOf("<source name=\"") + 14)
+                name = name.substring(0, name.indexOf("\""))
+                back += "[" + name + "]"
+                break
+            }
         }
     }
     return back

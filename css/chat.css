@@ -363,6 +363,7 @@ select:focus {
 .menu div a {
     line-height: 1rem;
     user-select: none;
+    white-space: nowrap;
 }
 
 .resend-tips {
@@ -726,7 +727,7 @@ select:focus {
     .forward-msg-body-open {
         width: calc(100% - 320px) !important;
     }
-    .msg-top-menu {
+    .msg-top-menu-body {
         transform: translate(-70%);
     }
 }

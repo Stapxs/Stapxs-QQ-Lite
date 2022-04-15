@@ -13,12 +13,13 @@ function runJSON(json) {
             case "get_friend_list": setFriendList(msg.data); break                                          // 获取好友列表
             case "get_group_list": setGroupList(msg.data); break                                            // 获取群列表
             case "get_login_info": setUserInfo(msg.data); break                                             // 获取用户信息
-            case "get_csrf_token": window.utoken = msg.data.token; break                                     // 获取 token
+            case "get_csrf_token": window.utoken = msg.data.token; break                                    // 获取 token
             case "get_cookies": window.ucookies = msg.data.cookies;break                                    // 获取 Cookies
             case "get_chat_history_fist": firstLoadingMsg(msg); break                                       // 首次获取历史消息（20）
             case "get_chat_history": loadingMoreMsg(msg); break                                             // 获取更多历史消息
             case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
             case "get_forward_msg": printForwardMsg(msg.data); break                                        // 输出合并转发消息详情
+            case "get_group_member_list": saveGroupMemberList(msg.data); break                              // 获取群成员列表
             default: {
                 // 处理其他特殊的返回
                 if(msg.echo.indexOf("get_rep_msg_") >= 0) {
@@ -78,11 +79,12 @@ function setFriendList(data) {
         div.classList.add("friend-body")
         div.dataset.id = data[i].user_id
         div.dataset.name = data[i].nickname
+        div.dataset.allname = data[i].remark === data[i].nickname ? data[i].nickname : data[i].remark + "（" + data[i].nickname + "）"
         div.dataset.type = "friend"
         div.onclick = function() { onListClick(div) }
         // 添加内容
         div.innerHTML = "<div></div><img src='https://q1.qlogo.cn/g?b=qq&s=0&nk=" + data[i].user_id + "'>" +
-                        "<div><p>" + (data[i].remark === data[i].nickname ? data[i].nickname : data[i].remark + "（" + data[i].nickname + "）") + "</p><a></a></div>" + 
+                        "<div><p>" + div.dataset.allname + "</p><a></a></div>" + 
                         "<a></a>"
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
@@ -102,6 +104,7 @@ function setGroupList(data) {
         div.classList.add("friend-body")
         div.dataset.id = data[i].group_id
         div.dataset.name = data[i].group_name
+        div.dataset.allname = data[i].group_name
         div.dataset.type = "group"
         div.onclick = function() { onListClick(div) }
         // 添加内容
@@ -221,6 +224,7 @@ function updateMsg(msg) {
     } else {
         if(window.optCookie["opt_group_no_up"] == undefined || window.optCookie["opt_group_no_up"] == "false") {
             // 如果是群组，置顶到最新的置顶消息下面，不提醒
+            findBodyInList(null, id).style.transform = "translate(0, -50%)"
             // 寻找最新的置顶消息
             for(let i=0; i<list.children.length; i++) {
                 if(list.children[i].children[0].style.transform !== "scaleY(0.5)") {
@@ -233,7 +237,8 @@ function updateMsg(msg) {
             }
         }
         //判断 at
-        if(msg.atme && nowSee != id) {
+        // TODO: at 全体在这边不会触发 atme 标志，但是由于不方便判断，暂时用 indexOf 判断
+        if((msg.atme == true || msg.raw_message.indexOf("CQ:at,qq=all,text=@全体成员") > 0) && nowSee != id) {
             showNotice(msg)
         }
     }
@@ -278,4 +283,14 @@ function printForwardMsg(msg) {
     document.getElementById("forward-msg-body").className = "forward-msg-body forward-msg-body-open"
     document.getElementById("forward-msg-bg").style.opacity = "0.7"
     document.getElementById("forward-msg-bg").style.pointerEvents = "auto"
+}
+
+function saveGroupMemberList(data) {
+    window.nowGroupMumber = []
+    for(let i=0; i<data.length; i++) {
+        let dataIn = {}
+        dataIn.id = data[i].user_id
+        dataIn.name = data[i].card == "" ? data[i].nickname : data[i].nickname + "(" + data[i].card + ")"
+        window.nowGroupMumber.push(dataIn)
+    }
 }

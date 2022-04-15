@@ -127,10 +127,22 @@ function btnChangeColor() {
 function onListClick(sender) {
     setStatue("load", "正在加载历史消息 ……")
     const type = sender.dataset.type
+    // 清空搜索
+    document.getElementById("seach-input").value = ""
+    cancelSearch()
     // 去除未读标记
     if(sender.dataset.alwayTop != "true") {
         sender.children[0].style.transform = "scaleY(0)"
+        // 刷新置顶
+        if(window.cookie["top_bodys"] != undefined) {
+            const ids = window.cookie["top_bodys"].split("&")
+            for(let i=0; i<ids.length; i++) {
+                setTop(ids[i])
+            }
+        }
     }
+    // 清空群员列表
+    window.nowGroupMumber = null
     // 显示顶栏
     document.getElementById("msg-hander").getElementsByTagName("a")[0].innerText = sender.dataset.name
     document.getElementById("msg-hander").dataset.id = sender.dataset.id
@@ -375,7 +387,7 @@ function searchInList() {
     if(what != null && what != "") {
         const childs =  document.getElementById("friend-list-body").children
         for(let i=0; i<childs.length; i++) {
-            if(childs[i].dataset.id == what || (childs[i].dataset.name.toLowerCase()).indexOf(what.toLowerCase()) >= 0) {
+            if(childs[i].dataset.id == what || (childs[i].dataset.allname.toLowerCase()).indexOf(what.toLowerCase()) >= 0) {
                 document.getElementById("friend-search-body").style.display = "block"
                 // 将对象复制到搜索结果框内
                 document.getElementById("friend-search-body").append(childs[i])
@@ -391,6 +403,13 @@ function cancelSearch() {
         const body = document.getElementById("friend-search-body")
         while(body.children.length > 0) {
             document.getElementById("friend-list-body").append(body.children[0])
+        }
+        // 刷新置顶
+        if(window.cookie["top_bodys"] != undefined) {
+            const ids = window.cookie["top_bodys"].split("&")
+            for(let i=0; i<ids.length; i++) {
+                setTop(ids[i])
+            }
         }
     }
 }
@@ -516,6 +535,7 @@ function menuReply() {
         document.getElementById("replyer").dataset.sender = window.msgInMenu.dataset.sender
         // 显示
         document.getElementById("replyer").style.height = "45px"
+        document.getElementById("replyer").style.marginBottom = "10px"
         // 关闭菜单
         showMsgMenu()
         // 将光标聚焦到输入框
@@ -527,6 +547,7 @@ function cancelReply() {
     document.getElementById("replyer-txt").innerText = ""
     document.getElementById("replyer").dataset.id = ""
     document.getElementById("replyer").style.height = "0"
+    document.getElementById("replyer").style.marginBottom = "0"
 }
 
 function menuResend() {
@@ -562,6 +583,7 @@ function menuCancel() {
 function menuChoice() {
     // 显示控件
     document.getElementById("resender").style.height = "90px"
+    document.getElementById("resender").style.marginBottom = "10px"
     document.getElementById("resender").dataset.onchoice = "true"
     // 添加列表
     if(window.resendList == undefined) {
@@ -577,6 +599,7 @@ function menuChoice() {
 function cancelChoice() {
     // 关闭
     document.getElementById("resender").style.height = "0"
+    document.getElementById("resender").style.marginBottom = "0"
     document.getElementById("resender").dataset.onchoice = "false"
     // 清空选中背景
     for(let i=0; i<window.resendList.length; i++) {
@@ -786,6 +809,13 @@ function addTopBody(statue) {
             window.cookie["top_bodys"] = str
             document.cookie = cookie
         }
+        // 刷新置顶
+        if(window.cookie["top_bodys"] != undefined) {
+            const ids = window.cookie["top_bodys"].split("&")
+            for(let i=0; i<ids.length; i++) {
+                setTop(ids[i])
+            }
+        }
     }
 }
 
@@ -813,6 +843,102 @@ function setTop(id, statue) {
             upBody.children[0].style.opacity = "1"
         }
     }
+}
+
+function openSenderView(statue, always) {
+    const body = document.getElementById("sender-view-box")
+    if(statue != false) {
+        body.innerHTML = ""
+        body.style.height = "auto"
+        body.style.marginBottom = "10px"
+    } else {
+        if(document.activeElement.id != body.id || always == true) {
+            body.style.height = "0"
+            body.style.marginBottom = "0"
+        }
+    }
+}
+
+function mainInputChange(sender) {
+    const value = sender.value
+    const lastInput = value.substring(value.length - 1)
+    // 匹配群成员列表
+    if(lastInput == "@" && document.getElementById("msg-hander").dataset.type == "group") {
+        if(window.nowGroupMumber == undefined || window.nowGroupMumber == null) {
+            // 尝试获取群友列表
+            sendWs(createAPI("get_group_member_list", {"group_id": document.getElementById("msg-hander").dataset.id}, null))
+        }
+        // 设置标记
+        showLog("b573f7", "fff", "UI", "开始匹配群成员列表 ……")
+        window.onAtFind = true
+        Window.atInfo = ""
+        openSenderView()
+    }
+    // 检索群成员列表
+    if(window.onAtFind == true) {
+        if(value.lastIndexOf("@") < 0) {
+            showLog("b573f7", "fff", "UI", "At 匹配被打断 ……")
+            window.onAtFind = false
+            Window.atInfo = ""
+            openSenderView(false)
+            return
+        }
+        window.atInfo = value.substring(value.lastIndexOf("@") + 1)
+        showLog("b573f7", "fff", "UI", "匹配列表：" + window.atInfo)
+        if(window.nowGroupMumber != undefined && window.nowGroupMumber != null) {
+            if(window.atInfo != "") {
+                document.getElementById("sender-view-box").innerHTML = ""
+                let num = 0
+                for(let i=0; i<window.nowGroupMumber.length; i++) {
+                    if((window.nowGroupMumber[i].name.toLowerCase()).indexOf(window.atInfo.toLowerCase()) >= 0 || (window.nowGroupMumber[i].id == window.atInfo)) {
+                        const div = document.createElement("div")
+                        div.dataset.id = window.nowGroupMumber[i].id
+                        div.onclick = function() { addAtStr(sender, window.nowGroupMumber[i].id) }
+                        div.className = "at-mb-body"
+                        div.innerHTML = "<img src='https://q1.qlogo.cn/g?b=qq&s=0&nk=" + window.nowGroupMumber[i].id + "'><i>" +
+                                         window.nowGroupMumber[i].name + "</i><a>" + window.nowGroupMumber[i].id + "</a>"
+                        document.getElementById("sender-view-box").appendChild(div)
+                        num ++
+                    }
+                }
+                if(num == 0) {
+                    const div = document.createElement("div")
+                    div.className = "at-mb-body"
+                    div.innerHTML = "<i style='display: block;text-align: center;'>没有找到匹配的群成员</i>"
+                    document.getElementById("sender-view-box").appendChild(div)
+                }
+            } else {
+                const div = document.createElement("div")
+                div.className = "at-mb-body"
+                div.innerHTML = "<i style='display: block;text-align: center;'>没有找到匹配的群成员</i>"
+                document.getElementById("sender-view-box").appendChild(div)
+            }
+        } else {
+            const div = document.createElement("div")
+            div.className = "at-mb-body"
+            div.innerHTML = "<i style='display: block;text-align: center;'>正在获取群成员列表</i>"
+            document.getElementById("sender-view-box").appendChild(div)
+        }
+    }
+}
+
+function mainInputOut(sender) {
+    // 取消 at 匹配
+    showLog("b573f7", "fff", "UI", "At 匹配被打断 ……")
+    window.onAtFind = false
+    Window.atInfo = ""
+    setTimeout(() => {
+        openSenderView(false)
+    }, 100)
+}
+
+function addAtStr(sender, id) {
+    // 去除 at 文本
+    sender.value = sender.value.substring(0, sender.value.lastIndexOf("@"))
+    // 追加 cq 码
+    sender.value += "[CQ:at,qq=" + id + "] "
+    // 关闭菜单
+    openSenderView(false, true)
 }
 
 function changeOpt(sender) {

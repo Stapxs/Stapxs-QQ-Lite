@@ -111,10 +111,9 @@
     border-radius: 0 0 7px 7px;
 }
 .msg-xml-img {
-    width: 70%;
-    margin-left: 50%;
-    margin-bottom: 10px;
-    transform: translate(-50%);
+    width: 3rem;
+    float: right;
+    margin-left: 15px;
 }
 
 .msg-record {
