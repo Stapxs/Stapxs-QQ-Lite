@@ -1,5 +1,7 @@
+# QQ Web Lite
+![logo](https://raw.githubusercontent.com/Stapxs/QQ-Web-Lite/main/topbar.png)
+
 <div align="center">
-    <img src="topbar.png" width="100%" alt="logo"><br><br><br>
     <div>
         <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Stapxs/QQ-Web-Lite?style=for-the-badge">
         <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/Stapxs/QQ-Web-Lite?include_prereleases&style=for-the-badge">
