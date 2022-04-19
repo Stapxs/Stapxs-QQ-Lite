@@ -1,11 +1,11 @@
 # QQ Web Lite
-![logo](https://raw.githubusercontent.com/Stapxs/QQ-Web-Lite/main/topbar.png)
+![logo](https://raw.githubusercontent.com/Stapxs/Stapxs-QQ-Lite/main/topbar.png)
 
 <div align="center">
     <div>
-        <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Stapxs/QQ-Web-Lite?style=for-the-badge">
-        <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/Stapxs/QQ-Web-Lite?include_prereleases&style=for-the-badge">
-        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Stapxs/QQ-Web-Lite?style=for-the-badge">
+        <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Stapxs/Stapxs-QQ-Lite?style=for-the-badge">
+        <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/Stapxs/Stapxs-QQ-Lite?include_prereleases&style=for-the-badge">
+        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Stapxs/Stapxs-QQ-Lite?style=for-the-badge">
     </div>
 </div>
 <br>
@@ -14,7 +14,7 @@
 # 部署
 
 ## Github Pages
-本仓库开启了 GitHub Pages, 你可以选择直接访问本仓库的页面来使用: https://stapxs.github.io/QQ-Web-Lite/
+本仓库开启了 GitHub Pages, 你可以选择直接访问本仓库的页面来使用: https://stapxs.github.io/Stapxs-QQ-Lite/
 
 ## 克隆仓库
 此项目为完整的纯前端静态页面,你可以克隆仓库,非常暴力的直接打开 index.html 来使用; 但是需要注意的是部分浏览器在使用 file:// 协议的时候无法正常允许页面发起通知, 同时文件也无法唤起 PWA 功能进行 PWA APP 安装。
@@ -67,13 +67,13 @@
 - 如果你使用的是 oicq-http, 可以查看此处了解封号风险 (https://github.com/takayama-lily/oicq/wiki/98.%E5%85%B3%E4%BA%8E%E8%B4%A6%E5%8F%B7%E5%86%BB%E7%BB%93%E5%92%8C%E9%A3%8E%E6%8E%A7), 如果你尝试使用其他 QQ Bot (参见上一条问题), 请自行参考它的文档。
 
 ### 我遇到了问题
-- 如果有什么奇奇怪怪的问题, 欢迎发起 issue 询问! 如果有什么 BUG 和优化建议也可以哦! (https://github.com/Stapxs/QQ-Web-Lite/issues)
+- 如果有什么奇奇怪怪的问题, 欢迎发起 issue 询问! 如果有什么 BUG 和优化建议也可以哦! (https://github.com/Stapxs/Stapxs-QQ-Lite/issues)
 
 
 <br>
 <br>
 <div align="right">
-    <font style="font-size: 0.8rem">README v1.0</font><br>
+    <font style="font-size: 0.8rem">README v1.1</font><br>
     <font style="font-size: 0.8rem">Stapx Steve [ 林槐 ] 2022</font><br>
     <font style="font-size: 0.8rem">林槐出品, 必属稽品</font>
 </div>
