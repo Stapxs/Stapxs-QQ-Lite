@@ -1,4 +1,4 @@
-# QQ Web Lite
+# Stapxs-QQ-Lite
 ![logo](https://raw.githubusercontent.com/Stapxs/Stapxs-QQ-Lite/main/topbar.png)
 
 <div align="center">
