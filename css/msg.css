@@ -49,9 +49,7 @@
     max-height: 35vh;
     cursor: pointer;
     display: block;
-    max-width: calc(100% - 10px);
-    margin: 5px 5px 5px 50%;
-    transform: translate(-50%);
+    max-width: 100%;
 }
 
 .msg-face {

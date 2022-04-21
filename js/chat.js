@@ -60,13 +60,11 @@ function noticeMsg() {
 function showLoginPan(what) {
     if(window.connect !== true) {
         if (what === true) {
-            document.getElementById("login-btn").innerHTML = "<svg class='fa-pulse' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M304 48C304 74.51 282.5 96 256 96C229.5 96 208 74.51 208 48C208 21.49 229.5 0 256 0C282.5 0 304 21.49 304 48zM304 464C304 490.5 282.5 512 256 512C229.5 512 208 490.5 208 464C208 437.5 229.5 416 256 416C282.5 416 304 437.5 304 464zM0 256C0 229.5 21.49 208 48 208C74.51 208 96 229.5 96 256C96 282.5 74.51 304 48 304C21.49 304 0 282.5 0 256zM512 256C512 282.5 490.5 304 464 304C437.5 304 416 282.5 416 256C416 229.5 437.5 208 464 208C490.5 208 512 229.5 512 256zM74.98 437C56.23 418.3 56.23 387.9 74.98 369.1C93.73 350.4 124.1 350.4 142.9 369.1C161.6 387.9 161.6 418.3 142.9 437C124.1 455.8 93.73 455.8 74.98 437V437zM142.9 142.9C124.1 161.6 93.73 161.6 74.98 142.9C56.24 124.1 56.24 93.73 74.98 74.98C93.73 56.23 124.1 56.23 142.9 74.98C161.6 93.73 161.6 124.1 142.9 142.9zM369.1 369.1C387.9 350.4 418.3 350.4 437 369.1C455.8 387.9 455.8 418.3 437 437C418.3 455.8 387.9 455.8 369.1 437C350.4 418.3 350.4 387.9 369.1 369.1V369.1z\"/></svg>"
             document.getElementById("login-pan").style.display = "block"
             setTimeout(() => {
                 document.getElementById("login-pan").style.opacity = "1"
             }, 100)
         } else {
-            document.getElementById("login-btn").innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M344.7 238.5l-144.1-136C193.7 95.97 183.4 94.17 174.6 97.95C165.8 101.8 160.1 110.4 160.1 120V192H32.02C14.33 192 0 206.3 0 224v64c0 17.68 14.33 32 32.02 32h128.1v72c0 9.578 5.707 18.25 14.51 22.05c8.803 3.781 19.03 1.984 26-4.594l144.1-136C354.3 264.4 354.3 247.6 344.7 238.5zM416 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c17.67 0 32 14.33 32 32v256c0 17.67-14.33 32-32 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c53.02 0 96-42.98 96-96V128C512 74.98 469 32 416 32z\"/></svg>"
             document.getElementById("login-pan").style.opacity = "0"
             setTimeout(() => {
                 document.getElementById("login-pan").style.display = "none"
@@ -101,7 +99,7 @@ function runConnect() {
     // 隐藏底栏
     document.getElementById("footer").style.transform = "translate(0, 100px)"
     document.getElementById("main-view").style.height  = "100vh"
-    document.getElementById("forward-msg").style.height  = "calc(100vh - 120px)"
+    document.getElementById("forward-msg").style.height  = "calc(100vh - 40px)"
     setTimeout(() => {
         document.getElementById("footer").style.display = "none"
     }, 450)
@@ -243,10 +241,12 @@ function msgBodyScroll() {
 }
 
 function lightChatBorder() {
-    document.getElementById("msg-view").style.border = "2px solid var(--color-main)"
-    setTimeout(() => {
-        document.getElementById("msg-view").style.border = "2px solid transparent"
-    }, 400)
+    if(window.optCookie["opt_close_flash"] == undefined || window.optCookie["opt_close_flash"] == "false") {
+        document.getElementById("msg-view").style.border = "2px solid var(--color-main)"
+        setTimeout(() => {
+            document.getElementById("msg-view").style.border = "2px solid transparent"
+        }, 400)
+    }
 }
 
 function sendMsg() {
@@ -459,25 +459,68 @@ function msgTouchDown(sender, event) {
     }, 450)
 }
 
-function msgTouchMove(event) {
+function msgTouchMove(sender, event) {
     if(window.msgTouchX != null && window.msgTouchY != null && window.msgTouchX != undefined && window.msgTouchY != undefined) {
         // 计算移动差值
         const dx = Math.abs(window.msgTouchX - event.targetTouches[0].pageX)
         const dy = Math.abs(window.msgTouchY - event.targetTouches[0].pageY)
+        const x = window.msgTouchX - event.targetTouches[0].pageX
         // 如果 dy 大于 10px 则判定为用户在滚动页面，打断长按消息判定
-        if(dy > 10) {
+        if(dy > 10 || dx > 5) {
             if(window.msgOnTouchDown == true) {
-                showLog("b573f7", "fff", "UI", "用户正在滚动，打断长按判定。")
+                showLog("b573f7", "fff", "UI", "用户正在滑动，打断长按判定。")
                 window.msgOnTouchDown = false
             }
+        }
+        if(dy < 50) {
+            if(x < -10) {
+                // 左滑
+                window.msgOnMove = "on"
+                if(dx > sender.offsetWidth / 10) {
+                    showLog("b573f7", "fff", "UI", "触发左滑判定 ……")
+                    window.msgOnMove = "right"
+                    window.msgInMenu = sender
+                }
+                sender.style.transform = "translate(" + dx + "px)"
+                sender.style.transition = "transform 0s"
+            } else if(x > 10) {
+                // 右滑
+                window.msgOnMove = "on"
+                if(dx > sender.offsetWidth / 10) {
+                    showLog("b573f7", "fff", "UI", "触发右滑判定 ……")
+                    window.msgOnMove = "left"
+                    window.msgInMenu = sender
+                }
+                sender.style.transform = "translate(-" + dx + "px)"
+                sender.style.transition = "transform 0s"
+            } 
+        }else {
+            window.msgOnMove = null
+            sender.style.transform = "translate(0px)"
         }
     }
 }
 
-function msgTouchEnd(event) {
+function msgTouchEnd(sender, event) {
     window.msgOnTouchDown = false
     window.msgTouchX = null
     window.msgTouchY = null
+    // 判定左右滑动
+    if(window.msgOnMove != undefined && window.msgOnMove != null) {
+        sender.style.transition = "transform 0.2s"
+        Window.msgOnMove = null
+        setTimeout(() => {
+            sender.style.transform = "translate(0px)"
+        }, 10)
+        if(window.msgOnMove == "left") {
+            menuReply()
+            showMsgMenu()
+        }
+        else if(window.msgOnMove == "right") {
+            menuResend()
+            showMsgMenu()
+        }
+    }
 }
 
 function showMsgMenu(sender, event) {

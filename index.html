@@ -15,6 +15,8 @@
     <meta name="referrer" content="always" id="referrer">
     <!-- 应用信息 -->
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="src/icon-for-fuck-apple.png">
+    <link rel="shortcut icon" href="src/icon.svg">
     <!-- 框架样式依赖 -->
     <link rel="stylesheet" href="https://api.stapxs.cn/css/color-light.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/bootstrap/bootstrap.min.css">
@@ -40,26 +42,13 @@
 <div style="display: flex;flex-direction: column;height: 100vh;overflow: hidden;">
     <div class="container-lg main-body" style="flex: 1;" id="main-body">
         <div class="main-view" id="main-view">
-            <!-- 顶部控制组件 -->
-            <div class="controller">
-                <div class="ss-card back-btn" title="返回" id="change-view-btn" data-icon="right" onclick="changeView()">
-                    <svg style="transition: transform .3s;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/></svg>
-                </div>
-                <div class="ss-card" title="登录" onclick="showLoginPan(true)" id="login-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M344.7 238.5l-144.1-136C193.7 95.97 183.4 94.17 174.6 97.95C165.8 101.8 160.1 110.4 160.1 120V192H32.02C14.33 192 0 206.3 0 224v64c0 17.68 14.33 32 32.02 32h128.1v72c0 9.578 5.707 18.25 14.51 22.05c8.803 3.781 19.03 1.984 26-4.594l144.1-136C354.3 264.4 354.3 247.6 344.7 238.5zM416 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c17.67 0 32 14.33 32 32v256c0 17.67-14.33 32-32 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c53.02 0 96-42.98 96-96V128C512 74.98 469 32 416 32z"/></svg>
-                </div>
-                <div class="controller-space" style="flex: 1"></div>
-                <div class="ss-card" title="白色模式" id="color-changer" data-color="light" onclick="btnChangeColor()">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1S202.1 351.1 256 351.1s95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347L446.1 255.1l63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7l-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89L164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6L12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256l-63.15 91.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7l19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109l109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1c0-70.69 57.31-127.1 127.1-127.1s127.1 57.3 127.1 127.1C383.1 326.7 326.7 383.1 256 383.1z"/></svg>
-                </div>
-            </div>
             <!-- 主框架 -->
             <div class="msg-view ss-card" id="msg-view">
                 <!-- 左列表 -->
                 <div class="friend-list" id="friend-list">
                     <!-- 用户信息区 -->
                     <div class="main-body" style="height: 90px;overflow: hidden;background: var(--color-main);border-radius: 7px 7px 0 0;padding: 20px;display: flex;color: var(--color-font-1-r);">
-                        <img id="main-src" style="width: 50px;height: 50px;border-radius: 100%;background: var(--color-card-1);">
+                        <img id="main-src" style="width: 50px;height: 50px;border-radius: 100%;background: var(--color-card-1);" alt="我的头像">
                         <div style="margin-left: 15px;flex: 1;">
                             <p id="main-name" style="font-size: 1.1rem;margin-bottom: 0;font-weight: bold;"></p>
                         </div>
@@ -87,7 +76,7 @@
                 <!-- 消息主框架 -->
                 <div class="msg-view-body" style="flex: 1;display: flex;flex-direction: column;padding: 0 0 0 20px;">
                     <!-- 消息主框架遮罩 -->
-                    <div style="position: fixed;height: 100%;width: 100%;" id="msg-view-mask"></div>
+                    <div style="position: fixed;height: 100%;width: 100%;margin-top: 50px;" id="msg-view-mask"></div>
                     <!-- 合并转发预览区 -->
                     <div class="forward-msg container-lg" id="forward-msg">
                         <div id="forward-msg-bg" class="forward-msg-bg" onclick="closeForwardBody()"></div>
@@ -100,8 +89,9 @@
                     </div>
                     <!-- 消息顶栏 -->
                     <div class="msg-hander" style="display: none;" id="msg-hander">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M511.1 63.1v287.1c0 35.25-28.75 63.1-64 63.1h-144l-124.9 93.68c-7.875 5.75-19.12 .0497-19.12-9.7v-83.98h-96c-35.25 0-64-28.75-64-63.1V63.1c0-35.25 28.75-63.1 64-63.1h384C483.2 0 511.1 28.75 511.1 63.1z"/></svg>
-                        <a>Title</a>
+                        <div class="back-btn" title="返回" id="change-view-btn" data-icon="right" onclick="changeView()">
+                            <svg style="transition: transform .3s;width: 8px;margin-left: 11px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/></svg>
+                        </div><a></a>
                         <div style="width: auto;cursor: pointer;" onclick="document.getElementById('msg-body').scrollTop = document.getElementById('msg-body').scrollHeight">
                             <svg style="width: 10px;margin-top: -3px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224 416c-8.188 0-16.38-3.125-22.62-9.375l-192-192c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L224 338.8l169.4-169.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-192 192C240.4 412.9 232.2 416 224 416z"/></svg>
                             <a style="font-size: 10px;margin-left: 5px;margin-right: 10px;margin-top: 6px;display: inline-block;">回到底部</a>
@@ -211,7 +201,7 @@
     </footer>
 
     <!-- 登录弹窗 -->
-    <div class="login-pan" id="login-pan" style="display: none;opacity: 0;">
+    <div class="login-pan" id="login-pan">
         <div class="login-pan-bg" onclick="showLoginPan(false)"></div>
         <div class="login-pan-card ss-card">
             <p>连接到 OICQ/OneBot</p>
@@ -264,16 +254,17 @@
                 <a class="list-group-item list-group-item-action" href="#list-item-5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M433.754 420.445c-11.526 1.393-44.86-52.741-44.86-52.741 0 31.345-16.136 72.247-51.051 101.786 16.842 5.192 54.843 19.167 45.803 34.421-7.316 12.343-125.51 7.881-159.632 4.037-34.122 3.844-152.316 8.306-159.632-4.037-9.045-15.25 28.918-29.214 45.783-34.415-34.92-29.539-51.059-70.445-51.059-101.792 0 0-33.334 54.134-44.859 52.741-5.37-.65-12.424-29.644 9.347-99.704 10.261-33.024 21.995-60.478 40.144-105.779C60.683 98.063 108.982.006 224 0c113.737.006 163.156 96.133 160.264 214.963 18.118 45.223 29.912 72.85 40.144 105.778 21.768 70.06 14.716 99.053 9.346 99.704z"/></svg>关于</a>
             </div>
             <div data-spy="scroll" data-target="#list-opt" data-offset="0" class="opt-main-body" style="flex: 1;">
-                <a class="opt-close-tip" style="display: none;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px 20px;margin-bottom: 20px;color: var(--color-font-1);">
+                <a class="opt-close-tip opt-tip" style="display: none;">
                     点击另一个屏幕关闭
                 </a>
-                <a id="file-open-tip" style="display: none;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px 20px;margin-bottom: 20px;color: var(--color-font-1);">
-                    你使用文件方式打开了此页面，这意味刷新或下次打开时需要保存的设置项将由于无法保存 Cookie 而全部还原默认
+                <a id="file-open-tip" class="opt-tip" style="display: none;">
+                    你使用文件方式打开了此页面，这将导致无法保存 Cookie，可能会影响一些功能
+                </a>
+                <a id="cookie-tip" class="opt-tip" style="display: none;">
+                    你的浏览器不允许保存 Cookie，这可能会影响一些功能
                 </a>
                 <h4 id="list-item-1" style="margin-top: 0;">账号</h4>
-                <a id="opt-account-tip" style="display: block;font-size: 0.9rem;background: var(--color-card-1);margin-right: 20px;border-radius: 7px;text-align: center;padding: 10px 20px;margin-bottom: 20px;color: var(--color-font-1);">
-                    请先连接
-                </a>
+                <button id="opt-account-tip" onclick="showLoginPan(true);showOpt()" class="ss-button" style="width: calc(100% - 20px);height: 40px;margin-top: 10px;">点击连接</button>
                 <div id="opt-account-main" style="display: none;">
                     <div class="main-body" style="margin-right: 20px;overflow: hidden;background: var(--color-main);border-radius: 7px;padding: 20px;display: flex;color: var(--color-font-1-r);">
                         <img id="opt-main-src" style="width: 50px;height: 50px;border-radius: 100%;background: var(--color-card-1);">
@@ -282,6 +273,7 @@
                             <svg style="fill: var(--color-font-r);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M362.7 19.32C387.7-5.678 428.3-5.678 453.3 19.32L492.7 58.75C517.7 83.74 517.7 124.3 492.7 149.3L444.3 197.7L314.3 67.72L362.7 19.32zM421.7 220.3L188.5 453.4C178.1 463.8 165.2 471.5 151.1 475.6L30.77 511C22.35 513.5 13.24 511.2 7.03 504.1C.8198 498.8-1.502 489.7 .976 481.2L36.37 360.9C40.53 346.8 48.16 333.9 58.57 323.5L291.7 90.34L421.7 220.3z"/></svg>
                         </div>
                     </div>
+                    <button onclick="showLoginPan(true);" class="ss-button" style="width: calc(100% - 20px);height: 40px;margin-top: 10px;">断开连接</button>
                     <div class="opt-child">
                         <div></div>
                         <div>
@@ -300,6 +292,17 @@
                 </div>
                 <h4 id="list-item-2">界面</h4>
                 <div>
+                    <div class="opt-child">
+                        <div></div>
+                        <div>
+                            <p>暗黑模式</p>
+                            <a>是五彩斑斓的黑色！</a>
+                        </div>
+                        <label class="ss-switch">
+                            <input type="checkbox" id="opt_dark" onclick="changeOpt(this);btnChangeColor();">
+                            <div><div></div></div>
+                        </label>
+                    </div>
                     <div class="opt-child">
                         <div></div>
                         <div>
@@ -368,11 +371,22 @@
                     <div class="opt-child">
                         <div></div>
                         <div>
-                            <p>不置顶新的群消息</p>
+                            <p>不冒泡新的群消息</p>
                             <a>加特林不上战场可惜了（恼</a>
                         </div>
                         <label class="ss-switch">
                             <input type="checkbox" id="opt_group_no_up" onclick="changeOpt(this)">
+                            <div><div></div></div>
+                        </label>
+                    </div>
+                    <div class="opt-child">
+                        <div></div>
+                        <div>
+                            <p>关闭新消息闪烁边框</p>
+                            <a>瞎了啦都怪你！</a>
+                        </div>
+                        <label class="ss-switch">
+                            <input type="checkbox" id="opt_close_flash" onclick="changeOpt(this)">
                             <div><div></div></div>
                         </label>
                     </div>
@@ -540,6 +554,18 @@
 </div>
 </body>
 
+<script>
+// SW 特性支持
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+    .then(function(reg) {
+        console.log('注册 Service Workers 服务成功：' + reg.scope)
+    })
+    .catch(function(error) {
+        console.log('注册 Service Workers 服务失败：' + error)
+    });
+}
+</script>
 <script src="main.js"></script>
 
 <!-- 外部附加功能依赖 -->

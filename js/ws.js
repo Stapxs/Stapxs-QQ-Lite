@@ -21,13 +21,9 @@ function runWs() {
         var date = new Date()
         date.setDate(date.getDate() + 30)
         const cookie = "address=" + address + "; expires=" + date.toUTCString()
-        console.log(cookie)
         document.cookie = cookie
         // 清空消息历史
         document.getElementById("msg-body").innerHTML = ""
-        // 修改按钮
-        document.getElementById("login-btn").innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z\"/></svg>"
-        document.getElementById("login-btn").title = "断开"
         // 开始加载数据
         loadInfo()
     }
@@ -40,13 +36,11 @@ function runWs() {
     window.ws.onclose = function (evt) {
         showLog("ff5370", "fff", "WS", "连接关闭：" + evt.code)
         setStatue("err", "连接关闭：" + evt.code)
-        document.getElementById("login-btn").title = "登录"
-        document.getElementById("login-btn").innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M344.7 238.5l-144.1-136C193.7 95.97 183.4 94.17 174.6 97.95C165.8 101.8 160.1 110.4 160.1 120V192H32.02C14.33 192 0 206.3 0 224v64c0 17.68 14.33 32 32.02 32h128.1v72c0 9.578 5.707 18.25 14.51 22.05c8.803 3.781 19.03 1.984 26-4.594l144.1-136C354.3 264.4 354.3 247.6 344.7 238.5zM416 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c17.67 0 32 14.33 32 32v256c0 17.67-14.33 32-32 32h-64c-17.67 0-32 14.33-32 32s14.33 32 32 32h64c53.02 0 96-42.98 96-96V128C512 74.98 469 32 416 32z\"/></svg>"
         window.connect = false
         // 显示底栏
             document.getElementById("footer").style.display = "block"
-            document.getElementById("main-view").style.height  = "calc(100vh - 100px)"
-            document.getElementById("forward-msg").style.height  = "calc(100vh - 220px)"
+            document.getElementById("main-view").style.height  = "calc(100vh - 110px)"
+            document.getElementById("forward-msg").style.height  = "calc(100vh - 150px)"
         setTimeout(() => {
             document.getElementById("footer").style.transform = "translate(0)"
         }, 100)

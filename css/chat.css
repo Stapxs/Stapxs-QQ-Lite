@@ -39,9 +39,13 @@ select:focus {
     outline: none;
 }
 
+.main-body {
+    transition: transform .3s;
+}
+
 .main-view {
     width: 100%;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 110px);
     padding: 20px 0;
     display: flex;
     flex-direction: column;
@@ -68,7 +72,7 @@ select:focus {
 
 .msg-view {
     flex: 1;
-    margin: 20px 0 0 0;
+    margin: 0;
     display: flex;
     flex-direction: row;
     border: 2px solid transparent;
@@ -76,7 +80,7 @@ select:focus {
 }
 .msg-view-right {
     flex: 1;
-    margin: 20px 0 0 0;
+    margin: 0;
     display: flex;
     flex-direction: row;
     border: 2px solid transparent;
@@ -86,6 +90,7 @@ select:focus {
 .msg-body {
     flex: 1;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding-right: 20px;
     scroll-behavior: smooth;
 }
@@ -390,6 +395,9 @@ select:focus {
 
 .back-btn {
     display: none;
+    cursor: pointer;
+    margin-left: -10px !important;
+    margin-right: 10px !important;
 }
 
 .run-statue > div {
@@ -538,6 +546,17 @@ select:focus {
 }
 .opt-child label > div {
     background: var(--color-card-2);
+}
+
+.opt-tip {
+    font-size: 0.9rem;
+    background: var(--color-card-1);
+    margin-right: 20px;
+    border-radius: 7px;
+    text-align: center;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    color: var(--color-font-1);
 }
 
 .lis-button:focus {

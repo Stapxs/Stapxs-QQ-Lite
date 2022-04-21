@@ -83,7 +83,7 @@ function setFriendList(data) {
         div.dataset.type = "friend"
         div.onclick = function() { onListClick(div) }
         // 添加内容
-        div.innerHTML = "<div></div><img src='https://q1.qlogo.cn/g?b=qq&s=0&nk=" + data[i].user_id + "'>" +
+        div.innerHTML = "<div></div><img loading='lazy' src='https://q1.qlogo.cn/g?b=qq&s=0&nk=" + data[i].user_id + "'>" +
                         "<div><p>" + div.dataset.allname + "</p><a></a></div>" + 
                         "<a></a>"
         // 添加到元素内
@@ -108,7 +108,7 @@ function setGroupList(data) {
         div.dataset.type = "group"
         div.onclick = function() { onListClick(div) }
         // 添加内容
-        div.innerHTML = "<div></div><img src='https://p.qlogo.cn/gh/" + data[i].group_id + "/" + data[i].group_id + "/0'>" +
+        div.innerHTML = "<div></div><img loading='lazy' src='https://p.qlogo.cn/gh/" + data[i].group_id + "/" + data[i].group_id + "/0'>" +
                         "<div><p>" + data[i].group_name + "</p><a></a></div>" + 
                         "<a></a>"
         // 添加到元素内
@@ -262,7 +262,7 @@ function runNotice(msg) {
                 }
             }
             // 尝试撤回通知
-            if(window.notices[msg.message_id] != undefined) {
+            if(window.notices[msg.message_id] != null && window.notices[msg.message_id] != undefined) {
                 window.notices[msg.message_id].close()
             }
         }

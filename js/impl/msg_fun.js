@@ -82,9 +82,9 @@ function printMsg(obj, addTo, addAt) {
             div.innerHTML = html
             div.oncontextmenu = function()                  { return false; }                               // 阻止右击菜单
             div.onmousedown = function()                    { msgMouseDown(div, event); }                   // 右击判定
-            div.addEventListener("touchstart", function()   { msgTouchDown(div, event); }, false)           // 长按判定（开始）
-            div.addEventListener("touchend", function()     { msgTouchEnd(event); }, false)                 // 长按判定（结束）
-            div.addEventListener("touchmove", function()    { msgTouchMove(event); }, false)                // 长按判定（移动）
+            div.addEventListener("touchstart", function()   { msgTouchDown(div, event); }, false)           // 触屏判定（开始）
+            div.addEventListener("touchend", function()     { msgTouchEnd(div, event); }, false)                 // 触屏判定（结束）
+            div.addEventListener("touchmove", function()    { msgTouchMove(div, event); }, false)           // 触屏判定（移动）
             // 添加到消息列表内
             if(addAt == undefined) {
                 addAt = document.getElementById("msg-body")
@@ -108,7 +108,7 @@ function getMsgRawTxt(message) {
     for(let i=0; i<message.length; i++) {
         switch(message[i].type) {
             case "at":
-            case "text": back += message[i].data.text;break
+            case "text": back += message[i].data.text.replaceAll('\n', ' ');break
             case "face": 
             case "bface": back += "[表情]";break
             case "image": back += "[图片]";break
@@ -135,7 +135,7 @@ function printText(txt) {
     txt = txt.replaceAll("\n\r", "<br>")
     txt = txt.replaceAll("\n", "<br>")
     txt = txt.replaceAll("\r", "<br>")
-    return "<a style='overflow-wrap: anywhere;'>" + txt + "</a>"
+    return "<span style='overflow-wrap: anywhere;'>" + txt + "</span>"
 }
 
 function printBface(txt) {
@@ -160,14 +160,14 @@ function printImg(url, num, sender) {
         loaded = "imgLoaded()"
     }
      if(num == 1) {
-        return "<img onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        return "<img alt='群图片' onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      } else {
-        return "<img onload='" + loaded + "' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        return "<img alt='群图片' onload='" + loaded + "' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      }
 }
 
 function printFace(id, name) {
-    return "<img class='msg-face' src='src/qq-face/" + id + ".gif' title='" + name + "'>"
+    return "<img alt='" + name + "' class='msg-face' src='src/qq-face/" + id + ".gif' title='" + name + "'>"
 }
 
 function printReplay(msgid, rawid) {
@@ -221,7 +221,7 @@ function printXML(xml, type) {
     item = item.replaceAll("title", "p")                                                        // title
     item = item.replaceAll("summary", "a")                                                      // summary
     item = item.replaceAll("<a", "<a class='msg-xml-summary'")
-    item = item.replaceAll("<picture", "<img class='msg-xml-img'")                              // picture
+    item = item.replaceAll("<picture", "<img alt='XML 图片' class='msg-xml-img'")               // picture
     // 将不正确的参数改为 dataset
     item = item.replaceAll("size=", "data-size=")
     item = item.replaceAll("linespace=", "data-linespace=")
