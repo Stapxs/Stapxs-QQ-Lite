@@ -476,23 +476,25 @@ function msgTouchMove(sender, event) {
             if(x < -10) {
                 // 左滑
                 window.msgOnMove = "on"
-                if(dx > sender.offsetWidth / 10) {
+                if(dx >= sender.offsetWidth / 10) {
                     showLog("b573f7", "fff", "UI", "触发左滑判定 ……")
                     window.msgOnMove = "right"
                     window.msgInMenu = sender
+                } else {
+                    sender.style.transform = "translate(" + dx + "px)"
+                    sender.style.transition = "transform 0s"
                 }
-                sender.style.transform = "translate(" + dx + "px)"
-                sender.style.transition = "transform 0s"
             } else if(x > 10) {
                 // 右滑
                 window.msgOnMove = "on"
-                if(dx > sender.offsetWidth / 10) {
+                if(dx >= sender.offsetWidth / 10) {
                     showLog("b573f7", "fff", "UI", "触发右滑判定 ……")
                     window.msgOnMove = "left"
                     window.msgInMenu = sender
+                } else {
+                    sender.style.transform = "translate(-" + dx + "px)"
+                    sender.style.transition = "transform 0s"
                 }
-                sender.style.transform = "translate(-" + dx + "px)"
-                sender.style.transition = "transform 0s"
             } 
         }else {
             window.msgOnMove = null
@@ -524,13 +526,14 @@ function msgTouchEnd(sender, event) {
 }
 
 function showMsgMenu(sender, event) {
+    const menu = document.getElementById("right-click-menu")
+    const body = document.getElementById("right-click-menu-body")
     if(sender == undefined || sender == null) {
-        document.getElementById("right-click-menu").children[1].style.transform = "scaleY(0)"
+        body.style.transform = "scaleY(0)"
         document.getElementById("right-click-menu-bg").onmousedown = null
         setTimeout(() => {
-            document.getElementById("right-click-menu").style.display = "none"
+            menu.style.display = "none"
             // 恢复被隐藏的菜单
-            const body = document.getElementById("right-click-menu-body")
             for(let i=0; i<body.children.length; i++) {
                 body.children[i].style.display = "flex"
             }
@@ -542,27 +545,36 @@ function showMsgMenu(sender, event) {
         window.msgInMenu = sender
         // 修改消息的背景
         sender.style.background = "#00000008"
-        // 获取鼠标位置
-        const pointEvent = event || window.event
-        // 修改菜单位置
-        document.getElementById("right-click-menu").children[1].style.marginLeft = pointEvent.pageX + "px"
-        document.getElementById("right-click-menu").children[1].style.marginTop = pointEvent.pageY + "px"
         // 判断是不是自己的消息
         if(Number(sender.dataset.sender) != Number(window.login_id)) {
             document.getElementById("menuCancel").style.display = "none"
         }
         // 只显示复制菜单(已经被撤回的消息、合并转发消息、未登录)
         if(sender.style.opacity === "0.4" || sender.parentNode.parentNode.id == "forward-msg-body" || window.connect == false) {
-            const body = document.getElementById("right-click-menu-body")
             for(let i=0; i<body.children.length; i++) {
                 body.children[i].style.display = "none"
             }
             document.getElementById("menuCopy").style.display = "flex"
         }
+        // 获取鼠标位置
+        const pointEvent = event || window.event
+        // 判定菜单是否出界
+        menu.style.display = "block"
+        const height = body.offsetHeight
+        const webHeight = document.body.offsetHeight
+        // 修改菜单位置
+        showLog("b573f7", "fff", "UI", "菜单底部位置：" + (pointEvent.pageY + height) + "，页面高度：" + webHeight)
+        if(pointEvent.pageY + height < webHeight) {
+            body.style.marginLeft = pointEvent.pageX + "px"
+            body.style.marginTop = pointEvent.pageY + "px"
+        } else {
+            body.style.marginLeft = pointEvent.pageX + "px"
+            body.style.marginTop = pointEvent.pageY - (pointEvent.pageY + height - webHeight) + "px"
+            showLog("b573f7", "fff", "UI", "菜单位置：" + body.style.marginTop)
+        }
         // 显示菜单
-        document.getElementById("right-click-menu").style.display = "block"
         setTimeout(() => {
-            document.getElementById("right-click-menu").children[1].style.transform = "scaleY(1)"
+            body.style.transform = "scaleY(1)"
             setTimeout(() => {
                 document.getElementById("right-click-menu-bg").onmousedown = function() { showMsgMenu() }
             }, 100)
@@ -571,6 +583,7 @@ function showMsgMenu(sender, event) {
 }
 
 function menuReply() {
+    cancelResend()
     if(window.msgInMenu != undefined && window.msgInMenu != null) {
         // 设置回复标志
         document.getElementById("replyer-txt").innerText = window.msgInMenu.dataset.raw
@@ -594,6 +607,7 @@ function cancelReply() {
 }
 
 function menuResend() {
+    cancelReply()
     if(window.msgInMenu != undefined && window.msgInMenu != null) {
         // 显示提示控件
         document.getElementById("resend-tips").style.height = "45px"

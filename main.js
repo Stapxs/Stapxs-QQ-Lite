@@ -1,4 +1,4 @@
-window.version = 'v1.27'
+window.version = 'v1.271'
 document.getElementById("opt-version").innerText = window.version
 // 自动暗黑模式标志
 window.is_auto_dark = true

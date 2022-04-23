@@ -20,6 +20,7 @@ function runJSON(json) {
             case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
             case "get_forward_msg": printForwardMsg(msg.data); break                                        // 输出合并转发消息详情
             case "get_group_member_list": saveGroupMemberList(msg.data); break                              // 获取群成员列表
+            case "delete_msg": deleteMsgBack(msg); break                                                    // 删除消息回调
             default: {
                 // 处理其他特殊的返回
                 if(msg.echo.indexOf("get_rep_msg_") >= 0) {
@@ -63,6 +64,12 @@ function runJSON(json) {
 }
 
 // ----------------------------------------------------------------------------------
+
+function deleteMsgBack(msg) {
+    if(msg.status == "failed") {
+        setStatue("err", "撤回消息失败，可能是消息不存在或消息超时。(" + msg.error.code + ":" + msg.error.message + ")")
+    }
+}
 
 function setFriendList(data) {
     // 遍历列表
