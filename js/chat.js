@@ -743,6 +743,12 @@ function moYu() {
 
 function xmlClick(sender) {
     const type = sender.dataset.type
+    // 如果存在 url 项，优先打开 url
+    if(sender.dataset.url != undefined && sender.dataset.url != "undefined") {
+        window.open(sender.dataset.url, "_blank")
+        return
+    }
+    // 接下来按类型处理
     if(type == "forward") {
         // 解析合并转发消息
         sendWs(createAPI("get_forward_msg", {"id": sender.dataset.id}))

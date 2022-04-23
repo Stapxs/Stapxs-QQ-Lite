@@ -59,12 +59,13 @@ function printMsg(obj, addTo, addAt) {
                 let nowBreak = false
                 switch(obj.message[i].type) {
                     case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
-                    case "text": body = body + printText(obj.message[i].data.text); break
+                    case "text": body = body + printText(obj.message[i].data.text, obj.message_id); break
                     case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, user_id); break
                     case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                     case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
                     case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, user_id); break
                     case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
+                    case "json": body = body + printJSON(obj.message[i].data.data, obj.message[i].data.type); break
                     case "record": body = body + printRecord(obj.message[i].data.url); break
                     case "video": body = body + printVideo(obj.message[i].data.url); break
                     case "file": body = body + printFile(obj.message[i].data); break
@@ -114,7 +115,8 @@ function getMsgRawTxt(message) {
             case "image": back += "[图片]";break
             case "record": back += "[语音]";break
             case "video": back += "[视频]";break
-            case "file": back += "[文件]";break
+            case "file": back += "[文件]"; break
+            case "json": back += JSON.parse(message[i].data.data).prompt;break
             case "xml": {
                 let name = message[i].data.data.substring(message[i].data.data.indexOf("<source name=\"") + 14)
                 name = name.substring(0, name.indexOf("\""))
@@ -128,13 +130,49 @@ function getMsgRawTxt(message) {
 
 // --------------------------------------------------------------
 
-function printText(txt) {
+function printText(txt, msgid) {
     txt = txt.replaceAll(" ", "&nbsp;")
     txt = txt.replaceAll("<", "&lt;")
     txt = txt.replaceAll(">", "&gt;")
     txt = txt.replaceAll("\n\r", "<br>")
     txt = txt.replaceAll("\n", "<br>")
     txt = txt.replaceAll("\r", "<br>")
+    // 判断文本内有没有链接
+    let reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/gi
+    if (reg.test(txt)) {
+        showLog("b573f7", "fff", "UI", "正在获取链接预览 ……")
+        // 获取第一个匹配的结果
+        let url = txt.match(reg)[0]
+        // 尝试通过 API 获取链接预览
+        fetch('https://api.stapxs.cn/Page-Info?address=' + url)
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == undefined) {
+                showLog("b573f7", "fff", "UI", "获取链接预览成功：" + res['og:title'])
+                // 创建额外的链接解析部分
+                // <div class="msg-link-view">
+                //     <div></div>
+                //     <div style="background-image: url(https://api.stapxs.cn/PicLib/Desktop);"></div>
+                //     <div>
+                //         <p>没有标题</p>
+                //         <a href="https://www.bilibili.com/video/BV1Ei4y1m7mS/">为了抢苹果，小狼居然发出了狗叫声_哔哩哔哩_bilibili</a>
+                //         <span>没有介绍</span>
+                //     </div>
+                // </div>
+                const div = document.createElement("div")
+                div.className = "msg-link-view"
+                let hasImg = res['og:image'] == undefined ? "display: none;" : ""
+                let site = res['og:site_name'] == undefined ? "" : res['og:site_name']
+                let title = res['og:title'] == undefined ? "" : res['og:title']
+                let desc = res['og:description'] == undefined ? "" : res['og:description']
+                div.innerHTML = '<div></div><div style="background-image: url(' + res['og:image'] + ');' + hasImg + '"></div>' +
+                    '<div><p>' + site + '</p><span href="' + res['og:url'] + '">' + title + '</span><span>' + desc + '</span></div>'
+                // 添加到消息内
+                document.getElementById("link-" + msgid).parentNode.appendChild(div)
+            }
+        })
+        return "<span id='link-" + msgid + "' style='overflow-wrap: anywhere;'>" + txt + "</span>"
+    }
     return "<span style='overflow-wrap: anywhere;'>" + txt + "</span>"
 }
 
@@ -226,7 +264,6 @@ function printXML(xml, type) {
     item = item.replaceAll("size=", "data-size=")
     item = item.replaceAll("linespace=", "data-linespace=")
     item = item.replaceAll("cover=", "src=")
-    console.log(item)
     // 处理出处标签
     item = item.replace("source name=", "source data-name=")
     // 处理错误的 style 位置
@@ -245,6 +282,7 @@ function printXML(xml, type) {
     let msgHeader = xml.substring(xml.indexOf("<msg"), xml.indexOf("<item")) + "</msg>"
     msgHeader = msgHeader.replace("msg", "div")
     msgHeader = msgHeader.replace("m_resid=", "data-resid=")
+    msgHeader = msgHeader.replace("url=", "data-url=")
     let header = document.createElement("div")
     header.innerHTML = msgHeader
     // 处理特殊的出处
@@ -255,6 +293,49 @@ function printXML(xml, type) {
         div.dataset.id = header.children[0].dataset.resid
         div.style.cursor = "pointer"
     }
-    console.log(div)
+    if (header.children[0].dataset.url != undefined) {
+        // 有附带链接的 xml 消息
+        div.dataset.url = header.children[0].dataset.url
+        div.style.cursor = "pointer"
+    }
     return div.outerHTML
+}
+
+function printJSON(data, typeId) {
+    // <div class="msg-json">
+    //     <p>ケガレの唄 (秽之歌)</p>
+    //     <span>羽生まゐご/v flower</span>
+    //     <div style="background-image: url(http://p3.music.126.net/zGMkUpsKqG1qeNSDZwN0fg==/109951166503498637.jpg);"></div>
+    //     <div>
+    //         <img src="https://i.gtimg.cn/open/app_icon/00/49/50/85/100495085_100_m.png">
+    //             <span>网易云音乐</span>
+    //     </div>
+    // </div>
+    // 解析 JSON
+    let json = JSON.parse(data)
+    let body = json.meta[Object.keys(json.meta)[0]]
+    // App 信息
+    let package = json.app
+    let type = json.desc
+    let appid = json.extra.appid
+    
+    let name = body.tag == undefined ? body.title : body.tag
+    let icon = body.icon == undefined ? body.source_icon : body.icon
+
+    let title = body.title
+    let desc = body.desc
+
+    let preview = body.preview
+        if (preview != undefined && preview.indexOf("http") == -1) preview = "//" + preview
+
+    let url = body.qqdocurl == undefined ? body.jumpUrl : body.qqdocurl
+    // 构建 HTML
+    let html = '<div class="msg-json" onclick="xmlClick(this)" data-url="' + url + '">' +
+               '<p>' + title + '</p>' +
+               '<span>' + desc + '</span>' + 
+               '<div style="background-image: url(' + preview + ');"></div>' + 
+               '<div><img src="' + icon + '"><span>' + name + '</span></div>' +
+               '</div>'
+    // 返回
+    return html
 }

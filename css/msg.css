@@ -180,6 +180,82 @@
     margin-top: -7px;
 }
 
+.msg-link-view {
+    display: flex;
+    flex-direction: row;
+    background: #00000017;
+    border-radius: 7px;
+    margin-top: 7px;
+    padding: 10px;
+}
+.msg-link-view div:nth-child(1) {
+    width: 5px;
+    background: var(--color-main);
+    border-radius: 5px;
+    margin-right: 7px;
+}
+.msg-link-view div:nth-child(2) {
+    width: 50%;
+    min-height: 5rem;
+    background-position: center;
+    background-size: cover;
+    border-radius: 7px;
+    margin-right: 7px;
+}
+.msg-link-view div:nth-child(3) {
+    display: flex;
+    flex-direction: column;
+}
+.msg-link-view div:nth-child(3) p {
+    font-weight: bold;
+    margin-bottom: 0;
+}
+.msg-link-view div:nth-child(3) span {
+    font-size: 0.9rem;
+}
+.msg-link-view div:nth-child(3) span:nth-child(3) {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.msg-json {
+    cursor: pointer;
+}
+.msg-json > p {
+    font-weight: bold;
+    margin-bottom: 0;
+}
+.msg-json > span {
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+.msg-json > div:nth-child(3) {
+    width: 100%;
+    height: 15vh;
+    border-radius: 7px;
+    margin-top: 7px;
+    background-position: center;
+    background-size: cover;
+}
+.msg-json>div:nth-child(4) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: #00000017;
+    margin: 10px -10px -10px -10px;
+    padding: 5px;
+}
+.msg-json>div:nth-child(4) > img {
+    height: 1.1rem;
+    border-radius: 5px;
+    margin-left: 7px;
+}
+.msg-json>div:nth-child(4) > span {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-left: 7px;
+}
+
 @media (max-width: 992px) {
     .message-body {
         max-width: 100%;
