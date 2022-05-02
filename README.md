@@ -54,7 +54,7 @@
 
 ![连接 oicq](src/readme/QWL_connect.png)
 
-如果没有意外, QQ Web Lite 将开始加载好友列表并刷新消息:
+如果没有意外, Stapxs QQ Lite 将开始加载好友列表并刷新消息:
 
 ![结束](src/readme/QWL_end.png)
 
