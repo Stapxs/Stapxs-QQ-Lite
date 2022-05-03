@@ -705,6 +705,18 @@ select:focus {
     margin-top: 0 !important;
 }
 
+.link {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.link:before {
+    text-align: center;
+    content: '🔗';
+    color: transparent;
+    text-shadow: 0 0 0 var(--color-font-1);
+}
+
 /* 窄设备兼容 */
 @media (max-width: 992px) {
     .login-pan-card {

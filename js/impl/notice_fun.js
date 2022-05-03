@@ -10,6 +10,7 @@ function runJSON(json) {
     if(msg.echo != undefined) {
         // 触发事件
         switch(msg.echo) {
+            case "get_version_info": getBotInfo(msg.data); break                                            // 后端信息
             case "get_friend_list": setFriendList(msg.data); break                                          // 获取好友列表
             case "get_group_list": setGroupList(msg.data); break                                            // 获取群列表
             case "get_login_info": setUserInfo(msg.data); break                                             // 获取用户信息
@@ -17,7 +18,7 @@ function runJSON(json) {
             case "get_cookies": window.ucookies = msg.data.cookies;break                                    // 获取 Cookies
             case "get_chat_history_fist": firstLoadingMsg(msg); break                                       // 首次获取历史消息（20）
             case "get_chat_history": loadingMoreMsg(msg); break                                             // 获取更多历史消息
-            case "send_msg": sendMsgBack(msg.data.message_id); break                                        // 发送消息回调
+            case "send_msg": sendMsgBack(msg); break                                                        // 发送消息回调
             case "get_forward_msg": printForwardMsg(msg.data); break                                        // 输出合并转发消息详情
             case "get_group_member_list": saveGroupMemberList(msg.data); break                              // 获取群成员列表
             case "delete_msg": deleteMsgBack(msg); break                                                    // 删除消息回调
@@ -64,6 +65,55 @@ function runJSON(json) {
 }
 
 // ----------------------------------------------------------------------------------
+
+function getBotInfo(msg) {
+    const body = document.getElementById("bot-info-body")
+    // 清空状态
+    body.innerHTML = '<span id="bot-info" style="margin-bottom: 5px;"></span><span id = "onebot-info" style = "color: var(--color-font-1);" ></span>'
+    document.getElementById("not-allow-info").style.display = "block"
+    // 加载
+    document.getElementById("backside-info").style.display = "block"
+    document.getElementById("bot-info").innerHTML = msg.app_name.toUpperCase() + "<span style='margin-left: 10px;color: var(--color-font-2);'>" + msg.app_version + "</span>"
+    document.getElementById("onebot-info").innerText = "OneBot：" + msg.protocol_version
+    let span = document.createElement("span")
+    span.style.color = "var(--color-font-1)"
+    switch(msg.app_name) {
+        case "oicq": {
+            document.getElementById("not-allow-info").style.display = "none"
+            span.innerHTML = "仓库信息：" + "<a class='link' src='" + msg.homepage + "'>查看仓库</a>"
+            body.appendChild(span)
+            span = document.createElement("span")
+            span.style.color = "var(--color-font-1)"
+            span.innerText = "作者：" + msg.author
+            body.appendChild(span)
+            span = document.createElement("span")
+            span.style.color = "var(--color-font-1)"
+            span.innerText = "程序引擎：nodejs " + msg.engines.node
+            body.appendChild(span)
+            span = document.createElement("span")
+            span.style.color = "var(--color-font-1)"
+            span.innerText = "程序入口：" + msg.main
+            body.appendChild(span)
+            break
+        }
+        case "go-cqhttp": {
+            document.getElementById("bot-icon").innerHTML = "<img src='https://user-images.githubusercontent.com/25968335/120111974-8abef880-c139-11eb-99cd-fa928348b198.png' style='width: calc(70% - 20px);margin-left: 20px;border-radius: 7px;'>"
+            document.getElementById("not-allow-info").children[0].innerText = "您使用了 GO-CQHTTP，但是我们并不完全支持它。你将无法加载历史消息同时也无法完美的显示消息，唯一可以正常使用的是发送消息功能。"
+            span = document.createElement("span")
+            span.style.color = "var(--color-font-1)"
+            span.innerText = "程序引擎：" + msg.runtime_version
+            body.appendChild(span)
+            span = document.createElement("span")
+            span.style.color = "var(--color-font-1)"
+            span.innerText = "代码版本：" + msg.plugin_version
+            body.appendChild(span)
+            span.style.color = "var(--color-font-1)"
+            span.innerText = "启动目录：" + msg.coolq_directory
+            body.appendChild(span)
+            break
+        }
+    }
+}
 
 function deleteMsgBack(msg) {
     if(msg.status == "failed") {
@@ -174,16 +224,24 @@ function loadingMoreMsg(msg) {
 }
 
 // 发送消息回调
-function sendMsgBack(msgId) {
-    if(msgId != undefined) {
-        setTimeout(() => {
-            // 请求消息内容
-            sendWs(createAPI(
-                "get_msg",
-                {"message_id":msgId},
-                "get_send_msg_" + msgId + "_0"
-            ))
-        }, 500)
+function sendMsgBack(msg) {
+    if (msg.data != undefined) {
+        // 请求消息内容
+        sendWs(createAPI(
+            "get_msg",
+            { "message_id": msg.data.message_id },
+            "get_send_msg_" + msg.data.message_id + "_0"
+        ))
+    } else if (msg.status == "failed") {
+        switch (msg.error.code) {
+            case 120: {
+                // 被禁言
+                setStatue("err", "您已被禁言，无法发送消息。")
+                document.getElementById("send-box").disabled = true
+                document.getElementById("send-box").placeholder = "禁言中 ……"
+                break
+            }
+        }
     }
 }
 
@@ -220,26 +278,38 @@ function updateMsg(msg) {
             showNotice(msg)
         }
         // 如果当前消息并没有打开，则置顶列表项（对群组无效）
-        list.insertBefore(findBodyInList(null, id), list.firstChild)
-        setTimeout(() => {
-            findBodyInList(null, id).style.transform = "translate(0, 0)"
-        }, 10)
-        setTimeout(() => {
-            findBodyInList(null, id).children[0].style.transform = "scaleY(0.5)"
-            findBodyInList(null, id).style.transform = "translate(0, 0)"
-        }, 300)
+        for (let i = 0; i < list.children.length; i++) {
+            if (list.children[i].dataset.alwayTop != "true") {
+                list.insertBefore(findBodyInList(null, id), list.children[i])
+                setTimeout(() => {
+                    findBodyInList(null, id).style.transform = "translate(0, 0)"
+                }, 10)
+                setTimeout(() => {
+                    findBodyInList(null, id).children[0].style.transform = "scaleY(0.5)"
+                    findBodyInList(null, id).style.transform = "translate(0, 0)"
+                }, 300)
+                break
+            }
+        }
     } else {
         if(window.optCookie["opt_group_no_up"] == undefined || window.optCookie["opt_group_no_up"] == "false") {
             // 如果是群组，置顶到最新的置顶消息下面，不提醒
             findBodyInList(null, id).style.transform = "translate(0, -50%)"
-            // 寻找最新的置顶消息
-            for(let i=0; i<list.children.length; i++) {
-                if(list.children[i].children[0].style.transform !== "scaleY(0.5)") {
-                    list.insertBefore(findBodyInList(null, id), list.children[i])
-                    setTimeout(() => {
-                        findBodyInList(null, id).style.transform = "translate(0, 0)"
-                    }, 10)
-                    break
+            if (findBodyInList(null, id).dataset.alwayTop == "true") {
+                list.insertBefore(findBodyInList(null, id), list.firstChild)
+                setTimeout(() => {
+                    findBodyInList(null, id).style.transform = "translate(0, 0)"
+                }, 10)
+            } else {
+                // 寻找最新的置顶消息
+                for(let i=0; i<list.children.length; i++) {
+                    if (list.children[i].children[0].style.transform !== "scaleY(0.5)" && list.children[i].dataset.alwayTop != "true") {
+                        list.insertBefore(findBodyInList(null, id), list.children[i])
+                        setTimeout(() => {
+                            findBodyInList(null, id).style.transform = "translate(0, 0)"
+                        }, 10)
+                        break
+                    }
                 }
             }
         }
@@ -272,6 +342,19 @@ function runNotice(msg) {
             if(window.notices[msg.message_id] != null && window.notices[msg.message_id] != undefined) {
                 window.notices[msg.message_id].close()
             }
+            break
+        }
+        case "ban": {
+            if (msg.group_id == document.getElementById("msg-hander").dataset.id) {
+                if (document.getElementById("send-box").disabled == true) {
+                    document.getElementById("send-box").disabled = false
+                    document.getElementById("send-box").placeholder = ""
+                } else {
+                    document.getElementById("send-box").disabled = true
+                    document.getElementById("send-box").placeholder = "禁言中 ……"
+                }
+            }
+            break
         }
     }
 }

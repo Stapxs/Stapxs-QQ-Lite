@@ -53,38 +53,43 @@ function printMsg(obj, addTo, addAt) {
             html = html.replaceAll("{hidden}", user_id==window.login_id?"display:none;":"")
             html = html.replace("{mine}", user_id==window.login_id?"message-mine":"")
             html = html.replace("{raw}", obj.raw_message)
-            // 遍历消息体
+            // 处理消息体
             let body = ""
-            for(let i=0; i<obj.message.length; i++) {
-                let nowBreak = false
-                switch(obj.message[i].type) {
-                    case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
-                    case "text": body = body + printText(obj.message[i].data.text, obj.message_id); break
-                    case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, user_id); break
-                    case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
-                    case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
-                    case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, user_id); break
-                    case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
-                    case "json": body = body + printJSON(obj.message[i].data.data, obj.message[i].data.type); break
-                    case "record": body = body + printRecord(obj.message[i].data.url); break
-                    case "video": body = body + printVideo(obj.message[i].data.url); break
-                    case "file": body = body + printFile(obj.message[i].data); break
-                    case "pass": break
-                    default: {
-                        nowBreak = true
-                        body = "<a class='msg-unknow'>（不支持的消息：" + obj.message[i].type + "）</a>"
+            if(typeof obj.message == "string") {
+                body = printText(obj.message, obj.message_id)
+            } else {
+            // 遍历消息体
+                for(let i=0; i<obj.message.length; i++) {
+                    let nowBreak = false
+                    switch(obj.message[i].type) {
+                        case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
+                        case "text": body = body + printText(obj.message[i].data.text, obj.message_id); break
+                        case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, user_id); break
+                        case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
+                        case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
+                        case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, user_id); break
+                        case "xml": body = body + printXML(obj.message[i].data.data, obj.message[i].data.type); break
+                        case "json": body = body + printJSON(obj.message[i].data.data, obj.message[i].data.type); break
+                        case "record": body = body + printRecord(obj.message[i].data.url); break
+                        case "video": body = body + printVideo(obj.message[i].data.url); break
+                        case "file": body = body + printFile(obj.message[i].data); break
+                        case "pass": break
+                        default: {
+                            nowBreak = true
+                            body = "<a class='msg-unknow'>（不支持的消息：" + obj.message[i].type + "）</a>"
+                        }
                     }
-                }
-                if(nowBreak) {
-                    break
+                    if(nowBreak) {
+                        break
+                    }
                 }
             }
             html = html.replace("{body}", body)
             div.innerHTML = html
-            div.oncontextmenu = function()                  { return false; }                               // 阻止右击菜单
+            div.oncontextmenu = function()                  { return showMsgMenu(); }                       // 阻止右击菜单
             div.onmousedown = function()                    { msgMouseDown(div, event); }                   // 右击判定
             div.addEventListener("touchstart", function()   { msgTouchDown(div, event); }, false)           // 触屏判定（开始）
-            div.addEventListener("touchend", function()     { msgTouchEnd(div, event); }, false)                 // 触屏判定（结束）
+            div.addEventListener("touchend", function()     { msgTouchEnd(div, event); }, false)            // 触屏判定（结束）
             div.addEventListener("touchmove", function()    { msgTouchMove(div, event); }, false)           // 触屏判定（移动）
             // 添加到消息列表内
             if(addAt == undefined) {
@@ -165,12 +170,14 @@ function printText(txt, msgid) {
                 let site = res['og:site_name'] == undefined ? "" : res['og:site_name']
                 let title = res['og:title'] == undefined ? "" : res['og:title']
                 let desc = res['og:description'] == undefined ? "" : res['og:description']
-                div.innerHTML = '<div></div><div style="background-image: url(' + res['og:image'] + ');' + hasImg + '"></div>' +
+                div.innerHTML = '<div></div><img alt="预览图片" title="查看图片" onclick="openImgView(\'' + res['og:image'] + '\');" onerror="this.style.display=\'none\';" src="' + res['og:image'] + '" style="' + hasImg + '">' +
                     '<div><p>' + site + '</p><span href="' + res['og:url'] + '">' + title + '</span><span>' + desc + '</span></div>'
                 // 添加到消息内
                 document.getElementById("link-" + msgid).parentNode.appendChild(div)
             }
         })
+        // 将所有链接替换为可点击的链接
+        txt = txt.replaceAll(reg, '<a href="$&" target="_blank">$&</a>')
         return "<span id='link-" + msgid + "' style='overflow-wrap: anywhere;'>" + txt + "</span>"
     }
     return "<span style='overflow-wrap: anywhere;'>" + txt + "</span>"
@@ -198,9 +205,9 @@ function printImg(url, num, sender) {
         loaded = "imgLoaded()"
     }
      if(num == 1) {
-        return "<img alt='群图片' onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+         return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      } else {
-        return "<img alt='群图片' onload='" + loaded + "' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+         return "<img title='查看图片' alt='群图片' onload='" + loaded + "' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      }
 }
 
@@ -213,7 +220,7 @@ function printReplay(msgid, rawid) {
     const msg = findMsgInList(msgid)
     if(msg != null) {
         const svg = String.raw`<svg style="height: 1rem;display: inline-block;margin-right: 5px;fill: var(--color-font-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M8.31 189.9l176-151.1c15.41-13.3 39.69-2.509 39.69 18.16v80.05C384.6 137.9 512 170.1 512 322.3c0 61.44-39.59 122.3-83.34 154.1c-13.66 9.938-33.09-2.531-28.06-18.62c45.34-145-21.5-183.5-176.6-185.8v87.92c0 20.7-24.31 31.45-39.69 18.16l-176-151.1C-2.753 216.6-2.784 199.4 8.31 189.9z"></path></svg>`
-        return "<div class='msg-replay' onclick='jumpToMsg(\"" + msgid + "\")'>" + svg +  msg.dataset.raw + "</div>"
+        return "<div class='msg-replay' onclick='jumpToMsg(\"" + msgid + "\")'>" + svg + "<span>" + msg.dataset.raw + "</span></div>"
     } else {
         // 如果消息队列里没有这个消息，尝试向服务器获取此条消息
         sendWs(createAPI(
@@ -286,15 +293,30 @@ function printXML(xml, type) {
     let header = document.createElement("div")
     header.innerHTML = msgHeader
     // 处理特殊的出处
-    const source = div.children[1].dataset.name
-    if(source == "聊天记录") {
-        // 合并转发消息
-        div.dataset.type = "forward"
-        div.dataset.id = header.children[0].dataset.resid
-        div.style.cursor = "pointer"
+    let sourceBody = ""
+    for(let i=0; i<div.children.length; i++) {
+        if(div.children[i].nodeName == "SOURCE") {
+            sourceBody = div.children[i]
+        }
     }
+    const source = sourceBody.dataset.name
+    showLog("b573f7", "fff", "UI", "XML 解析类型：" + source)
+    switch(source) {
+        case "聊天记录": {
+            // 合并转发消息
+            div.dataset.type = "forward"
+            div.dataset.id = header.children[0].dataset.resid
+            div.style.cursor = "pointer"
+            break
+        }
+        case "群投票": {
+            // 群投票
+            return "<a class='msg-unknow'>（不支持显示的 XML：" + source + "）</a>"
+            break
+        }
+    }
+    // 附带链接的 xml 消息处理
     if (header.children[0].dataset.url != undefined) {
-        // 有附带链接的 xml 消息
         div.dataset.url = header.children[0].dataset.url
         div.style.cursor = "pointer"
     }
@@ -315,10 +337,6 @@ function printJSON(data, typeId) {
     let json = JSON.parse(data)
     let body = json.meta[Object.keys(json.meta)[0]]
     // App 信息
-    let package = json.app
-    let type = json.desc
-    let appid = json.extra.appid
-    
     let name = body.tag == undefined ? body.title : body.tag
     let icon = body.icon == undefined ? body.source_icon : body.icon
 
@@ -333,7 +351,7 @@ function printJSON(data, typeId) {
     let html = '<div class="msg-json" onclick="xmlClick(this)" data-url="' + url + '">' +
                '<p>' + title + '</p>' +
                '<span>' + desc + '</span>' + 
-               '<div style="background-image: url(' + preview + ');"></div>' + 
+               '<img src="' + preview + '">' + 
                '<div><img src="' + icon + '"><span>' + name + '</span></div>' +
                '</div>'
     // 返回

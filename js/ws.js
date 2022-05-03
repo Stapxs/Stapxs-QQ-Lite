@@ -5,13 +5,16 @@
 
 window.ws = null
 
-function runWs() {
-
+function runWs(protocol) {
     setStatue("load", "正在尝试连接到服务 ……")
     const address = document.getElementById("sev_address").value
     window.token = document.getElementById("access_token").value
 
-    window.ws = new WebSocket("ws://" + address + "?access_token=" + token)
+    if (protocol == undefined) {
+        protocol = "ws://"
+    }
+    showLog("4a93c3", "fff", "WS", "尝试使用 " + protocol + " 连接 ……")
+    window.ws = new WebSocket(protocol + address + "?access_token=" + token)
 
     window.ws.onopen = function (evt) {
         setStatue("ok", "成功连接 ……")
@@ -26,6 +29,8 @@ function runWs() {
         document.getElementById("msg-body").innerHTML = ""
         // 开始加载数据
         loadInfo()
+        // 初次连接 tag
+        window.isFistUse = false
     }
 
     window.ws.onmessage = function (evt) {
@@ -47,6 +52,15 @@ function runWs() {
         // 隐藏账号设置
         document.getElementById("opt-account-main").style.display = "none"
         document.getElementById("opt-account-tip").style.display = "block"
+        // 如果是由于协议连接失败 ……
+        if(window.isFistUse == undefined || window.isFistUse == true || window.tryAll == undefined) {
+            window.tryAll = true
+            if(protocol == "ws://") {
+                runWs("wss://")
+            } else {
+                runWs("ws://")
+            }
+        }
     }
 }
 
@@ -97,27 +111,35 @@ function showNotice(msg) {
 
 // 加载基础数据
 function loadInfo() {
-    // 加载用户信息
+    // 加载 Bot 信息
     sendWs(createAPI(
-        "get_login_info",
+        "get_version_info",
         null, null
     ))
-    sendWs(createAPI(
-        "get_csrf_token",
-        null, null
-    ))
-    // 清空列表
-    document.getElementById("friend-list-body").innerHTML = ""
-    // 加载好友列表
-    sendWs(createAPI(
-        "get_friend_list",
-        null, null
-    ))
-    // 加载群列表
-    sendWs(createAPI(
-        "get_group_list",
-        null, null
-    ))
+    console.log(window.isFistUse)
+    if (window.isFistUse == undefined || window.isFistUse == true) {
+        // 加载用户信息
+        sendWs(createAPI(
+            "get_login_info",
+            null, null
+        ))
+        sendWs(createAPI(
+            "get_csrf_token",
+            null, null
+        ))
+        // 清空列表
+        document.getElementById("friend-list-body").innerHTML = ""
+        // 加载好友列表
+        sendWs(createAPI(
+            "get_friend_list",
+            null, null
+        ))
+        // 加载群列表
+        sendWs(createAPI(
+            "get_group_list",
+            null, null
+        ))
+    }
 }
 
 // ----------------------------------------

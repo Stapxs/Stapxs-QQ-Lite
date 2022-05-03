@@ -110,14 +110,12 @@ function runConnect() {
 }
 
 function btnChangeColor() {
-    const botton = document.getElementById("color-changer")
+    const botton = document.getElementById("opt_dark")
     if(botton.dataset.color == "dark") {
-        document.getElementById("color-changer").dataset.color = "light"
-        document.getElementById("color-changer").innerHTML = String.raw`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1S202.1 351.1 256 351.1s95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347L446.1 255.1l63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7l-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89L164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6L12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256l-63.15 91.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7l19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109l109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1c0-70.69 57.31-127.1 127.1-127.1s127.1 57.3 127.1 127.1C383.1 326.7 326.7 383.1 256 383.1z"/></svg>`
+        botton.dataset.color = "light"
         changeColor("light")
     } else {
-        document.getElementById("color-changer").dataset.color = "dark"
-        document.getElementById("color-changer").innerHTML = String.raw`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M32 256c0-123.8 100.3-224 223.8-224c11.36 0 29.7 1.668 40.9 3.746c9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3c9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480C132.1 480 32 379.6 32 256z"/></svg>`
+        botton.dataset.color = "dark"
         changeColor("dark")
     }
 }
@@ -131,14 +129,10 @@ function onListClick(sender) {
     // 去除未读标记
     if(sender.dataset.alwayTop != "true") {
         sender.children[0].style.transform = "scaleY(0)"
-        // 刷新置顶
-        if(window.cookie["top_bodys"] != undefined) {
-            const ids = window.cookie["top_bodys"].split("&")
-            for(let i=0; i<ids.length; i++) {
-                setTop(ids[i])
-            }
-        }
     }
+    // 去除禁言状态
+    document.getElementById("send-box").disabled = false
+    document.getElementById("send-box").placeholder = ""
     // 清空群员列表
     window.nowGroupMumber = null
     // 显示顶栏
@@ -257,11 +251,6 @@ function sendMsg() {
         const type = document.getElementById("msg-hander").dataset.type
         const id = document.getElementById("msg-hander").dataset.id
         // 构建消息体
-        if(document.getElementById("replyer").dataset.id != undefined && document.getElementById("replyer").dataset.id != "") {
-            // 构建回复 CQ 码
-            msg = "[CQ:reply,id=" + document.getElementById("replyer").dataset.id + "]" + msg
-            cancelReply()
-        }
         if(window.cacheImg != undefined && window.cacheImg != "") {
             // 构建图片 CQ 码
             msg  = "[CQ:image,file=base64://" + window.cacheImg.substring(window.cacheImg.indexOf("base64") + 7)  + "]" + msg
@@ -280,6 +269,11 @@ function sendMsg() {
                 input.onchange = function() { selectImgFile() }
                 document.getElementById("btn-img").append(input)
             }, 100)
+        }
+        if (document.getElementById("replyer").dataset.id != undefined && document.getElementById("replyer").dataset.id != "") {
+            // 构建回复 CQ 码
+            msg = "[CQ:reply,id=" + document.getElementById("replyer").dataset.id + "]" + msg
+            cancelReply()
         }
         if(msg != "" && msg != undefined && msg != null && type != undefined && id != undefined && window.connect) {
             // 构建 JSON
@@ -423,6 +417,13 @@ function jumpToMsg(id) {
     }
 }
 
+function showMsgMenu() {
+    if (window.optCookie["opt_clouse_cmenu"] == undefined || window.optCookie["opt_clouse_cmenu"] == "false") {
+        return false
+    }
+    return true
+}
+
 function msgMouseDown(sender, e) {
     showLog("b573f7", "fff", "UI", "消息被点击：" + e.which)
     // 单击事件
@@ -438,10 +439,12 @@ function msgMouseDown(sender, e) {
     }
     // 右击事件
     else if(e.which == 3) {
-        // 阻止点击传递
-        e.stopPropagation()
-        // 显示菜单
-        showMsgMenu(sender)
+        if (window.optCookie["opt_clouse_cmenu"] == undefined || window.optCookie["opt_clouse_cmenu"] == "false") {
+            // 阻止点击传递
+            e.stopPropagation()
+            // 显示菜单
+            showMsgMenu(sender)
+        }
     }
 }
 
@@ -744,7 +747,7 @@ function moYu() {
 function xmlClick(sender) {
     const type = sender.dataset.type
     // 如果存在 url 项，优先打开 url
-    if(sender.dataset.url != undefined && sender.dataset.url != "undefined") {
+    if(sender.dataset.url != undefined && sender.dataset.url != "undefined" && sender.dataset.url != "") {
         window.open(sender.dataset.url, "_blank")
         return
     }
@@ -904,6 +907,7 @@ function setTop(id, statue) {
             upBody.style.background = "transparent"
             upBody.children[0].style.transform = "scaleY(0)"
             upBody.children[0].style.opacity = "1"
+            upBody.dataset.alwayTop = "false"
         }
     }
 }
