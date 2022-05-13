@@ -1,4 +1,4 @@
-window.version = 'v1.29'
+window.version = 'v1.291'
 document.getElementById("opt-version").innerText = window.version
 // 自动暗黑模式标志
 window.is_auto_dark = true
@@ -119,6 +119,11 @@ if(x != "") {
                 body.scrollTop = body.scrollHeight
             })
     }
+}
+// 看看日期
+const datey = new Date()
+if(datey.getMonth === 5 && datey.getDate() === 1) {
+    document.getElementById("opt_debug_fk").click()
 }
 // 覆写粘贴事件，提供粘贴图片的功能
 document.getElementById("send-box").addEventListener("paste", function(e) {

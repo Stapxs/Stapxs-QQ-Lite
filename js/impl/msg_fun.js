@@ -152,7 +152,7 @@ function printText(txt, msgid) {
         fetch('https://api.stapxs.cn/Page-Info?address=' + url)
         .then(res => res.json())
         .then(res => {
-            if (res.status == undefined) {
+            if (res.status == undefined && Object.keys(res).length > 0) {
                 showLog("b573f7", "fff", "UI", "获取链接预览成功：" + res['og:title'])
                 // 创建额外的链接解析部分
                 // <div class="msg-link-view">
@@ -174,6 +174,8 @@ function printText(txt, msgid) {
                     '<div><p>' + site + '</p><span href="' + res['og:url'] + '">' + title + '</span><span>' + desc + '</span></div>'
                 // 添加到消息内
                 document.getElementById("link-" + msgid).parentNode.appendChild(div)
+            } else {
+                showLog("b573f7", "fff", "UI", "获取链接预览失败：" + res)
             }
         })
         // 将所有链接替换为可点击的链接

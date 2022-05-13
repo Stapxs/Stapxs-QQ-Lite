@@ -148,7 +148,7 @@
                             </label>
                             <form id="send-box-form" style="display: flex;flex: 1;height: 60px;margin-left: 20px;" onsubmit="return sendMsg();">
                                 <div class="ss-card msg-box">
-                                    <input id="send-box" type="text" autocomplete="off" oninput="mainInputChange(this)" onblur="mainInputOut(this)">
+                                    <input id="send-box" type="text" autocomplete="off" oninput="mainInputChange(this)" onblur="mainInputOut(this)" ondrop="mainInputDrop(event, this)">
                                 </div>
                                 <button class="ss-card" title="发送" style="width: 60px;height: 60px;border: 0;margin-left: 20px;background: var(--color-main);">
                                     <svg style="fill: var(--color-font-r);width: 20px;height: 20px;margin-top: -4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M511.6 36.86l-64 415.1c-1.5 9.734-7.375 18.22-15.97 23.05c-4.844 2.719-10.27 4.097-15.68 4.097c-4.188 0-8.319-.8154-12.29-2.472l-122.6-51.1l-50.86 76.29C226.3 508.5 219.8 512 212.8 512C201.3 512 192 502.7 192 491.2v-96.18c0-7.115 2.372-14.03 6.742-19.64L416 96l-293.7 264.3L19.69 317.5C8.438 312.8 .8125 302.2 .0625 289.1s5.469-23.72 16.06-29.77l448-255.1c10.69-6.109 23.88-5.547 34 1.406S513.5 24.72 511.6 36.86z"/></svg>
@@ -238,6 +238,40 @@
             <div id="menuCopy">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M336 64h-53.88C268.9 26.8 233.7 0 192 0S115.1 26.8 101.9 64H48C21.5 64 0 85.48 0 112v352C0 490.5 21.5 512 48 512h288c26.5 0 48-21.48 48-48v-352C384 85.48 362.5 64 336 64zM192 64c17.67 0 32 14.33 32 32c0 17.67-14.33 32-32 32S160 113.7 160 96C160 78.33 174.3 64 192 64zM272 224h-160C103.2 224 96 216.8 96 208C96 199.2 103.2 192 112 192h160C280.8 192 288 199.2 288 208S280.8 224 272 224z"/></svg>
                 <a>复制</a>
+            </div>
+        </div>
+    </div>
+    <div id="qe" style="position: absolute;width: 100%;height: 100%;display: none;transition: opacity .3s;">
+        <div style="position: absolute;width: 100%;height: 100%;background: var(--color-shader);opacity: 0.6;"></div>
+        <div class="qq-err-card ss-card">
+            <div>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAADJViUEAAAC5klEQVQokYVSW0hTcRz+1s6Oc8zlbbp5mZa3bkKunA9BWShF9dAVIozCblAUpg/1EGWQDz0IdlG0Rwm0FF+UrGYXL9O0TJtrpltW8zQ1reVmx7Odc/zHDGUK0Q8++P//fB/fn+/3gRCyBMYWY44gCNTCm9VqXeccc8Ys5/mxAgHT19+nf/ykeU/Pmx7D0NDQmvaO9q0+n5eurKo6SwhZwvUPFXjxeDzKka+fC2rrawtaTc8hCiLy887AMvgBPM+X0DTt+6fYkGnocf12wdJkAiuKkGEO1fXV2Je7HxRFCf9xdqsShHEcP5SL1M3Z4H570PasAZSEX677O4EBlN8qLG2uuEKc9gHi8MM2QJiPb0nxyRzS3/9O/8/AzOY+vdX48EhaVjxA3sBuacME0wlVqAVbDPEou1NaNDvLKgKN58VPnj7efb6o8LYuIygmWtuKlcouEKYDStIJidCBjGwbbDbb0QuFBXfHnd/iFsTScHXExV+u6dDLhZdKxxxDmqhg03rW9R1MjwMS2RgI/wX2uhFEOrVIDlFlNJk6VGp11KQmLo6hDh84VK9Wq7/70wwLTx2echgxJ7IQpn1wjUohlLHQjwrYfM6A0UcPsIqbOzW9c1fz/Le1Wq1zYQ0Op0c5bvdh0sFD4iNwmzhkMiJUCgX7M3nt2UGZwhE+/QOu0luXea9XvqQ1dcZX2e7PAqZGefi4OQQ5BNASQFSq3LoTp++rExK/iAA0YUoDY7FsWNzze3P/RsbljhyR05BLZqALksEtErgJQfDkuEYKYIIAQTQNb2Q0pErlzKJze/vLHYkRsXFceh7YGSkSgqVQ6WgMBqswpolnWm8W35gVgZC8fAyERZfFJiXZ551FUaRMXa+zKssr0lNS0oYf1mzKq2lpOMjGKthtu7O6Pa0vtqut5mu61UloEWX3jl2/WiL15+RvCs/zVHd3tyGwPRzHyb0cJ/effRwn/9Tbq3/W2Lh3lmUV8xxC8AeV8pvsqY2H6AAAAABJRU5ErkJggg==">
+                <span>错误报告<span>(这是彩蛋)</span></span>
+                <svg onclick="closeQe(this)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full"
+                    width="76" height="76" viewBox="0 0 76.00 76.00" enable-background="new 0 0 76.00 76.00" xml:space="preserve">
+                    <path fill-opacity="1" stroke-width="0.2" stroke-linejoin="round"
+                        d="M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z " />
+                </svg>
+            </div>
+            <div>
+                <div>
+                    <img src="data:image/png;base64,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">
+                    <span>Stapxs QQ Lite遇到错误，给您带来不便，我们深表庆幸。</span>
+                </div>
+                <hr>
+                <div>
+                    <span>我们已经产生了相关错误报告（报告中应该不包含你的任何隐私信息），希望您发送此报告给我们以帮助改善Stapxs QQ Lite的质量。</span>
+                    <div><input type="checkbox" checked><span>发送错误报告(S)</span></div>
+                    <textarea placeholder="这个问题是任何出现的？"></textarea>
+                    <div class="qq-err-card-err"><span>错误号：</span><span style="flex: 1;text-align: center;">F6ED4FJDB6SKSZ7CG6Z9A07GDZ</span><a><span>▲ </span><span>错误信息</span></a></div>
+                    <div class="qq-err-card-err"><span>错误模块：</span><span>function printMsg()</span></div>
+                    <hr>
+                    <div style="margin-bottom: -5px;">
+                        <input type="checkbox" checked><span>刷新页面(R)</span>
+                        <div style="flex: 1;"></div>
+                        <button onclick="location.reload()">确定(O)</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -484,8 +518,8 @@
                     </div>
                     <div style="align-items: flex-start;display: flex;">
                         <div style="display: flex;flex-direction: column;flex:1;" id="bot-info-body"></div>
-                        <div id="bot-icon" style="text-align: right;">
-                            <svg style="width: 20%;fill: var(--color-font-1);margin-left: 20px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M9.375 233.4C3.375 239.4 0 247.5 0 256v128c0 8.5 3.375 16.62 9.375 22.62S23.5 416 32 416h32V224H32C23.5 224 15.38 227.4 9.375 233.4zM464 96H352V32c0-17.62-14.38-32-32-32S288 14.38 288 32v64H176C131.8 96 96 131.8 96 176V448c0 35.38 28.62 64 64 64h320c35.38 0 64-28.62 64-64V176C544 131.8 508.3 96 464 96zM256 416H192v-32h64V416zM224 296C201.9 296 184 278.1 184 256S201.9 216 224 216S264 233.9 264 256S246.1 296 224 296zM352 416H288v-32h64V416zM448 416h-64v-32h64V416zM416 296c-22.12 0-40-17.88-40-40S393.9 216 416 216S456 233.9 456 256S438.1 296 416 296zM630.6 233.4C624.6 227.4 616.5 224 608 224h-32v192h32c8.5 0 16.62-3.375 22.62-9.375S640 392.5 640 384V256C640 247.5 636.6 239.4 630.6 233.4z"/></svg>
+                        <div id="bot-icon" style="width: 20%;text-align: right;margin-left: 20px">
+                            <svg style="fill: var(--color-font-1);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M9.375 233.4C3.375 239.4 0 247.5 0 256v128c0 8.5 3.375 16.62 9.375 22.62S23.5 416 32 416h32V224H32C23.5 224 15.38 227.4 9.375 233.4zM464 96H352V32c0-17.62-14.38-32-32-32S288 14.38 288 32v64H176C131.8 96 96 131.8 96 176V448c0 35.38 28.62 64 64 64h320c35.38 0 64-28.62 64-64V176C544 131.8 508.3 96 464 96zM256 416H192v-32h64V416zM224 296C201.9 296 184 278.1 184 256S201.9 216 224 216S264 233.9 264 256S246.1 296 224 296zM352 416H288v-32h64V416zM448 416h-64v-32h64V416zM416 296c-22.12 0-40-17.88-40-40S393.9 216 416 216S456 233.9 456 256S438.1 296 416 296zM630.6 233.4C624.6 227.4 616.5 224 608 224h-32v192h32c8.5 0 16.62-3.375 22.62-9.375S640 392.5 640 384V256C640 247.5 636.6 239.4 630.6 233.4z"/></svg>
                         </div>
                     </div>
                 </div>

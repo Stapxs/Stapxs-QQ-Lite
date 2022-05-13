@@ -232,7 +232,7 @@
 .msg-link-view div:nth-child(1) {
     width: 5px;
     min-width: 5px;
-    background: var(--color-main);
+    background: #00000030;
     border-radius: 5px;
     margin-right: 7px;
 }
@@ -286,6 +286,7 @@
     align-items: center;
     background: #00000017;
     margin: 10px -10px -10px -10px;
+    border-radius: 0 0 7px 7px;
     padding: 5px;
 }
 .msg-json>div:nth-child(4) > img {

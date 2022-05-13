@@ -324,32 +324,7 @@ function selectImg() {
 
 function selectImgFile() {
     const blob = document.getElementById("choice-pic").files[0]
-    if(blob.type.indexOf("image/") >= 0 && blob.size != 0) {
-        setStatue("load", "正在处理图片 ……")
-        if(blob.size < 3145728) {
-            // 转换为 Base64
-            var reader = new FileReader();
-            reader.readAsDataURL(blob); 
-            reader.onloadend = function() {
-                var base64data = reader.result
-                // 将按钮改为选中状态
-                document.getElementById("btn-img").style.background = "var(--color-main)"
-                document.getElementById("btn-img").children[1].style.fill = "var(--color-font-r)"
-                document.getElementById("btn-img").title = "取消发送图片"
-                // 记录图片信息
-                window.cacheImg = base64data
-                // 设置标记
-                document.getElementById("btn-img").dataset.select = "true"
-                // 完成
-                setStatue("ok", "图片处理完成！")
-                // 删除 input
-                document.getElementById("btn-img").removeChild(document.getElementById("choice-pic"))
-            }
-        } else {
-            // 图片过大
-            setStatue("err", "图片过大！")
-        }
-    }
+    setSendPic(blob)
 }
 
 function showSelView(statue) {
@@ -999,6 +974,17 @@ function mainInputOut(sender) {
     }, 100)
 }
 
+function mainInputDrop(e, sender) {
+    // 拖拽文件
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    // 获取文件
+    if(files.length > 0) {
+        const blob = files[0];
+        setSendPic(blob)
+    }
+}
+
 function addAtStr(sender, id) {
     // 去除 at 文本
     sender.value = sender.value.substring(0, sender.value.lastIndexOf("@"))
@@ -1006,6 +992,16 @@ function addAtStr(sender, id) {
     sender.value += "[CQ:at,qq=" + id + "] "
     // 关闭菜单
     openSenderView(false, true)
+    // 将光标聚焦到输入框
+    document.getElementById("send-box").focus()
+}
+
+function closeQe(sender) {
+    const card = sender.parentNode.parentNode.parentNode
+    card.style.opacity = "0"
+    setTimeout(() => {
+        card.style.display = "none"
+    }, 300)
 }
 
 function changeOpt(sender) {
@@ -1045,5 +1041,34 @@ function changeOpt(sender) {
         document.cookie = cookie
     } else {
         showLog("ff5370", "fff", "ERR", "获取设置内容出错")
+    }
+}
+
+function setSendPic(blob) {
+    if(blob.type.indexOf("image/") >= 0 && blob.size != 0) {
+        setStatue("load", "正在处理图片 ……")
+        if(blob.size < 3145728) {
+            // 转换为 Base64
+            var reader = new FileReader();
+            reader.readAsDataURL(blob); 
+            reader.onloadend = function() {
+                var base64data = reader.result
+                // 将按钮改为选中状态
+                document.getElementById("btn-img").style.background = "var(--color-main)"
+                document.getElementById("btn-img").children[1].style.fill = "var(--color-font-r)"
+                document.getElementById("btn-img").title = "取消发送图片"
+                // 记录图片信息
+                window.cacheImg = base64data
+                // 设置标记
+                document.getElementById("btn-img").dataset.select = "true"
+                // 完成
+                setStatue("ok", "图片处理完成！")
+                // 删除 input
+                document.getElementById("btn-img").removeChild(document.getElementById("choice-pic"))
+            }
+        } else {
+            // 图片过大
+            setStatue("err", "图片过大！")
+        }
     }
 }
