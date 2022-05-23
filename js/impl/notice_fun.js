@@ -354,7 +354,7 @@ function runNotice(msg) {
             break
         }
         case "ban": {
-            if (msg.group_id == document.getElementById("msg-hander").dataset.id) {
+            if (msg.group_id == document.getElementById("msg-hander").dataset.id && msg.user_id == window.login_id) {
                 if (document.getElementById("send-box").disabled == true) {
                     document.getElementById("send-box").disabled = false
                     document.getElementById("send-box").placeholder = ""

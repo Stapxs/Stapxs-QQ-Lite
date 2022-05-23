@@ -40,12 +40,15 @@ function runWs(protocol) {
 
     window.ws.onclose = function (evt) {
         showLog("ff5370", "fff", "WS", "连接关闭：" + evt.code)
-        setStatue("err", "连接关闭：" + evt.code)
+        setStatue("err", "连接关闭：" + evt.code, true)
         window.connect = false
         // 显示底栏
-            document.getElementById("footer").style.display = "block"
-            document.getElementById("main-view").style.height  = "calc(100vh - 110px)"
-            document.getElementById("forward-msg").style.height  = "calc(100vh - 150px)"
+        document.getElementById("footer").style.display = "block"
+        document.getElementById("main-view").style.height = "calc(100vh - 110px)"
+        document.getElementById("forward-msg").style.height = "calc(100vh - 150px)"
+        // 扩展视图
+        document.getElementById("main-body").className = "container-lg main-body"
+        document.getElementById("main-view").style.padding = "20px 0"
         setTimeout(() => {
             document.getElementById("footer").style.transform = "translate(0)"
         }, 100)
@@ -116,13 +119,13 @@ function loadInfo() {
         "get_version_info",
         null, null
     ))
+    // 加载用户信息
+    sendWs(createAPI(
+        "get_login_info",
+        null, null
+    ))
     console.log(window.isFistUse)
     if (window.isFistUse == undefined || window.isFistUse == true) {
-        // 加载用户信息
-        sendWs(createAPI(
-            "get_login_info",
-            null, null
-        ))
         sendWs(createAPI(
             "get_csrf_token",
             null, null

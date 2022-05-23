@@ -12,7 +12,7 @@ function showLog(bg, fg, head, info) {
 }
 
 // 设置状态消息
-function setStatue(type, msg) {
+function setStatue(type, msg, stay) {
     const body = document.getElementById("run-statue")
     const div = document.createElement("div")
     div.style.height = "0"
@@ -39,14 +39,25 @@ function setStatue(type, msg) {
     setTimeout(() => {
         div.style.height = "35px"
     }, 100)
-    setTimeout(() => {
-        div.style.height = "0"
-        div.style.opacity = "0"
-        div.style.margin = "0"
+    if (stay == true) {
+        div.onclick = function() { 
+            div.style.height = "0"
+            div.style.opacity = "0"
+            div.style.margin = "0"
+            setTimeout(() => {
+                body.removeChild(div)
+            }, 350)
+         }
+    } else {
         setTimeout(() => {
-            body.removeChild(div)
-        }, 350)
-    }, 1500)
+            div.style.height = "0"
+            div.style.opacity = "0"
+            div.style.margin = "0"
+            setTimeout(() => {
+                body.removeChild(div)
+            }, 350)
+        }, 1500)
+    }
 }
 
 // 显示新消息提醒
@@ -68,6 +79,25 @@ function showLoginPan(what) {
             document.getElementById("login-pan").style.opacity = "0"
             setTimeout(() => {
                 document.getElementById("login-pan").style.display = "none"
+            }, 300)
+        }
+    } else {
+        // 断开连接
+        window.ws.close(1000, "主动断开")
+    }
+}
+
+function showUpdatePan(what) {
+    if(window.connect !== true) {
+        if (what === true) {
+            document.getElementById("update-info-pan").style.display = "block"
+            setTimeout(() => {
+                document.getElementById("update-info-pan").style.opacity = "1"
+            }, 100)
+        } else {
+            document.getElementById("update-info-pan").style.opacity = "0"
+            setTimeout(() => {
+                document.getElementById("update-info-pan").style.display = "none"
             }, 300)
         }
     } else {
@@ -100,6 +130,9 @@ function runConnect() {
     document.getElementById("footer").style.transform = "translate(0, 100px)"
     document.getElementById("main-view").style.height  = "100vh"
     document.getElementById("forward-msg").style.height  = "calc(100vh - 40px)"
+    // 扩展视图
+    document.getElementById("main-body").className = "main-body"
+    document.getElementById("main-view").style.padding = "0"
     setTimeout(() => {
         document.getElementById("footer").style.display = "none"
     }, 450)

@@ -721,15 +721,14 @@ select:focus {
 }
 
 .qq-err-card {
-    min-width: 450px;
+    max-width: 520px;
     background: var(--color-card);
     position: absolute;
     transform: translate(-50%, -50%);
     margin-left: 50%;
     margin-top: 50vh;
     padding: 5px 10px;
-
-    width: 520px;
+    width: calc(100% - 40px);
 }
 .qq-err-card > div:first-child {
     display: flex;
@@ -833,6 +832,30 @@ select:focus {
     margin-right: 5px;
 }
 
+.github-contributors {
+    background: var(--color-card-1);
+    margin-right: 20px;
+    margin-top: 20px;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding: 20px 20px 10px 20px;
+    border-radius: 7px;
+}
+.github-contributors::-webkit-scrollbar {
+    height: 7px;
+}
+.github-contributors > div {
+    background-size: 100%;
+    border-radius: 40px;
+    margin-right: 10px;
+    min-height: 40px;
+    min-width: 40px;
+}
+.github-contributors svg {
+    color: var(--color-font);
+}
+
 /* 窄设备兼容 */
 @media (max-width: 992px) {
     .login-pan-card {
@@ -846,11 +869,11 @@ select:focus {
         display: block;
     }
     .msg-view {
-        width: calc(100% + 360px);
+        width: calc(100% + 345px);
     }
     .msg-view-right {
-        transform: translate(-360px);
-        width: calc(100% + 360px);
+        transform: translate(-345px);
+        width: calc(100% + 345px);
     }
     .message-space {
         flex: 0 !important;

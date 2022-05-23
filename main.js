@@ -1,4 +1,4 @@
-window.version = 'v1.291'
+window.version = 'v1.292'
 document.getElementById("opt-version").innerText = window.version
 // 自动暗黑模式标志
 window.is_auto_dark = true
@@ -63,60 +63,36 @@ if(x != "") {
         date.setDate(date.getDate() + 30)
         const cookie = "version=" + window.version + "; expires=" + date.toUTCString()
         document.cookie = cookie
-        // 显示消息、
-        const body = document.getElementById("msg-body")
-        const msg = JSON.parse(`{"time":1649921703,"post_type":"message","message_type":"private","sub_type":"friend","message_id":"whyneedmsgid","user_id":1007028430,"message":[{"type":"text","data":{"text":"abab"}}],"raw_message":"whyneedrawmsg","sender":{"user_id":1007028430,"nickname":"林小槐","sex":"female","remark":"林小槐"}}`)
-        msg.time = Date.parse(new Date()) / 1000
-        msg.message[0].data.text = "是新版本更新通知哦 ~"
-        printMsg(msg)
-        body.scrollTop = body.scrollHeight
         // 尝试拉取 GitHub 上的最新日志
         fetch('https://api.github.com/repos/stapxs/qq-web-lite/commits')
             .then(response => response.json())
             .then(data => {
-                msg.time = Date.parse(new Date()) / 1000
-                msg.message[0].data.text = "这是最新的更新日志 ——"
-                printMsg(msg)
-                body.scrollTop = body.scrollHeight
                 if(data.length > 0) {
-                    const msgList = data[0]["commit"]["message"].split("\n")
-                    let msgStr = ""
-                    for(let i=0; i<msgList.length; i++) {
-                        if(msgList[i].substring(0, 1) == ":") {
-                            const emoji = msgList[i].substring(0, msgList[i].substring(1).indexOf(":") + 2)
-                            msgStr += gitmojiToEmoji(emoji) + msgList[i].substring(msgList[i].substring(1).indexOf(":") + 2) + "\n"
-                        } else {
-                            msgStr += msgList[i] + "\n"
+                    showUpdatePan(true)
+                    for(let i=0; i<data.length; i++) {
+                        if(data[i]["commit"]["message"].indexOf(":") > 0) {
+                            const msgList = data[i]["commit"]["message"].split("\n")
+                            let msgStr = ""
+                            for(let i=0; i<msgList.length; i++) {
+                                if(i == 0) {
+                                    msgStr += "<p style='text-align: center;font-size: 1rem;margin-bottom: -2rem;font-weight: bold;'>" + msgList[i] + "</p><br>"
+                                    continue
+                                }
+                                if(msgList[i].substring(0, 1) == ":") {
+                                    const emoji = msgList[i].substring(0, msgList[i].substring(1).indexOf(":") + 2)
+                                    msgStr += (gitmojiToEmoji(emoji) == undefined ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : gitmojiToEmoji(emoji)) + msgList[i].substring(msgList[i].substring(1).indexOf(":") + 2) + "<br>"
+                                } else {
+                                    msgStr += msgList[i] + "<br>"
+                                }
+                            }
+                            document.getElementById("update-info").innerHTML = msgStr
+                            break
                         }
                     }
-                    msg.time = Date.parse(new Date()) / 1000
-                    msg.message[0].data.text = msgStr
-                    printMsg(msg)
-                    body.scrollTop = body.scrollHeight
-                    // 尝试获取附加内容
-                    fetch('https://raw.githubusercontent.com/Stapxs/QQ-Web-Lite/main/addMsg.txt')
-                        .then(response =>  {
-                            if (!response.ok) {throw new Error('请求未完成 ……')}
-                            return response.text()})
-                        .then(data => {
-                            msg.time = Date.parse(new Date()) / 1000
-                            msg.message[0].data.text = "顺带一提 ……"
-                            printMsg(msg)
-                            body.scrollTop = body.scrollHeight
-                            setTimeout(() => {
-                                msg.time = Date.parse(new Date()) / 1000
-                                msg.message[0].data.text = data
-                                printMsg(msg)
-                                body.scrollTop = body.scrollHeight
-                            }, 500)
-                        })
                 }
             })
             .catch(function (e) {
-                msg.time = Date.parse(new Date()) / 1000
-                msg.message[0].data.text = "获取更新日志失败（小声"
-                printMsg(msg)
-                body.scrollTop = body.scrollHeight
+                console.log(e)
             })
     }
 }
@@ -181,3 +157,18 @@ clipboard.on('error', function(e) {
     console.error('Trigger:', e.trigger);
     setStatue("err", "复制消息失败！")
 });
+// 加载仓库贡献者信息
+fetch('https://api.github.com/repos/stapxs/stapxs-qq-lite/contributors')
+    .then(response => response.json())
+    .then(data => {
+        for(let i=0; i<data.length; i++) {
+            const img = document.createElement("div")
+            img.style.backgroundImage = "url('" + data[i]["avatar_url"] + "')"
+            img.title = data[i]["login"]
+            img.onclick = function () {
+                window.open(data[i]["html_url"]);
+            }
+            document.getElementById("contributors-list").append(img)
+        }
+    })
+    .catch(console.error)
