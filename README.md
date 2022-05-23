@@ -75,5 +75,6 @@
 <div align="right">
     <font style="font-size: 0.8rem">README v1.1</font><br>
     <font style="font-size: 0.8rem">Stapx Steve [ 林槐 ] 2022</font><br>
-    <font style="font-size: 0.8rem">林槐出品, 必属稽品</font>
+    <font style="font-size: 0.8rem">林槐出品, 必属稽品</font><br>
+    <font style="font-size: 0.5rem">部分 QQ 表情来自 <a href="https://github.com/koishijs/QFace">Koishi.js</font>
 </div>
