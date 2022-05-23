@@ -73,7 +73,8 @@
 <br>
 <br>
 <div align="right">
-    <font style="font-size: 0.8rem">README v1.1</font><br>
-    <font style="font-size: 0.8rem">Stapx Steve [ 林槐 ] 2022</font><br>
-    <font style="font-size: 0.8rem">林槐出品, 必属稽品</font>
+    <font style="font-size: 0.8rem font-color: #EEEEEE;">README v1.1</font><br>
+    <font style="font-size: 0.8rem font-color: #EEEEEE;">Stapx Steve [ 林槐 ] 2022</font><br>
+    <font style="font-size: 0.8rem font-color: #EEEEEE;">林槐出品, 必属稽品</font>
+    <font style="font-size: 0.5rem font-color: #CCCCCC;">部分 QQ 表情来自 [Koishi.js](https://github.com/koishijs/QFace)</font>
 </div>
