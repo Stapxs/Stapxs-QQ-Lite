@@ -621,27 +621,26 @@ select:focus {
 }
 
 .forward-msg {
-    position: fixed;
-    left: 0;
-    right: 0;
+    position: absolute;
+    left: 7px;
+    right: 47px;
     height: calc(100vh - 220px);
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     pointer-events: none;
-    margin-top: -22px;
-    padding-right: 50px;
+    max-width: 100%;
+    width: calc(100% - 50px);
 }
 .forward-msg-bg {
     background: var(--color-shader);
-    width: calc(100% - 60px);
+    width: 100%;
     height: 100%;
-    position: absolute;
     opacity: 0;
-    z-index: -1;
     transition: opacity .3s;
-    border-radius: 7px;
+    border-radius: 7px 0 0 7px;
     pointer-events: auto;
+    flex: 1;
 }
 .forward-msg-body {
     width: 0;
@@ -835,22 +834,22 @@ select:focus {
 .github-contributors {
     background: var(--color-card-1);
     margin-right: 20px;
-    margin-top: 20px;
-    display: flex;
-    overflow-x: scroll;
-    overflow-y: hidden;
+    margin-top: 10px;
     padding: 20px 20px 10px 20px;
     border-radius: 7px;
 }
-.github-contributors::-webkit-scrollbar {
-    height: 7px;
-}
 .github-contributors > div {
+    display: flex;
+    flex-wrap: wrap;
+}
+.github-contributors > div > div {
     background-size: 100%;
     border-radius: 40px;
     margin-right: 10px;
     min-height: 40px;
     min-width: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .github-contributors svg {
     color: var(--color-font);
@@ -896,9 +895,6 @@ select:focus {
     }
     .forward-msg-body-open {
         width: calc(100% - 320px) !important;
-    }
-    .msg-top-menu-body {
-        transform: translate(-70%);
     }
 }
 

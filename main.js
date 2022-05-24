@@ -1,4 +1,4 @@
-window.version = 'v1.292'
+window.version = 'v1.293'
 document.getElementById("opt-version").innerText = window.version
 // 自动暗黑模式标志
 window.is_auto_dark = true
@@ -70,7 +70,7 @@ if(x != "") {
                 if(data.length > 0) {
                     showUpdatePan(true)
                     for(let i=0; i<data.length; i++) {
-                        if(data[i]["commit"]["message"].indexOf(":") > 0) {
+                        if(data[i]["commit"]["message"].indexOf(":") > 0 && data[i]["commit"]["author"]["email"] == "1007028430.stapx@gmail.com") {
                             const msgList = data[i]["commit"]["message"].split("\n")
                             let msgStr = ""
                             for(let i=0; i<msgList.length; i++) {
@@ -165,6 +165,10 @@ fetch('https://api.github.com/repos/stapxs/stapxs-qq-lite/contributors')
             const img = document.createElement("div")
             img.style.backgroundImage = "url('" + data[i]["avatar_url"] + "')"
             img.title = data[i]["login"]
+            if(data[i]["login"] == "Stapxs") {
+                img.style.outline = "2px solid var(--color-main)"
+                img.style.border = "1px solid var(--color-card-1)"
+            }
             img.onclick = function () {
                 window.open(data[i]["html_url"]);
             }

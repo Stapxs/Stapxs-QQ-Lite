@@ -272,13 +272,13 @@ function updateMsg(msg) {
         }
     }
     // 刷新列表
-    if(msg.message_type != "group") {
+    if(msg.message_type != "group" || window.optCookie["opt_notice_all_msg"] == "true") {
         findBodyInList(null, id).style.transform = "translate(0, -50%)"
         if(nowSee != id) {
             // 尝试通过浏览器通知用户
             showNotice(msg)
         }
-        // 如果当前消息并没有打开，则置顶列表项（对群组无效）
+        // 如果当前消息并没有打开，则置顶列表项
         for (let i = 0; i < list.children.length; i++) {
             if (list.children[i].dataset.alwayTop != "true") {
                 list.insertBefore(findBodyInList(null, id), list.children[i])

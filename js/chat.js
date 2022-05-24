@@ -40,6 +40,7 @@ function setStatue(type, msg, stay) {
         div.style.height = "35px"
     }, 100)
     if (stay == true) {
+        div.style.cursor = "pointer"
         div.onclick = function() { 
             div.style.height = "0"
             div.style.opacity = "0"
@@ -129,7 +130,7 @@ function runConnect() {
     // 隐藏底栏
     document.getElementById("footer").style.transform = "translate(0, 100px)"
     document.getElementById("main-view").style.height  = "100vh"
-    document.getElementById("forward-msg").style.height  = "calc(100vh - 40px)"
+    document.getElementById("forward-msg").style.height  = "calc(100vh - 44px)"
     // 扩展视图
     document.getElementById("main-body").className = "main-body"
     document.getElementById("main-view").style.padding = "0"
@@ -573,15 +574,21 @@ function showMsgMenu(sender, event) {
         menu.style.display = "block"
         const height = body.offsetHeight
         const webHeight = document.body.offsetHeight
+        const width = body.offsetWidth
+        const webWidth = document.body.offsetWidth
         // 修改菜单位置
         showLog("b573f7", "fff", "UI", "菜单底部位置：" + (pointEvent.pageY + height) + "，页面高度：" + webHeight)
         if(pointEvent.pageY + height < webHeight) {
-            body.style.marginLeft = pointEvent.pageX + "px"
             body.style.marginTop = pointEvent.pageY + "px"
         } else {
-            body.style.marginLeft = pointEvent.pageX + "px"
             body.style.marginTop = pointEvent.pageY - (pointEvent.pageY + height - webHeight) + "px"
             showLog("b573f7", "fff", "UI", "菜单位置：" + body.style.marginTop)
+        }
+        if(pointEvent.pageX + width < webWidth) {
+            body.style.marginLeft = pointEvent.pageX + "px"
+        } else {
+            body.style.marginLeft = pointEvent.pageX - (pointEvent.pageX + width - webWidth) + "px"
+            showLog("b573f7", "fff", "UI", "菜单位置：" + body.style.marginLeft)
         }
         // 显示菜单
         setTimeout(() => {
@@ -848,6 +855,8 @@ function openTopMenu() {
     }
     // 处理菜单
     if(document.getElementById("msg-top-menu").style.transform == "scaleY(0)") {
+        const menuWidth = document.getElementById("msg-top-menu").offsetWidth
+        document.getElementById("msg-top-menu").style.right = (menuWidth / 2 - 50) + "px"
         document.getElementById("msg-top-menu").style.transform = "scaleY(1)"
     } else {
         document.getElementById("msg-top-menu").style.transform = "scaleY(0)"
@@ -1035,6 +1044,27 @@ function closeQe(sender) {
     setTimeout(() => {
         card.style.display = "none"
     }, 300)
+}
+
+// 通知所有消息开关的后续操作
+function changeNoticeAll(sender) {
+    // 因为这个设置和不冒泡冲突，所以在打开的时候隐藏冒泡的设置
+    const value = sender.checked
+    const set = document.getElementById("opt_group_no_up").parentNode.parentNode
+    if(value == true) {
+        set.style.display = "none"
+    } else {
+        set.style.display = "flex"
+    }
+}
+function changeNoUp(sender) {
+    const value = sender.checked
+    const set = document.getElementById("opt_notice_all_msg").parentNode.parentNode
+    if(value == true) {
+        set.style.display = "none"
+    } else {
+        set.style.display = "flex"
+    }
 }
 
 function changeOpt(sender) {
