@@ -1,3 +1,5 @@
+'use strict';
+
 window.version = 'v1.293'
 document.getElementById("opt-version").innerText = window.version
 // 自动暗黑模式标志
@@ -7,7 +9,7 @@ if(!window.navigator.cookieEnabled) {
     document.getElementById("cookie-tip").style.display = "block"
 }
 // 加载 cookie
-var x = document.cookie
+let x = document.cookie
 window.optCookie = {}
 window.cookie = {}
 if(x != "") {
@@ -107,19 +109,19 @@ document.getElementById("send-box").addEventListener("paste", function(e) {
     if (!(e.clipboardData && e.clipboardData.items)) {
         return
     }
-    for (var i = 0, len = e.clipboardData.items.length; i < len; i++) {
-        var item = e.clipboardData.items[i]
+    for (let i = 0, len = e.clipboardData.items.length; i < len; i++) {
+        let item = e.clipboardData.items[i]
         if (item.kind === "file") {
             console.log("file")
-            var blob = item.getAsFile()
+            let blob = item.getAsFile()
             if(blob.type.indexOf("image/") >= 0 && blob.size != 0) {
                 setStatue("load", "正在处理图片 ……")
                 if(blob.size < 3145728) {
                     // 转换为 Base64
-                    var reader = new FileReader();
+                    let reader = new FileReader();
                     reader.readAsDataURL(blob); 
                     reader.onloadend = function() {
-                        var base64data = reader.result
+                        let base64data = reader.result
                         // 将按钮改为选中状态
                         document.getElementById("btn-img").style.background = "var(--color-main)"
                         document.getElementById("btn-img").children[1].style.fill = "var(--color-font-r)"
@@ -133,20 +135,18 @@ document.getElementById("send-box").addEventListener("paste", function(e) {
                         // 删除 input
                         document.getElementById("btn-img").removeChild(document.getElementById("choice-pic"))
                     }
-                } else {
-                    // 图片过大
-                    setStatue("err", "图片过大！")
-                }
+                // 图片过大
+                } else setStatue("err", "图片过大！")
             }
-            //阻止默认行为
+            // 阻止默认行为
             e.preventDefault();
         }
     }
 })
 // 复制消息
-var clipboard = new ClipboardJS(document.getElementById("menuCopy"), {
+let clipboard = new ClipboardJS(document.getElementById("menuCopy"), {
     text: function(trigger) {
-        return (window.msgInMenu != undefined && window.msgInMenu != null)?window.msgInMenu.dataset.raw:""
+        return (window.msgInMenu != undefined && window.msgInMenu != null)? window.msgInMenu.dataset.raw: ""
     }
 });
 clipboard.on('success', function(e) {
