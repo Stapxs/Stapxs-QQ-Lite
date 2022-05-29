@@ -621,6 +621,7 @@ select:focus {
 }
 
 .forward-msg {
+    z-index: 1;
     position: absolute;
     left: 7px;
     right: 47px;
