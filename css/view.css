@@ -44,6 +44,9 @@
 .friend-body > div p {
     font-weight: bold;
     margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .friend-body > div a {
     font-size: 0.9rem;

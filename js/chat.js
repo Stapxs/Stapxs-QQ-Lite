@@ -1,15 +1,114 @@
 /*
     msg.js - 提供 UI 相关方法
-    2022/04/05 - Stapx Steve [林槐]
+    Copyright © Stapx Steve [林槐]
+    林槐出品，比属稽品。
+    ----------------------------------
+    v1 - 2022/04/05
+    v2 - 2022/05/30
 */
 
-// 样式 LOG
-function showLog(bg, fg, head, info) {
-    const level = window.optCookie["opt_log_level"]
-    if(((level == undefined || level == "err") && bg == "ff5370") || level == "all" || head == "SS") {
-        console.log("%c" + head + "%c " + info, "background:#" + bg + ";color:#" + fg + ";border-radius:7px 0 0 7px;display:inline-block;padding:2px 4px 2px 7px;", "")
+/* --------------------------------------------------
+    全局组件
+*/
+
+// 添加通知
+function showToast(type, msg, stay) {
+    type = type.toUpperCase()
+    let svg = ""
+    switch (type) {
+        case "LOAD": {
+            svg = "<svg class='fa-pulse' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M304 48C304 74.51 282.5 96 256 96C229.5 96 208 74.51 208 48C208 21.49 229.5 0 256 0C282.5 0 304 21.49 304 48zM304 464C304 490.5 282.5 512 256 512C229.5 512 208 490.5 208 464C208 437.5 229.5 416 256 416C282.5 416 304 437.5 304 464zM0 256C0 229.5 21.49 208 48 208C74.51 208 96 229.5 96 256C96 282.5 74.51 304 48 304C21.49 304 0 282.5 0 256zM512 256C512 282.5 490.5 304 464 304C437.5 304 416 282.5 416 256C416 229.5 437.5 208 464 208C490.5 208 512 229.5 512 256zM74.98 437C56.23 418.3 56.23 387.9 74.98 369.1C93.73 350.4 124.1 350.4 142.9 369.1C161.6 387.9 161.6 418.3 142.9 437C124.1 455.8 93.73 455.8 74.98 437V437zM142.9 142.9C124.1 161.6 93.73 161.6 74.98 142.9C56.24 124.1 56.24 93.73 74.98 74.98C93.73 56.23 124.1 56.23 142.9 74.98C161.6 93.73 161.6 124.1 142.9 142.9zM369.1 369.1C387.9 350.4 418.3 350.4 437 369.1C455.8 387.9 455.8 418.3 437 437C418.3 455.8 387.9 455.8 369.1 437C350.4 418.3 350.4 387.9 369.1 369.1V369.1z\"/></svg>"
+            break
+        }
+        case "OK": {
+            svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M438.6 105.4C451.1 117.9 451.1 138.1 438.6 150.6L182.6 406.6C170.1 419.1 149.9 419.1 137.4 406.6L9.372 278.6C-3.124 266.1-3.124 245.9 9.372 233.4C21.87 220.9 42.13 220.9 54.63 233.4L159.1 338.7L393.4 105.4C405.9 92.88 426.1 92.88 438.6 105.4H438.6z\"/></svg>"
+            break
+        }
+        case "ERR": {
+            svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z\"/></svg>"
+            break
+        }
+    }
+
+    let delay = 1000
+    let div = document.createElement("div")
+    let close = `<button onclick="deleteToast(this)" type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button>`
+    if (stay != true) {
+        close = ""
+        stay = false
+    }
+    
+    div.className = "toast"
+    div.setAttribute("role", "alert")
+    div.setAttribute("aria-live", "assertive")
+    div.setAttribute("aria-atomic", "true")
+    div.dataset.autohide = !stay
+    div.dataset.delay = delay
+    
+    let html = `
+        ${svg}
+        <div class="toast-body">${msg}</div>
+        ${close}`
+
+    div.innerHTML = html
+    document.getElementById("toast-pan").append(div)
+    $(div).toast("show")
+    if (stay != true) {
+        setTimeout(() => {
+            div.parentNode.removeChild(div)
+        }, delay + 300);
     }
 }
+
+// 删除通知
+function deleteToast(sender) {
+    setTimeout(() => {
+        sender.parentNode.parentNode.removeChild(sender.parentNode)
+    }, 100);
+}
+
+
+/* --------------------------------------------------
+    连接相关
+*/
+
+// 开始连接流程
+function runConnect() {
+    // 绕过跨域限制
+    document.getElementById("referrer").content = "no-referrer"
+    // 修改按钮状态
+    document.getElementById("connect-button").innerHTML = '<svg style="width:20px;margin-left:-3px;" class="fa-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M222.7 32.15C227.7 49.08 218.1 66.9 201.1 71.94C121.8 95.55 64 169.1 64 255.1C64 362 149.1 447.1 256 447.1C362 447.1 448 362 448 255.1C448 169.1 390.2 95.55 310.9 71.94C293.9 66.9 284.3 49.08 289.3 32.15C294.4 15.21 312.2 5.562 329.1 10.6C434.9 42.07 512 139.1 512 255.1C512 397.4 397.4 511.1 256 511.1C114.6 511.1 0 397.4 0 255.1C0 139.1 77.15 42.07 182.9 10.6C199.8 5.562 217.6 15.21 222.7 32.15V32.15z"/></svg>'
+    // 开始链接
+    runWs();
+}
+
+
+/* --------------------------------------------------
+    UI 动画
+*/
+
+// 波浪动画
+function waveAnimation(wave) {
+    let waves = wave.children[1].children
+    let min = 20
+    let max = 200
+    let timer = setInterval(() => {
+        // 遍历波浪体
+        for(var i=0; i<waves.length; i++) {
+            let now = waves[i].getAttribute("x")
+            let add = 1;
+            if(Number(now) + add > max) {
+                waves[i].setAttribute("x", min)
+            } else {
+                waves[i].setAttribute("x", Number(now) + add)
+            }
+        }
+    }, 50);
+    return timer;
+}
+
+
+
 
 // 设置状态消息
 function setStatue(type, msg, stay) {
@@ -121,26 +220,6 @@ function openImgView(url) {
                 document.getElementById("img-view").style.opacity = "1"
             }, 100)
     }
-}
-
-function runConnect() {
-    showLoginPan(false)
-    // 啊吧啊吧
-    document.getElementById("referrer").content = "no-referrer"
-    // 隐藏底栏
-    document.getElementById("footer").style.transform = "translate(0, 100px)"
-    document.getElementById("main-view").style.height  = "100vh"
-    document.getElementById("forward-msg").style.height  = "calc(100vh - 44px)"
-    // 扩展视图
-    document.getElementById("main-body").className = "main-body"
-    document.getElementById("main-view").style.padding = "0"
-    setTimeout(() => {
-        document.getElementById("footer").style.display = "none"
-    }, 450)
-    setTimeout(() => {
-        // 开始链接
-        runWs();
-    }, 500)
 }
 
 function btnChangeColor() {
@@ -903,30 +982,30 @@ function addTopBody(statue) {
 }
 
 function setTop(id, statue) {
-    const list = document.getElementById("friend-list-body")
-    const upBody = findBodyInList(null, id)
-    if(upBody != null) {
-        if(statue != false) {
-            // 置顶
-            list.insertBefore(upBody, list.firstChild)
-            upBody.style.background = "var(--color-card-2)"
-            upBody.dataset.alwayTop = "true"
-            setTimeout(() => {
-                upBody.style.transform = "translate(0, 0)"
-            }, 10)
-            setTimeout(() => {
-                upBody.children[0].style.transform = "scaleY(0.5)"
-                upBody.children[0].style.opacity = "0"
-                upBody.style.transform = "translate(0, 0)"
-            }, 300)
-        } else {
-            // 取消置顶
-            upBody.style.background = "transparent"
-            upBody.children[0].style.transform = "scaleY(0)"
-            upBody.children[0].style.opacity = "1"
-            upBody.dataset.alwayTop = "false"
-        }
-    }
+    // const list = document.getElementById("friend-list-body")
+    // const upBody = findBodyInList(null, id)
+    // if(upBody != null) {
+    //     if(statue != false) {
+    //         // 置顶
+    //         list.insertBefore(upBody, list.firstChild)
+    //         upBody.style.background = "var(--color-card-2)"
+    //         upBody.dataset.alwayTop = "true"
+    //         setTimeout(() => {
+    //             upBody.style.transform = "translate(0, 0)"
+    //         }, 10)
+    //         setTimeout(() => {
+    //             upBody.children[0].style.transform = "scaleY(0.5)"
+    //             upBody.children[0].style.opacity = "0"
+    //             upBody.style.transform = "translate(0, 0)"
+    //         }, 300)
+    //     } else {
+    //         // 取消置顶
+    //         upBody.style.background = "transparent"
+    //         upBody.children[0].style.transform = "scaleY(0)"
+    //         upBody.children[0].style.opacity = "1"
+    //         upBody.dataset.alwayTop = "false"
+    //     }
+    // }
 }
 
 function openSenderView(statue, always) {

@@ -6,19 +6,25 @@
 window.ws = null
 
 function runWs(protocol) {
-    setStatue("load", "正在尝试连接到服务 ……")
+    showLog("ws", "正在尝试连接到服务 ……")
     const address = document.getElementById("sev_address").value
     window.token = document.getElementById("access_token").value
+    if(address == "" || window.token == "") {
+        showToast("err", "请输入内容 ……")
+        document.getElementById("connect-button").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/></svg>'
+        return
+    }
 
     if (protocol == undefined) {
         protocol = "ws://"
     }
-    showLog("4a93c3", "fff", "WS", "尝试使用 " + protocol + " 连接 ……")
+    showLog("ws", "尝试使用 " + protocol + " 连接 ……")
     window.ws = new WebSocket(protocol + address + "?access_token=" + token)
 
     window.ws.onopen = function (evt) {
-        setStatue("ok", "成功连接 ……")
-        showLog("7abb7e", "fff", "WS", "成功连接 ……")
+        document.getElementById("connect-button").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/></svg>'
+        showToast("ok", "成功连接")
+        showLog("ws", "成功连接")
         window.connect = true
         // 保存输入框
         var date = new Date()
@@ -26,7 +32,7 @@ function runWs(protocol) {
         const cookie = "address=" + address + "; expires=" + date.toUTCString()
         document.cookie = cookie
         // 清空消息历史
-        document.getElementById("msg-body").innerHTML = ""
+        //document.getElementById("msg-body").innerHTML = ""
         // 开始加载数据
         loadInfo()
         // 初次连接 tag
@@ -34,27 +40,15 @@ function runWs(protocol) {
     }
 
     window.ws.onmessage = function (evt) {
-        showLog("4a93c3", "fff", "GET", evt.data)
+        showLog("GET", evt.data)
         runJSON(evt.data)
     }
 
     window.ws.onclose = function (evt) {
-        showLog("ff5370", "fff", "WS", "连接关闭：" + evt.code)
-        setStatue("err", "连接关闭：" + evt.code, true)
+        showLog("ws", "连接关闭：" + evt.code)
+        showToast("err", "连接关闭：" + evt.code, true)
+        document.getElementById("connect-button").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/></svg>'
         window.connect = false
-        // 显示底栏
-        document.getElementById("footer").style.display = "block"
-        document.getElementById("main-view").style.height = "calc(100vh - 110px)"
-        document.getElementById("forward-msg").style.height = "calc(100vh - 150px)"
-        // 扩展视图
-        document.getElementById("main-body").className = "container-lg main-body"
-        document.getElementById("main-view").style.padding = "20px 0"
-        setTimeout(() => {
-            document.getElementById("footer").style.transform = "translate(0)"
-        }, 100)
-        // 隐藏账号设置
-        document.getElementById("opt-account-main").style.display = "none"
-        document.getElementById("opt-account-tip").style.display = "block"
         // 如果是由于协议连接失败 ……
         if(window.isFistUse == undefined || window.isFistUse == true || window.tryAll == undefined) {
             window.tryAll = true
@@ -114,24 +108,28 @@ function showNotice(msg) {
 
 // 加载基础数据
 function loadInfo() {
+    // 加载 UI
+    document.getElementById("nv-home-tab").style.display = "none"       // 隐藏主页按钮
+    document.getElementById("nv-message-tab").click()                   // 切换到消息页面
     // 加载 Bot 信息
-    sendWs(createAPI(
-        "get_version_info",
-        null, null
-    ))
-    // 加载用户信息
-    sendWs(createAPI(
-        "get_login_info",
-        null, null
-    ))
+    // sendWs(createAPI(
+    //     "get_version_info",
+    //     null, null
+    // ))
+    // // 加载用户信息
+    // sendWs(createAPI(
+    //     "get_login_info",
+    //     null, null
+    // ))
     console.log(window.isFistUse)
     if (window.isFistUse == undefined || window.isFistUse == true) {
+        // 获取基础密钥
         sendWs(createAPI(
             "get_csrf_token",
             null, null
         ))
         // 清空列表
-        document.getElementById("friend-list-body").innerHTML = ""
+        // document.getElementById("friend-list-body").innerHTML = ""
         // 加载好友列表
         sendWs(createAPI(
             "get_friend_list",
