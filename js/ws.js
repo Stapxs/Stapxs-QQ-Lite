@@ -25,6 +25,9 @@ function runWs(protocol) {
         date.setDate(date.getDate() + 30)
         const cookie = "address=" + address + "; expires=" + date.toUTCString()
         document.cookie = cookie
+        if(window.optCookie["opt_save_password"] == "true") {
+            document.cookie = "token=" + token + "; expires=" + date.toUTCString()
+        }
         // 清空消息历史
         document.getElementById("msg-body").innerHTML = ""
         // 开始加载数据
@@ -124,7 +127,6 @@ function loadInfo() {
         "get_login_info",
         null, null
     ))
-    console.log(window.isFistUse)
     if (window.isFistUse == undefined || window.isFistUse == true) {
         sendWs(createAPI(
             "get_csrf_token",

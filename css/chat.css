@@ -4,6 +4,7 @@
 */
 
 :root {
+    /* 开关全局参数 */
     --switch-dot-border-me: 4px;
     --switch-dot-margin-me: 5px;
     --switch-height-me: 30px;
@@ -125,9 +126,9 @@ select:focus {
 }
 .login-pan-card {
     position: absolute;
-    width: 30%;
-    padding: 40px;
-    margin-left: calc(70% / 2);
+    width: 310px;
+    padding: 40px 30px;
+    margin-left: calc(calc(100% - 310px) / 2);
     margin-top: calc(100vh / 2);
     transform: translate(0, -50%);
     background: var(--color-card);
@@ -135,35 +136,75 @@ select:focus {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
+    overflow: hidden;
+ }
+ .login-pan-card > svg {
+    fill: var(--color-main);
+    width: 30%;
  }
 .login-pan-card p {
     color: var(--color-main);
-    font-size: 1.3rem;
+    font-size: 1rem;
+    margin-top: 20px;
 }
-.login-pan-card a {
-    font-size: 0.9rem;
-    color: var(--color-font-1);
-    background: var(--color-card-2);
-    padding: 10px 20px;
+.login-pan-card label {
+    width: 100%;
+    display: flex;
+    border: 1px solid var(--color-font);
     border-radius: 7px;
-    margin-top: -0.5rem;
-    text-align: center;
-    width: calc(100% - 20px);
-    display: inline-block;
+    padding: 0 10px;
+    transition: border .3s;
+    background: var(--color-card);
 }
-.login-pan-card input {
-    margin-top: 40px;
-    width: calc(100% - 20px);
-    border: 2px solid var(--color-main);
+.login-pan-card label:focus-within {
+    border: 1px solid var(--color-main);
+}
+.login-pan-card label:focus-within > svg {
+    fill: var(--color-main);
+}
+.login-pan-card label:focus-within > input {
+    outline: none;
+}
+.login-pan-card label > input {
+    width: 100%;
     height: 40px;
     background: transparent;
-    text-align: center;
+    flex: 1;
+}
+.login-pan-card label > svg {
+    width: 15px;
+    fill: var(--color-font);
+    transition: fill .3s;
+}
+.login-pan-card label.default {
+    border: none;
+}
+.login-pan-card label.default > input {
+    width: auto;
+    height: auto;
+    background: unset;
+    flex: unset;
+}
+.login-pan-card label.default > a {
+    margin-top: 0;
+    margin-left: 10px;
 }
 .login-pan-card button {
-    margin-top: 40px;
-    width: 200px;
-    border: 2px solid var(--color-main);
+    margin-top: 30px;
+    width: 100%;
     height: 40px;
+}
+.login-pan-card a {
+    margin-top: 10px;
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    cursor: pointer;
+    color: var(--color-font);
+}
+
+.login-tip {
+    margin: 0 !important;
 }
 
 .drop-a {
@@ -235,6 +276,7 @@ select:focus {
 }
 
 .img-view {
+    z-index: 2;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -243,25 +285,57 @@ select:focus {
     transition: opacity .3s;
     overflow: hidden;
 }
-.img-view div:nth-child(1) {
+.img-view > div:nth-child(1) {
     position: absolute;
     width: 100%;
     height: 100%;
     background: var(--color-shader);
     opacity: 0.8;
 }
-.img-view div:nth-child(2) {
+.img-view > div:nth-child(2) {
     position: absolute;
     width: 100%;
     height: 100%;
     text-align: center;
 }
-.img-view div:nth-child(2) > img {
+.img-view > div:nth-child(2) > img {
     max-height: calc(100% - 20vh);
     max-width: 100%;
     display: inline-block;
     margin-top: 50vh;
     transform: translate(0, -50%);
+    user-select: none;
+}
+.img-view > div:nth-child(3) {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    pointer-events: none;
+    flex-direction: row;
+    align-items: center;
+}
+.img-view > div:nth-child(3) > div {
+    padding: 15px;
+    pointer-events: auto;
+    background: var(--color-main);
+    border-radius: 7px;
+    margin: 20px;
+    opacity: 0.7;
+    transition: opacity .3s;
+}
+.img-view > div:nth-child(3) > div:hover {
+    opacity: 1;
+}
+.img-view > div:nth-child(3) > div svg {
+    width: 25px;
+    height: 25px;
+    fill: var(--color-font-r);
+}
+.img-view > div:nth-child(3) > div.space {
+    flex: 1;
+    background-color: transparent;
+    pointer-events: none;
 }
 
 .btn-img-hover {
@@ -295,6 +369,7 @@ select:focus {
     padding: 14px;
     background: var(--color-card-2);
     cursor: pointer;
+    margin-left: -14px;
 }
 .friend-search svg {
     margin-top: -9px;
@@ -324,6 +399,7 @@ select:focus {
 }
 
 .right-click-menu {
+    z-index: 10;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -346,7 +422,7 @@ select:focus {
 }
 .menu div {
     display: flex;
-    padding: 10px;
+    padding: 10px 20px 10px 10px;
     border-radius: 7px;
     transition: background .3s, color .3s;
     fill: var(--color-font-2);
@@ -432,8 +508,9 @@ select:focus {
     margin-left: 50%;
     margin-top: 50vh;
     transform: translate(-50%, -50%);
-    height: 60vh;
-    width: 45%;
+    height: 55vh;
+    width: 50%;
+    max-width: 780px;
     display: flex;
     transition: width .3s, margin-top .3s;
     overflow: hidden;
@@ -851,20 +928,39 @@ select:focus {
     min-width: 40px;
     margin-top: 10px;
     margin-bottom: 10px;
+    cursor: pointer;
 }
 .github-contributors svg {
     color: var(--color-font);
 }
 
+.main-msg-mask {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.wave-pan {
+    width: 100%;
+    margin: 0 -20px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    z-index: -1;
+}
+.wave-pan > svg {
+    fill: var(--color-card-2);
+}
+.wave-pan > svg > g > use {
+    opacity: 0.5;
+}
+.wave-pan > svg > g > use:last-child {
+    opacity: 1;
+}
+
 /* 窄设备兼容 */
 @media (max-width: 992px) {
-    .login-pan-card {
-        width: calc(100% - 40px);
-        margin-left: 20px;
-        margin-right: 20px;
-        transform: translate(0);
-        bottom: 20px;
-    }
     .back-btn {
         display: block;
     }
@@ -884,18 +980,28 @@ select:focus {
     .message-body > a {
         display: inline-block !important;
     }
+    .forward-msg-body {
+        margin-right: -55px;
+    }
+    .forward-msg-body-open {
+        width: calc(100% - 320px) !important;
+    }
     .opt-card {
         width: calc(100% - 40px);
         margin-left: 20px;
         margin-right: 20px;
         transform: translate(0);
         bottom: 20px;
+        max-width: unset;
     }
-    .forward-msg-body {
-        margin-right: -55px;
-    }
-    .forward-msg-body-open {
-        width: calc(100% - 320px) !important;
+}
+@media (max-width: 350px) {
+    .login-pan-card {
+        width: calc(100% - 40px);
+        margin-left: 20px;
+        margin-right: 20px;
+        transform: translate(0);
+        bottom: 20px;
     }
 }
 

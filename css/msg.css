@@ -185,6 +185,7 @@
     fill: var(--color-font-1);
     height: calc(2rem + 10px);
     margin-right: 20px;
+    margin-left: 10px;
 }
 .msg-file svg {
     fill: var(--color-font-1);

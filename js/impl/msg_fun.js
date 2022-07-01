@@ -42,7 +42,7 @@ function printMsg(obj, addTo, addAt) {
             <a style="{hidden}">{name}</a>
             <div class="{mine}">{body}</div>
         </div>
-        <a style="display: none;">{raw}</a>`
+        <code style="display: none;">{raw}</code>`
             html = html.replace("{id}", user_id)
             let name = nickname
             if(obj.message_type=="group" && card!=nickname && card!="") {
@@ -64,7 +64,7 @@ function printMsg(obj, addTo, addAt) {
                     switch(obj.message[i].type) {
                         case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
                         case "text": body = body + printText(obj.message[i].data.text, obj.message_id); break
-                        case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, user_id); break
+                        case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, user_id, obj.time); break
                         case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                         case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
                         case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, user_id); break
@@ -154,16 +154,6 @@ function printText(txt, msgid) {
         .then(res => {
             if (res.status == undefined && Object.keys(res).length > 0) {
                 showLog("b573f7", "fff", "UI", "获取链接预览成功：" + res['og:title'])
-                // 创建额外的链接解析部分
-                // <div class="msg-link-view">
-                //     <div></div>
-                //     <div style="background-image: url(https://api.stapxs.cn/PicLib/Desktop);"></div>
-                //     <div>
-                //         <p>没有标题</p>
-                //         <a href="https://www.bilibili.com/video/BV1Ei4y1m7mS/">为了抢苹果，小狼居然发出了狗叫声_哔哩哔哩_bilibili</a>
-                //         <span>没有介绍</span>
-                //     </div>
-                // </div>
                 const div = document.createElement("div")
                 div.className = "msg-link-view"
                 let hasImg = res['og:image'] == undefined ? "display: none;" : ""
@@ -200,7 +190,30 @@ function printAt(txt, id, sender) {
     }
 }
 
-function printImg(url, num, sender) {
+function printImg(url, num, sender, time) {
+    // 缓存图片列表
+    if(window.imgListId != document.getElementById("msg-hander").dataset.id) {
+        // 如果不是当前消息的图片列表，则清空
+        window.imgList = []
+        window.imgListId = document.getElementById("msg-hander").dataset.id
+    }
+    if (window.imgList == undefined) {
+        // 初始化图片列表
+        window.imgList = []
+    }
+    // 如果时间小于第一个的时间则插入在前面
+    if (window.imgList.length == 0 || Number(time) < Number(window.imgList[0].time)) {
+        window.imgList.unshift({
+            url: url,
+            time: time
+        })
+    } else {
+        window.imgList.push({
+            url: url,
+            time: time
+        })
+    }
+    // 加载图片
     const body = document.getElementById("msg-body")
     let loaded = ""
     if((window.login_id == sender && body.scrollHeight - body.scrollTop === body.clientHeight) || body.scrollHeight - body.scrollTop === body.clientHeight) {
@@ -247,13 +260,9 @@ function printVideo(url) {
 function printFile(data) {
     let html = String.raw`<div class="msg-file">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M0 64C0 28.65 28.65 0 64 0H224V128C224 145.7 238.3 160 256 160H384V448C384 483.3 355.3 512 320 512H64C28.65 512 0 483.3 0 448V64zM256 128V0L384 128H256z"/></svg>
-    <div><div><p>{name}</p><a>（{size}）</a></div><i>{md5}</i></div>
-    <div onclick="window.open('{url}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"/></svg></div>
+    <div><div><p>${data.name}</p><a>（${formatBytes(data.size)}）</a></div><i>${data.md5}</i></div>
+    <div onclick="downloadFile('${data.url}', '${data.name}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"/></svg></div>
 </div>`
-    html = html.replace("{name}", data.name)
-    html = html.replace("{size}", formatBytes(data.size))
-    html = html.replace("{url}", data.url)
-    html = html.replace("{md5}", data.md5)
     return html
 }
 

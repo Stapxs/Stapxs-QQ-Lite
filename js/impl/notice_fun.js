@@ -130,7 +130,6 @@ function setFriendList(data) {
     //         <p>林小槐（木）</p>
     //         <a>你是不是闲着无聊</a>
     //     </div>
-    //     <a>23:50</a>
     // </div>
     for(let i=0; i<data.length; i++) {
         const div = document.createElement("div")
@@ -142,8 +141,7 @@ function setFriendList(data) {
         div.onclick = function() { onListClick(div) }
         // 添加内容
         div.innerHTML = "<div></div><img loading='lazy' src='https://q1.qlogo.cn/g?b=qq&s=0&nk=" + data[i].user_id + "'>" +
-                        "<div><p>" + div.dataset.allname + "</p><a></a></div>" + 
-                        "<a></a>"
+                        "<div><div><p>" + div.dataset.allname + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
     }
@@ -167,8 +165,7 @@ function setGroupList(data) {
         div.onclick = function() { onListClick(div) }
         // 添加内容
         div.innerHTML = "<div></div><img loading='lazy' src='https://p.qlogo.cn/gh/" + data[i].group_id + "/" + data[i].group_id + "/0'>" +
-                        "<div><p>" + data[i].group_name + "</p><a></a></div>" + 
-                        "<a></a>"
+                        "<div><div><p>" + data[i].group_name + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
     }
@@ -252,7 +249,9 @@ function updateMsg(msg) {
     const id = msg.message_type == "group" ? msg.group_id:msg.user_id
     const raw = getMsgRawTxt(msg.message)
     // 刷新列表显示消息
-    findBodyInList(null, id).children[2].children[1].innerText = raw==""?msg.raw_message:raw
+    var myDate = new Date();
+    findBodyInList(null, id).children[2].children[0].children[2].innerText = (myDate.getHours() + 1).toString().padStart(2, "0") + ":" + myDate.getMinutes().toString().padStart(2, "0")
+    findBodyInList(null, id).children[2].children[1].children[0].innerText = raw==""?msg.raw_message:raw
     // 获取当前打开的窗口 ID
     const nowSee = document.getElementById("msg-hander").dataset.id
     // 刷新当前打开的窗口
@@ -264,8 +263,6 @@ function updateMsg(msg) {
             scroll = true
         }
         printMsg(msg)
-        // 显示边框高亮
-        lightChatBorder()
         // 滚动屏幕
         if(scroll == true) {
             body.scrollTop = body.scrollHeight

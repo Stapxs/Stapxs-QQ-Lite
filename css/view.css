@@ -14,12 +14,15 @@
     transform: translate(0, 0);
     transition: background .2s, color .2s, transform .2s;
 }
-.friend-body:hover {
-    background: var(--color-main) !important;
-    color: var(--color-font-1-r) !important;
+.friend-body.active {
+    background: var(--color-main);
+    color: var(--color-font-r);
 }
-.friend-body:hover a {
-    color: var(--color-font-1-r);
+.friend-body:hover {
+    background: var(--color-card-2) !important;
+}
+.friend-body.active:hover {
+    background: var(--color-main) !important;
 }
 .friend-body img {
     width: 50px;
@@ -44,15 +47,46 @@
 .friend-body > div p {
     font-weight: bold;
     margin-bottom: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
-.friend-body > div a {
+.friend-body > div > div {
+    display: flex;
+    align-items: center;
+}
+.friend-body > div > div a {
     font-size: 0.9rem;
     color: var(--color-font-1);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+.friend-body.active > div > div a {
+    color: var(--color-font-1-r);
+}
+.friend-body > div > div a.time {
+    flex: unset;
+    margin-left: 15px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    overflow: unset;
+}
+.friend-body > div > div svg {
+    width: 0.7rem;
+    fill: var(--color-font);
+    opacity: 0.7;
+}
+.friend-body.active > div > div svg {
+    fill: var(--color-font-r);
 }
 .friend-body > a {
     font-size: 0.9rem;
     color: var(--color-font-2);
+}
+.friend-body.active > a {
+    color: var(--color-font-1-r);
 }
 
 .msg-hander {
@@ -60,7 +94,7 @@
     flex-direction: row;
     background: var(--color-main);
     height: 50px;
-    border-radius: 7px 7px 0 0;
+    border-radius: 7px;
     color: var(--color-font-r);
     padding: 0 20px;
 }

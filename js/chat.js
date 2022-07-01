@@ -121,6 +121,37 @@ function openImgView(url) {
                 document.getElementById("img-view").style.opacity = "1"
             }, 100)
     }
+    // 尝试加载前后文
+    let control = document.getElementById("img-control")
+    control.children[0].style.display = "unset"
+    control.children[2].style.display = "unset"
+    // 寻找 url 在列表里的位置
+    let index = -1
+    for (let i = 0; i < window.imgList.length; i++) {
+        if (window.imgList[i].url === url) {
+            index = i
+            break
+        }
+    }
+    control.children[0].dataset.id = index - 1
+    control.children[2].dataset.id = index + 1
+    if(index == 0) {
+        control.children[0].style.display = "none"
+    }
+    if(index == window.imgList.length - 1) {
+        control.children[2].style.display = "none"
+    }
+    if(index == -1) {
+        control.children[0].style.display = "none"
+        control.children[2].style.display = "none"
+    }
+}
+
+function changeImg(sender) {
+    let id = sender.dataset.id
+    if(id != undefined && id >= 0 && id < window.imgList.length) {
+        openImgView(window.imgList[id].url)
+    }
 }
 
 function runConnect() {
@@ -157,6 +188,12 @@ function btnChangeColor() {
 function onListClick(sender) {
     setStatue("load", "正在加载历史消息 ……")
     const type = sender.dataset.type
+    // 清除和显示高亮
+    const lastBody = findBodyInList(null, document.getElementById("msg-hander").dataset.id)
+    if(lastBody != null) {
+        lastBody.classList.remove("active")
+    }
+    sender.classList.add("active")
     // 清空搜索
     document.getElementById("seach-input").value = ""
     cancelSearch()
@@ -268,15 +305,6 @@ function msgBodyScroll() {
     }
 }
 
-function lightChatBorder() {
-    if(window.optCookie["opt_close_flash"] == undefined || window.optCookie["opt_close_flash"] == "false") {
-        document.getElementById("msg-view").style.border = "2px solid var(--color-main)"
-        setTimeout(() => {
-            document.getElementById("msg-view").style.border = "2px solid transparent"
-        }, 400)
-    }
-}
-
 function sendMsg() {
     let json = null
     try {
@@ -384,6 +412,9 @@ function searchInList() {
     // 清空搜索结果
     const body = document.getElementById("friend-search-body")
     while(body.children.length > 0) {
+        if(body.children[0].dataset.id != document.getElementById("msg-hander").dataset.id) {
+            body.children[0].classList.remove("active")
+        }
         document.getElementById("friend-list-body").appendChild(body.children[0])
     }
     const what = document.getElementById("seach-input").value
@@ -393,6 +424,7 @@ function searchInList() {
             if(childs[i].dataset.id == what || (childs[i].dataset.allname.toLowerCase()).indexOf(what.toLowerCase()) >= 0) {
                 document.getElementById("friend-search-body").style.display = "block"
                 // 将对象复制到搜索结果框内
+                childs[i].classList.add("active")
                 document.getElementById("friend-search-body").append(childs[i])
             }
         }
@@ -405,7 +437,10 @@ function cancelSearch() {
         // 清空搜索结果
         const body = document.getElementById("friend-search-body")
         while(body.children.length > 0) {
-            document.getElementById("friend-list-body").append(body.children[0])
+            if(body.children[0].dataset.id != document.getElementById("msg-hander").dataset.id) {
+                body.children[0].classList.remove("active")
+            }
+            document.getElementById("friend-list-body").appendChild(body.children[0])
         }
         // 刷新置顶
         if(window.cookie["top_bodys"] != undefined) {
@@ -415,6 +450,24 @@ function cancelSearch() {
             }
         }
     }
+}
+
+function reloadList() {
+    // 取消搜索
+    document.getElementById("seach-input").value = ""
+    cancelSearch()
+    // 清空列表
+    document.getElementById("friend-list-body").innerHTML = ""
+    // 加载好友列表
+    sendWs(createAPI(
+        "get_friend_list",
+        null, null
+    ))
+    // 加载群列表
+    sendWs(createAPI(
+        "get_group_list",
+        null, null
+    ))
 }
 
 function jumpToMsg(id) {
@@ -689,7 +742,7 @@ function choiceMsg() {
 }
 
 function noticeOnClick(event) {
-    event.preventDefault()
+    window.focus();
     const openId = event.target.tag.split("/")[0]
     // 打开界面
     const dom = findBodyInList(null, openId)
@@ -909,7 +962,12 @@ function setTop(id, statue) {
         if(statue != false) {
             // 置顶
             list.insertBefore(upBody, list.firstChild)
-            upBody.style.background = "var(--color-card-2)"
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+            svg.setAttribute("viewBox", "0 0 448 512")
+            svg.style.transform = "rotate(45deg)"
+            svg.innerHTML = '<path d="M32 32C32 14.33 46.33 0 64 0H320C337.7 0 352 14.33 352 32C352 49.67 337.7 64 320 64H290.5L301.9 212.2C338.6 232.1 367.5 265.4 381.4 306.9L382.4 309.9C385.6 319.6 383.1 330.4 377.1 338.7C371.9 347.1 362.3 352 352 352H32C21.71 352 12.05 347.1 6.04 338.7C.0259 330.4-1.611 319.6 1.642 309.9L2.644 306.9C16.47 265.4 45.42 232.1 82.14 212.2L93.54 64H64C46.33 64 32 49.67 32 32zM224 384V480C224 497.7 209.7 512 192 512C174.3 512 160 497.7 160 480V384H224z"/>'
+            upBody.children[2].children[1].children[1].innerHTML = ""
+            upBody.children[2].children[1].children[1].append(svg)
             upBody.dataset.alwayTop = "true"
             setTimeout(() => {
                 upBody.style.transform = "translate(0, 0)"
@@ -921,7 +979,7 @@ function setTop(id, statue) {
             }, 300)
         } else {
             // 取消置顶
-            upBody.style.background = "transparent"
+            upBody.children[2].children[1].children[1].innerHTML = ""
             upBody.children[0].style.transform = "scaleY(0)"
             upBody.children[0].style.opacity = "1"
             upBody.dataset.alwayTop = "false"
@@ -1132,6 +1190,59 @@ function setSendPic(blob) {
         } else {
             // 图片过大
             setStatue("err", "图片过大！")
+        }
+    }
+}
+
+function waveAnimation(wave) {
+    let waves = wave.children[1].children
+    let min = 20
+    let max = 195
+    let add = 1
+    let timer = setInterval(() => {
+        // 遍历波浪体
+        for(var i=0; i<waves.length; i++) {
+            let now = waves[i].getAttribute("x")
+            if(Number(now) + add > max) {
+                waves[i].setAttribute("x", min)
+            } else {
+                waves[i].setAttribute("x", Number(now) + add)
+            }
+        }
+    }, 50);
+    return timer;
+}
+
+function downloadFile(url, name) {
+    // 如果是 safari，使用更兼容的方式下载
+    if(navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1) {
+        window.open(url)
+        return
+    }
+    // 使用 a 标签下载文件
+    var a = document.createElement("a")
+    a.href = url
+    a.download = name
+    a.click()
+}
+
+
+function changeSavePwd(sender) {
+    const value = sender.checked
+    if(value == false) {
+        changeOpt(sender)
+    } else {
+        if(!window.loading) {
+            if(sender.dataset.accept == "true") {
+                sender.checked = true
+                document.getElementById("save_pwd_note").style.display = "none"
+                changeOpt(sender)
+            } else {
+                // 显示二次确认提醒
+                sender.dataset.accept = "true"
+                sender.checked = false
+                document.getElementById("save_pwd_note").style.display = "block"
+            }
         }
     }
 }

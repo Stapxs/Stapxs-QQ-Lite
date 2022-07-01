@@ -1,7 +1,9 @@
 'use strict';
 
-window.version = 'v1.294'
+window.version = 'v1.2942'
+window.loading = true
 document.getElementById("opt-version").innerText = window.version
+waveAnimation(document.getElementById("login-wave"))
 // 自动暗黑模式标志
 window.is_auto_dark = true
 // 检查 Cookie 可用性
@@ -58,6 +60,13 @@ if(x != "") {
     if(window.cookie["address"] != undefined) {
         document.getElementById("sev_address").value = window.cookie["address"]
     }
+    if(window.cookie["token"] != undefined) {
+        document.getElementById("access_token").value = window.cookie["token"]
+    }
+    // 自动连接
+    if(window.optCookie["opt_auto_connect"] == "true") {
+        document.getElementById("connect_btn").click()
+    }
     // 检查缓存版本
     if(window.cookie["version"] == undefined || Number(window.cookie["version"].substring(1)) < Number(window.version.substring(1))) {
         // 刷新 Cookie
@@ -97,6 +106,7 @@ if(x != "") {
                 console.log(e)
             })
     }
+    window.loading = false
 }
 // 看看日期
 const datey = new Date()
@@ -112,7 +122,6 @@ document.getElementById("send-box").addEventListener("paste", function(e) {
     for (let i = 0, len = e.clipboardData.items.length; i < len; i++) {
         let item = e.clipboardData.items[i]
         if (item.kind === "file") {
-            console.log("file")
             let blob = item.getAsFile()
             if(blob.type.indexOf("image/") >= 0 && blob.size != 0) {
                 setStatue("load", "正在处理图片 ……")
