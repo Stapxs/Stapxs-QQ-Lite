@@ -35,14 +35,14 @@
 
 ### 克隆仓库
 
-此项目为完整的纯前端静态页面,你可以克隆仓库,非常暴力的直接打开 index.html 来使用; 但是需要注意的是部分浏览器在使用 file:// 协议的时候无法正常允许页面发起通知, 同时文件也无法唤起 PWA 功能进行 PWA APP 安装。
+此项目为完整的纯前端静态页面,你可以克隆仓库,非常暴力的直接打开 `index.html` 来使用; 但是需要注意的是部分浏览器在使用 `file://` 协议的时候无法正常允许页面发起通知, 同时文件也无法唤起 PWA 功能进行 PWA APP 安装。
 在 `v1.2.0` 版本之后，依赖 cookie 的功能也完全无法在文件打开时使用，敬请注意。
 
-因为此项目是静态页面,你也可以将它部署在任何 Web 服务端或者静态页面托管服务上, 在这种情况下上面提到的问题将恢复正常。
+同样由于此项目是静态页面,你也可以将它部署在任何 Web 服务端或者静态页面托管服务上。
 
 ## 使用
 
-本程序依赖 oicq-http (v1) 作为后端服务, 关于 oicq-http 可以参考此处: <https://github.com/takayama-lily/oicq/tree/master/http-api>
+本程序依赖 oicq-http v1 作为后端服务, 关于 oicq-http 可以参考 [此处](https://github.com/takayama-lily/oicq/tree/master/http-api)。
 
 ### 部署 OICQ
 
@@ -54,7 +54,7 @@
 `yarn global add oicq@1`
 
 2. 接下来使用你的 QQ 号登录 oicq:  
-`oicq < QQ 号 >`
+`oicq < QQ 号 >` 
 
 3. 首次运行将生成配置文件, 需要修改配置文件来使 Web 可以交互:  
 ![首次运行 oicq](src/readme/fist_run_oicq.png)  
@@ -76,29 +76,43 @@
 
 ### 我能使用其他 QQ Http Bot 吗
 
-- 如果它兼容 OneBot 11 协议 (<https://github.com/botuniverse/onebot-11>), 你可以尝试连接它, 但是由于获取历史消息的接口是 oicq-http 独有的, 依赖此接口的部分功能 (如加载历史消息、发送消息显示) 将会无法正常工作。
+- 如果它兼容 [OneBot 11 协议](<https://github.com/botuniverse/onebot-11>), 你可以尝试连接它, 但是由于消息体格式和接口扩展的差异，大部分情况下都不能完全正常使用。以下是已经经过兼容的 Bot:
 
-### 使用 Bot 是否有封号风险
+    - [oicq http v1](https://github.com/takayama-lily/oicq/tree/master/http-api)：完全兼容
+    - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)：最低兼容，仅保证消息查看基本可用
 
-- 如果你使用的是 oicq-http, 可以查看此处了解封号风险 (<https://github.com/takayama-lily/oicq/wiki/98.%E5%85%B3%E4%BA%8E%E8%B4%A6%E5%8F%B7%E5%86%BB%E7%BB%93%E5%92%8C%E9%A3%8E%E6%8E%A7>), 如果你尝试使用其他 QQ Bot (参见上一条问题), 请自行参考它的文档。
+### 使用 Bot 是否有风险
+
+- 如果你使用的是 oicq-http, 可以查看此处了解 [使用风险](<https://github.com/takayama-lily/oicq/wiki/98.%E5%85%B3%E4%BA%8E%E8%B4%A6%E5%8F%B7%E5%86%BB%E7%BB%93%E5%92%8C%E9%A3%8E%E6%8E%A7>), 如果你尝试使用其他 QQ Bot (参见上一条问题), 请自行参考它的文档。
 
 ### 我遇到了问题
 
-- 如果有什么奇奇怪怪的问题, 欢迎发起 issue 询问! 如果有什么 BUG 和优化建议也可以哦! (<https://github.com/Stapxs/Stapxs-QQ-Lite/issues>)
+- 如果有什么奇奇怪怪的问题, 欢迎发起 [issue](<https://github.com/Stapxs/Stapxs-QQ-Lite/issues>) 询问! 如果有什么 BUG 和优化建议也可以哦! 
 
-<br/>
-<br/>
+## 依赖和许可声明
 
-## 许可证
+- Stapxs QQ Lite
+    - (C) Stapx Steve [ 林槐 ]. licensed under Apache 2.0
 
-<div align="right">
-    <font style="font-size: 0.8rem">README v1.1</font>
+- Border Card UI
+    - (C) Stapx Steve [ 林槐 ]. licensed under Apache 2.0
+
+- Bootstrap
+    - (C) Fathom. licensed under MIT
+
+- Font Awesome
+    - (C) Fonticons, Inc. licensed under SIL OFL 1.1
+
+- JQuery & JQuery UI
+    - (C) OpenJS Foundation. licensed under MIT
+
+- QFace
+    - @koishijs. https://github.com/koishijs/QFace
+
+<div align=right>
     <br/>
-    <font style="font-size: 0.8rem">(C) Stapx Steve [ 林槐 ] 2022, licensed under Apache 2.0</font>
+    <br/>
+    <font style="font-size: 0.8rem">README v1.2</font>
     <br/>
     <font style="font-size: 0.8rem">林槐出品, 必属稽品</font>
-    <br/>
-    <font style="font-size: 0.5rem">
-        部分 QQ 表情来自 <a href="https://github.com/koishijs/QFace">Koishi.js</a>
-    </font>
 </div>

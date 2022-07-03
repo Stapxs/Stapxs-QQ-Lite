@@ -1226,7 +1226,6 @@ function downloadFile(url, name) {
     a.click()
 }
 
-
 function changeSavePwd(sender) {
     const value = sender.checked
     if(value == false) {
@@ -1244,5 +1243,25 @@ function changeSavePwd(sender) {
                 document.getElementById("save_pwd_note").style.display = "block"
             }
         }
+    }
+}
+
+function setUserColor() {
+    document.getElementById("user_color_picker").click()
+}
+
+function colorPickChange(sender) {
+    if(!window.loading) {
+        const button = document.getElementById("opt_color_user")
+        button.parentNode.children[1].style.background = sender.value
+        // 保存
+        const id = button.parentNode.dataset.id
+        const name = button.name
+        button.parentNode.dataset.id = sender.value
+        button.name = button.id
+        changeOpt(button)
+        button.parentNode.dataset.id = id
+        button.name = name
+        // 设置主题色
     }
 }

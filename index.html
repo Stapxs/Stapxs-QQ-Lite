@@ -18,7 +18,7 @@
     <link rel="apple-touch-icon" href="src/icon-for-fuck-apple.png">
     <link rel="shortcut icon" href="src/icon.svg">
     <!-- 框架样式依赖 -->
-    <link rel="stylesheet" href="https://api.stapxs.cn/css/color-light.css">
+    <link rel="stylesheet" href="css/color/color-light.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://api.stapxs.cn/font/fira_code.css">
@@ -253,7 +253,7 @@
         <div class="login-pan-bg" onclick="showUpdatePan(false)"></div>
         <div class="login-pan-card ss-card">
             <p>更新日志</p>
-            <div style="text-align: left;margin-top: 20px;background: var(--color-card-1);padding: 20px;border-radius: 7px;font-size: 0.9rem;max-height: 70vh;overflow-x: hidden;overflow-y: scroll;"><span id="update-info"></span></div>
+            <div style="text-align: left;margin-top: 20px;background: var(--color-card-1);padding: 20px;border-radius: 7px;font-size: 0.9rem;max-height: 40vh;overflow-x: hidden;overflow-y: scroll;"><span id="update-info"></span></div>
             <button class="ss-button" onclick="showUpdatePan(false)">知道了</button>
         </div>
     </div>
@@ -436,23 +436,29 @@
                             <a>换个心情 🎵 ~</a>
                         </div>
                         <div style="display: flex;flex: 0;margin-right: 5px;">
-                            <label class="ss-radio" title="坏猫黄" data-id="4">
+                            <!-- <label class="ss-radio" data-id="-1">
+                                <input type="radio" name="opt_color" id="opt_color_user" onclick="changeOpt(this);setUserColor();">
+                                <div style="background: var(--color-main);background-image: -webkit-linear-gradient(309deg, #ff0000, #e99f07, #dbe729, #61eb58, #3c8ee3, #221bdd, #8712df);--radio-size: 30px;margin-top: 1px;"><div style="margin-top: 1px;margin-right: 1px;"></div></div>
+                            </label>
+                            <input type="color" id="user_color_picker" onchange="colorPickChange(this)" style="opacity: 0;width: 0;height: 0;margin-top: 30px;margin-left: 10px;">
+                            <div style="margin: 0 10px 0 -1px;width: 1px;background: var(--color-font-1);transform: scaleY(.5);opacity: 0.7;border-radius: 1px;"></div> -->
+                            <label class="ss-radio" data-id="4">
                                 <input type="radio" name="opt_color" id="opt_color_4" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-4);"><div></div></div>
                             </label>
-                            <label class="ss-radio" title="林槐蓝" data-id="3">
+                            <label class="ss-radio" data-id="3">
                                 <input type="radio" name="opt_color" id="opt_color_3" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-3);"><div></div></div>
                             </label>
-                            <label class="ss-radio" title="天牧红" data-id="2">
+                            <label class="ss-radio" data-id="2">
                                 <input type="radio" name="opt_color" id="opt_color_2" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-2);"><div></div></div>
                             </label>
-                            <label class="ss-radio" title="玄素黑" data-id="1">
+                            <label class="ss-radio" data-id="1">
                                 <input type="radio" name="opt_color" id="opt_color_1" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-1);"><div></div></div>
                             </label>
-                            <label class="ss-radio" title="Zorin 蓝（默认）" data-id="0">
+                            <label class="ss-radio" data-id="0">
                                 <input type="radio" name="opt_color" id="opt_color_0" onclick="changeOpt(this);setMainColor(this);" checked>
                                 <div style="background: var(--color-main-0);"><div></div></div>
                             </label>

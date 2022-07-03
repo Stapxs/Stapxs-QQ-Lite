@@ -111,6 +111,7 @@
 }
 .msg-replay span {
     flex: 1;
+    overflow: hidden;
 }
 
 .note-base {

@@ -1,6 +1,6 @@
 'use strict';
 
-window.version = 'v1.2942'
+window.version = 'v1.2943'
 window.loading = true
 document.getElementById("opt-version").innerText = window.version
 waveAnimation(document.getElementById("login-wave"))
@@ -86,7 +86,7 @@ if(x != "") {
                             let msgStr = ""
                             for(let i=0; i<msgList.length; i++) {
                                 if(i == 0) {
-                                    msgStr += "<p style='text-align: center;font-size: 1rem;margin-bottom: -2rem;font-weight: bold;'>" + msgList[i] + "</p><br>"
+                                    msgStr += "<p style='text-align: center;font-size: 1rem;    margin-bottom: -1rem;margin-top: -0.5rem;font-weight: bold;'>" + msgList[i] + "</p><br>"
                                     continue
                                 }
                                 if(msgList[i].substring(0, 1) == ":") {

@@ -64,7 +64,7 @@ function printMsg(obj, addTo, addAt) {
                     switch(obj.message[i].type) {
                         case "reply": { if(obj.message[i+1].type == "at")obj.message[i+1].type = "pass";body = printReplay(obj.message[i].data.id, obj.message_id) + body; break }
                         case "text": body = body + printText(obj.message[i].data.text, obj.message_id); break
-                        case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, user_id, obj.time); break
+                        case "image": body = body + printImg(obj.message[i].data.url, obj.message.length, i, user_id, obj.time); break
                         case "face": body = body + printFace(obj.message[i].data.id, obj.message[i].data.text); break
                         case "bface": body = body + printBface("[ 表情：" + obj.message[i].data.text + " ]"); break
                         case "at": body = body + printAt(obj.message[i].data.text, obj.message[i].data.qq, user_id); break
@@ -190,7 +190,7 @@ function printAt(txt, id, sender) {
     }
 }
 
-function printImg(url, num, sender, time) {
+function printImg(url, num, where, sender, time) {
     // 缓存图片列表
     if(window.imgListId != document.getElementById("msg-hander").dataset.id) {
         // 如果不是当前消息的图片列表，则清空
@@ -219,11 +219,19 @@ function printImg(url, num, sender, time) {
     if((window.login_id == sender && body.scrollHeight - body.scrollTop === body.clientHeight) || body.scrollHeight - body.scrollTop === body.clientHeight) {
         loaded = "imgLoaded()"
     }
+    // 判断是否需要去除消息框边距
      if(num == 1) {
          return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
      } else {
-         return "<img title='查看图片' alt='群图片' onload='" + loaded + "' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
-     }
+        // 判断上下边距的添加
+        if(where == 0) {
+            return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='margin-bottom: 5px;' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        } else if(where == (num - 1)) {
+            return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='margin-top: 5px;' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        } else {
+            return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='margin-bottom: 5px;margin-top: 5px;' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+        }
+    }
 }
 
 function printFace(id, name) {

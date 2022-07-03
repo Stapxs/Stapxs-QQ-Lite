@@ -318,7 +318,7 @@ select:focus {
 .img-view > div:nth-child(3) > div {
     padding: 15px;
     pointer-events: auto;
-    background: var(--color-main);
+    background: var(--color-card);
     border-radius: 7px;
     margin: 20px;
     opacity: 0.7;
@@ -330,7 +330,7 @@ select:focus {
 .img-view > div:nth-child(3) > div svg {
     width: 25px;
     height: 25px;
-    fill: var(--color-font-r);
+    fill: var(--color-font);
 }
 .img-view > div:nth-child(3) > div.space {
     flex: 1;
@@ -508,7 +508,7 @@ select:focus {
     margin-left: 50%;
     margin-top: 50vh;
     transform: translate(-50%, -50%);
-    height: 55vh;
+    height: 70vh;
     width: 50%;
     max-width: 780px;
     display: flex;
