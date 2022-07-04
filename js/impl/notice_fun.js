@@ -250,7 +250,7 @@ function updateMsg(msg) {
     const raw = getMsgRawTxt(msg.message)
     // 刷新列表显示消息
     var myDate = new Date();
-    findBodyInList(null, id).children[2].children[0].children[2].innerText = (myDate.getHours() + 1).toString().padStart(2, "0") + ":" + myDate.getMinutes().toString().padStart(2, "0")
+    findBodyInList(null, id).children[2].children[0].children[2].innerText = myDate.getHours().toString().padStart(2, "0") + ":" + myDate.getMinutes().toString().padStart(2, "0")
     findBodyInList(null, id).children[2].children[1].children[0].innerText = raw==""?msg.raw_message:raw
     // 获取当前打开的窗口 ID
     const nowSee = document.getElementById("msg-hander").dataset.id
