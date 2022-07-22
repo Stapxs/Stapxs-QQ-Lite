@@ -313,24 +313,13 @@ function sendMsg() {
         const type = document.getElementById("msg-hander").dataset.type
         const id = document.getElementById("msg-hander").dataset.id
         // 构建消息体
-        if(window.cacheImg != undefined && window.cacheImg != "") {
-            // 构建图片 CQ 码
-            msg  = "[CQ:image,file=base64://" + window.cacheImg.substring(window.cacheImg.indexOf("base64") + 7)  + "]" + msg
+        if(window.cacheImg != undefined && window.cacheImg.length > 0) {
+            for(let i = 0; i < window.cacheImg.length; i++) {
+                // 构建图片 CQ 码
+                msg  = "[CQ:image,file=base64://" + window.cacheImg[i].substring(window.cacheImg[i].indexOf("base64") + 7)  + "]" + msg
+            }
             // 清除图片缓存
-            document.getElementById("btn-img").title = "发送图片"
-            document.getElementById("btn-img").style.background = "var(--color-card-1)"
-            document.getElementById("btn-img").children[1].style.fill = "var(--color-font)"
-            window.cacheImg = ""
-            document.getElementById("btn-img").dataset.select = "false"
-            setTimeout(() => {
-                // 添加 input
-                var input = document.createElement("input")
-                input.id = "choice-pic"
-                input.type = "file"
-                input.style.display = "none"
-                input.onchange = function() { selectImgFile() }
-                document.getElementById("btn-img").append(input)
-            }, 100)
+            window.cacheImg = []
         }
         if (document.getElementById("replyer").dataset.id != undefined && document.getElementById("replyer").dataset.id != "") {
             // 构建回复 CQ 码
@@ -363,48 +352,13 @@ function sendMsg() {
     }
 }
 
-function selectImg() {
-    const btn = document.getElementById("btn-img")
-    if(btn.dataset.select === "true") {
-        // 取消发送图片
-        document.getElementById("btn-img").title = "发送图片"
-        document.getElementById("btn-img").style.background = "var(--color-card-1)"
-        document.getElementById("btn-img").children[1].style.fill = "var(--color-font)"
-        window.cacheImg = ""
-        document.getElementById("btn-img").dataset.select = "false"
-        setTimeout(() => {
-            // 添加 input
-            var input = document.createElement("input")
-            input.id = "choice-pic"
-            input.type = "file"
-            input.style.display = "none"
-            input.onchange = function() { selectImgFile() }
-            document.getElementById("btn-img").append(input)
-        }, 100)
-    }
-}
-
-function selectImgFile() {
-    const blob = document.getElementById("choice-pic").files[0]
+function selectImgFile(sender) {
+    showMoreBox()
+    if(window.cacheImg != undefined && window.cacheImg.length < 4) {
+    const blob = sender.files[0]
     setSendPic(blob)
-}
-
-function showSelView(statue) {
-    const view = document.getElementById("btn-img-hover")
-    if(statue && window.cacheImg != undefined && window.cacheImg != "") {
-        // 显示
-        view.style.display = "flex"
-        setTimeout(() => {
-            view.style.opacity = "1"
-        }, 10)
-        // 设置图片
-        view.children[0].src = window.cacheImg
     } else {
-        // 隐藏
-        view.style.opacity = "0"
-        setTimeout(() => {
-            view.style.display = "none"
-        }, 300)
+        setStatue("error", "最多发送四张图片 ……", true)
     }
 }
 
@@ -1174,18 +1128,15 @@ function setSendPic(blob) {
             reader.readAsDataURL(blob); 
             reader.onloadend = function() {
                 var base64data = reader.result
-                // 将按钮改为选中状态
-                document.getElementById("btn-img").style.background = "var(--color-main)"
-                document.getElementById("btn-img").children[1].style.fill = "var(--color-font-r)"
-                document.getElementById("btn-img").title = "取消发送图片"
                 // 记录图片信息
-                window.cacheImg = base64data
-                // 设置标记
-                document.getElementById("btn-img").dataset.select = "true"
+                if(window.cacheImg == undefined) {
+                    window.cacheImg = []
+                }
+                window.cacheImg.push(base64data)
                 // 完成
                 setStatue("ok", "图片处理完成！")
-                // 删除 input
-                document.getElementById("btn-img").removeChild(document.getElementById("choice-pic"))
+                // 显示弹窗
+                showAddImgPan(true)
             }
         } else {
             // 图片过大
@@ -1244,6 +1195,112 @@ function changeSavePwd(sender) {
             }
         }
     }
+}
+
+function showAddImgPan(what) {
+    if (what === true) {
+        document.getElementById("add-img-pan").style.display = "block"
+        setTimeout(() => {
+            document.getElementById("add-img-pan").style.opacity = "1"
+        }, 100)
+        // 聚焦输入框
+        document.getElementById("send-img-text").focus()
+        // 复制输入框内本来就有的内容
+        document.getElementById("send-img-text").value = document.getElementById("send-box").value
+        // 刷新图片显示区
+        document.getElementById("img-show-pan").innerText = ""
+        for(let i=0; i<window.cacheImg.length; i++) {
+            const div = document.createElement("div")
+            div.dataset.num = i
+            div.className = "img-show-item-" + (window.cacheImg.length + 1)
+            div.style.backgroundImage = "url(" + window.cacheImg[i] + ")"
+            div.onclick = function() { openImgView(window.cacheImg[i]) }
+            document.getElementById("img-show-pan").appendChild(div)
+        }
+        if(window.cacheImg.length < 4) {
+            const div = document.createElement("div")
+            div.className = "img-show-item-add img-show-item-" + (window.cacheImg.length + 1)
+            div.onclick = function() { div.lastChild.click() }
+            const input = document.createElement("input")
+            input.id = "choice-pic"
+            input.type = "file"
+            input.style.display = "none"
+            input.onchange = function() { selectImgFile(input) }
+            div.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM256 368C269.3 368 280 357.3 280 344V280H344C357.3 280 368 269.3 368 256C368 242.7 357.3 232 344 232H280V168C280 154.7 269.3 144 256 144C242.7 144 232 154.7 232 168V232H168C154.7 232 144 242.7 144 256C144 269.3 154.7 280 168 280H232V344C232 357.3 242.7 368 256 368z"/></svg>'
+            div.appendChild(input)
+            document.getElementById("img-show-pan").appendChild(div)
+        }
+    } else {
+        document.getElementById("add-img-pan").style.opacity = "0"
+        setTimeout(() => {
+            document.getElementById("add-img-pan").style.display = "none"
+        }, 300)
+        // 清除缓存
+        window.cacheImg = []
+    }
+}
+
+function sendImgMsg() {
+    document.getElementById("send-box-button").click()
+    showAddImgPan(false)
+}
+
+function sendImgTextChange() {
+    document.getElementById("send-box").value = document.getElementById("send-img-text").value
+}
+
+function showMoreBox() {
+    const body = document.getElementById("more-box")
+    const sender = document.getElementById("more-box-button")
+    if(body.style.height == 0 || body.style.height == "0px") {
+        body.style.height = "100px"
+        body.style.marginBottom = "10px"
+        sender.children[0].style.transform = "rotate(-90deg)"
+    } else {
+        body.style.height = 0
+        body.style.marginBottom = 0
+        sender.children[0].style.transform = "rotate(90deg)"
+    }
+}
+
+function showPopPan(id, how) {
+    if(how === true) {
+        document.getElementById(id).style.display = "block"
+        setTimeout(() => {
+            document.getElementById(id).style.opacity = "1"
+        }, 100)
+    } else {
+        document.getElementById(id).style.opacity = "0"
+        setTimeout(() => {
+            document.getElementById(id).style.display = "none"
+        }, 300)
+    }
+}
+
+function showALoadFacePan() {
+    showMoreBox()
+    showPopPan("add-face-pan", true)
+    // 表情信息
+    const maxId = 323;
+    const passId = [17, 40, 44, 45, 47, 48, 50, 51, 52, 58, 65, 68, 70, 71, 73, 80 ,81, 82, 83, 84, 87, 88,
+                    92, 93, 94, 95, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 275, 276]
+    if(document.getElementById("add-face-pan").dataset.loaded == "false") {
+        // 加载表情列表
+        for(let i=0; i<=maxId; i++) {
+            if(passId.indexOf(i) == -1) {
+                const div = document.createElement("div")
+                div.onclick = function() { choiceFace(i) }
+                div.innerHTML = '<img loading="lazy" src="src/qq-face/' + i + '.gif" alt="">'
+                document.getElementById("face-show-pan").appendChild(div)
+            }
+        }
+        // 刷新状态
+        document.getElementById("add-face-pan").dataset.loaded = "true"
+    }
+}
+
+function choiceFace(id) {
+    document.getElementById("send-box").value += "[CQ:face,id=" + id + "]"
 }
 
 function setUserColor() {

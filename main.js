@@ -1,6 +1,6 @@
 'use strict';
 
-window.version = 'v1.2943'
+window.version = 'v1.2954'
 window.loading = true
 document.getElementById("opt-version").innerText = window.version
 waveAnimation(document.getElementById("login-wave"))
@@ -123,28 +123,25 @@ document.getElementById("send-box").addEventListener("paste", function(e) {
         let item = e.clipboardData.items[i]
         if (item.kind === "file") {
             let blob = item.getAsFile()
-            if(blob.type.indexOf("image/") >= 0 && blob.size != 0) {
+            if (blob.type.indexOf("image/") >= 0 && blob.size != 0) {
                 setStatue("load", "正在处理图片 ……")
-                if(blob.size < 3145728) {
+                if (blob.size < 3145728) {
                     // 转换为 Base64
-                    let reader = new FileReader();
-                    reader.readAsDataURL(blob); 
-                    reader.onloadend = function() {
-                        let base64data = reader.result
-                        // 将按钮改为选中状态
-                        document.getElementById("btn-img").style.background = "var(--color-main)"
-                        document.getElementById("btn-img").children[1].style.fill = "var(--color-font-r)"
-                        document.getElementById("btn-img").title = "取消发送图片"
+                    var reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = function () {
+                        var base64data = reader.result
                         // 记录图片信息
-                        window.cacheImg = base64data
-                        // 设置标记
-                        document.getElementById("btn-img").dataset.select = "true"
+                        if (window.cacheImg == undefined) {
+                            window.cacheImg = []
+                        }
+                        window.cacheImg.push(base64data)
                         // 完成
                         setStatue("ok", "图片处理完成！")
-                        // 删除 input
-                        document.getElementById("btn-img").removeChild(document.getElementById("choice-pic"))
+                        // 显示弹窗
+                        showAddImgPan(true)
                     }
-                // 图片过大
+                    // 图片过大
                 } else setStatue("err", "图片过大！")
             }
             // 阻止默认行为

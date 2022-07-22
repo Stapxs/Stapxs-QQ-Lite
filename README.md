@@ -72,6 +72,11 @@
 
 ![结束](src/readme/QWL_end.png)
 
+## 其他提醒
+
+### 关于不安全连接
+- 当使用 https 页面连接 ws 服务（反之相同）的情况下，连接将会失败；这是由于其中某一者是不安全的。在这种情况下，你可以选择将 ws 提升为 wss 或者将 https 降级为 http（不安全）来解决问题，此处不提供解决方案。[#32](https://github.com/Stapxs/Stapxs-QQ-Lite/issues/32)
+
 ## 更多问题
 
 ### 我能使用其他 QQ Http Bot 吗

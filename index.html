@@ -140,18 +140,32 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/></svg>
                             </div>
                         </div>
+                        <!-- 更多功能控件框 -->
+                        <div class="more-box" id="more-box">
+                            <div>
+                                <label>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M447.1 32h-384C28.64 32-.0091 60.65-.0091 96v320c0 35.35 28.65 64 63.1 64h384c35.35 0 64-28.65 64-64V96C511.1 60.65 483.3 32 447.1 32zM111.1 96c26.51 0 48 21.49 48 48S138.5 192 111.1 192s-48-21.49-48-48S85.48 96 111.1 96zM446.1 407.6C443.3 412.8 437.9 416 432 416H82.01c-6.021 0-11.53-3.379-14.26-8.75c-2.73-5.367-2.215-11.81 1.334-16.68l70-96C142.1 290.4 146.9 288 152 288s9.916 2.441 12.93 6.574l32.46 44.51l93.3-139.1C293.7 194.7 298.7 192 304 192s10.35 2.672 13.31 7.125l128 192C448.6 396 448.9 402.3 446.1 407.6z"/></svg>
+                                    <input id="choice-pic" type="file" style="display: none;" onchange="selectImgFile(this);showAddImgPan(true)">
+                                </label>
+                                <span>图片</span>
+                            </div>
+                            <div>
+                                <div onclick="showALoadFacePan()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM256.3 331.8C208.9 331.8 164.1 324.9 124.5 312.8C112.2 309 100.2 319.7 105.2 331.5C130.1 390.6 188.4 432 256.3 432C324.2 432 382.4 390.6 407.4 331.5C412.4 319.7 400.4 309 388.1 312.8C348.4 324.9 303.7 331.8 256.3 331.8H256.3zM176.4 176C158.7 176 144.4 190.3 144.4 208C144.4 225.7 158.7 240 176.4 240C194 240 208.4 225.7 208.4 208C208.4 190.3 194 176 176.4 176zM336.4 240C354 240 368.4 225.7 368.4 208C368.4 190.3 354 176 336.4 176C318.7 176 304.4 190.3 304.4 208C304.4 225.7 318.7 240 336.4 240z"/></svg>
+                                </div>
+                                <span>表情</span>
+                            </div>
+                        </div>
                         <!-- 发送控件 -->
                         <div style="display: flex;" class="controller">
-                            <label title="发送图片" onmouseout="showSelView(false);" onmouseover="showSelView(true);" class="ss-card" id="btn-img" data-select="false" onclick="selectImg();" style="height: 60px;margin-bottom: 0;transition: background .3s;cursor: pointer;background: var(--color-card-1);padding: 20px;min-height: unset;">
-                                <div class="btn-img-hover" id="btn-img-hover" style="opacity: 0;display: none;"><img></div>
-                                <svg style="width: 20px;height: 20px;margin-top: -7px;fill: var(--color-font);" style="transition: fill .3s;pointer-events: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M224 128L224 0H48C21.49 0 0 21.49 0 48v416C0 490.5 21.49 512 48 512h288c26.51 0 48-21.49 48-48V160h-127.1C238.3 160 224 145.7 224 128zM96 224c17.67 0 32 14.33 32 32S113.7 288 96 288S64 273.7 64 256S78.33 224 96 224zM318.1 439.5C315.3 444.8 309.9 448 304 448h-224c-5.9 0-11.32-3.248-14.11-8.451c-2.783-5.201-2.479-11.52 .7949-16.42l53.33-80C122.1 338.7 127.1 336 133.3 336s10.35 2.674 13.31 7.125L160 363.2l45.35-68.03C208.3 290.7 213.3 288 218.7 288s10.35 2.674 13.31 7.125l85.33 128C320.6 428 320.9 434.3 318.1 439.5zM256 0v128h128L256 0z"/></svg>
-                                <input id="choice-pic" type="file" style="display: none;" onchange="selectImgFile()">
+                            <label id="more-box-button" onclick="showMoreBox()" title="更多功能" class="ss-card" id="btn-img" data-select="false" style="height: 60px;margin-bottom: 0;transition: background .3s;cursor: pointer;background: var(--color-card-1);padding: 20px;min-height: unset;">
+                                <svg style="transform: rotate(90deg);width: 20px;height: 20px;margin-top: -7px;fill: var(--color-font);transition: transform .3s;pointer-events: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M192 448c-8.188 0-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25L77.25 256l137.4 137.4c12.5 12.5 12.5 32.75 0 45.25C208.4 444.9 200.2 448 192 448z"/></svg>
                             </label>
                             <form id="send-box-form" style="display: flex;flex: 1;height: 60px;margin-left: 20px;" onsubmit="return sendMsg();">
                                 <div class="ss-card msg-box">
                                     <input id="send-box" type="text" autocomplete="off" oninput="mainInputChange(this)" onblur="mainInputOut(this)" ondrop="mainInputDrop(event, this)">
                                 </div>
-                                <button class="ss-card" title="发送" style="width: 60px;height: 60px;border: 0;margin-left: 20px;background: var(--color-main);">
+                                <button id="send-box-button" class="ss-card" title="发送" style="width: 60px;height: 60px;border: 0;margin-left: 20px;background: var(--color-main);">
                                     <svg style="fill: var(--color-font-r);width: 20px;height: 20px;margin-top: -4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M511.6 36.86l-64 415.1c-1.5 9.734-7.375 18.22-15.97 23.05c-4.844 2.719-10.27 4.097-15.68 4.097c-4.188 0-8.319-.8154-12.29-2.472l-122.6-51.1l-50.86 76.29C226.3 508.5 219.8 512 212.8 512C201.3 512 192 502.7 192 491.2v-96.18c0-7.115 2.372-14.03 6.742-19.64L416 96l-293.7 264.3L19.69 317.5C8.438 312.8 .8125 302.2 .0625 289.1s5.469-23.72 16.06-29.77l448-255.1c10.69-6.109 23.88-5.547 34 1.406S513.5 24.72 511.6 36.86z"/></svg>
                                 </button>
                             </form>
@@ -272,6 +286,28 @@
             <div onclick="changeImg(this)">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"/></svg>
             </div>
+        </div>
+    </div>
+    <!-- 添加图片弹窗 -->
+    <div class="login-pan" id="add-img-pan" style="display: none;transition: opacity .3s;">
+        <div class="login-pan-bg" onclick="showAddImgPan(false)"></div>
+        <div class="imgadd-pan-card ss-card">
+            <p>添加图片</p>
+            <div id="img-show-pan" data-num="0"></div>
+            <input type="text" id="send-img-text" oninput="sendImgTextChange()" ondrop="mainInputDrop(event, this)">
+            <div>
+                <button class="ss-button" onclick="showAddImgPan(false)">取消</button>
+                <button class="ss-button" onclick="sendImgMsg()">发送</button>
+            </div>
+        </div>
+    </div>
+    <!-- 添加表情弹窗 -->
+    <div class="login-pan" id="add-face-pan" data-loaded="false" style="display: none;transition: opacity .3s;">
+        <div class="login-pan-bg" onclick="showPopPan('add-face-pan', false)" style="opacity: 0;"></div>
+        <div class="imgadd-pan-card ss-card" style="left: auto;right: 0;transform: translate(-40px, -50px);box-shadow: 0 0 5px var(--color-shader);">
+            <p>添加表情</p>
+            <div id="face-show-pan" class="face-show-pan"></div>
+            <button class="ss-button" style="width: 100%;height: 35px;" onclick="showPopPan('add-face-pan', false)">关闭</button>
         </div>
     </div>
     <!-- 右击菜单 -->
@@ -442,6 +478,10 @@
                             </label>
                             <input type="color" id="user_color_picker" onchange="colorPickChange(this)" style="opacity: 0;width: 0;height: 0;margin-top: 30px;margin-left: 10px;">
                             <div style="margin: 0 10px 0 -1px;width: 1px;background: var(--color-font-1);transform: scaleY(.5);opacity: 0.7;border-radius: 1px;"></div> -->
+                            <label class="ss-radio" data-id="5">
+                                <input type="radio" name="opt_color" id="opt_color_5" onclick="changeOpt(this);setMainColor(this);">
+                                <div style="background: var(--color-main-5);"><div></div></div>
+                            </label>
                             <label class="ss-radio" data-id="4">
                                 <input type="radio" name="opt_color" id="opt_color_4" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-4);"><div></div></div>

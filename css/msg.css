@@ -105,9 +105,7 @@
     flex-direction: row;
     height: calc(1rem + 20px);
     overflow: hidden;
-}
-.msg-replay svg {
-    margin-top: 4px;
+    align-items: center;
 }
 .msg-replay span {
     flex: 1;

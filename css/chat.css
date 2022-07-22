@@ -413,21 +413,23 @@ select:focus {
 .menu {
     box-shadow: 0 0 5px var(--color-shader);
     max-width: 50%;
-    min-width: 10%;
     width: fit-content;
-    padding: 10px;
+    padding: 8px;
     transform: scaleY(0);
     transform-origin: top;
     transition: transform .1s;
+    background: rgba(var(--color-bg-rgb), .80);
+    backdrop-filter: blur(10px);
 }
 .menu div {
     display: flex;
-    padding: 10px 20px 10px 10px;
+    padding: 8px 4rem 8px 8px;
     border-radius: 7px;
     transition: background .3s, color .3s;
     fill: var(--color-font-2);
     margin: 2px 0;
     cursor: pointer;
+    align-items: center;
 }
 .menu div:hover {
     background: var(--color-main);
@@ -437,14 +439,15 @@ select:focus {
     fill: var(--color-font-r) !important;
 }
 .menu div svg {
-    height: 1rem;
-    width: 1rem;
+    height: 0.9rem;
+    width: 0.9rem;
     margin-right: 10px;
 }
 .menu div a {
-    line-height: 1rem;
+    line-height: 0.9rem;
     user-select: none;
     white-space: nowrap;
+    font-size: 0.9rem;
 }
 
 .resend-tips {
@@ -772,6 +775,9 @@ select:focus {
 .msg-top-menu-body {
     transform: unset;
     max-width: unset;
+}
+.msg-top-menu-body > div {
+    padding: 0 4rem 0 8px;
 }
 .msg-top-menu-body svg {
     width: 1rem !important;

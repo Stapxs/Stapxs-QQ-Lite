@@ -53,7 +53,7 @@
 }
 .friend-body > div > div {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 .friend-body > div > div a {
     font-size: 0.9rem;
@@ -270,4 +270,150 @@
     color: var(--color-font-2);
     font-size: 0.9rem;
     margin-right: 10px;
+}
+
+.imgadd-pan-card {
+    position: absolute;
+    width: calc(100% - 40px);
+    max-width: 310px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.imgadd-pan-card > p {
+    color: var(--color-main);
+}
+.imgadd-pan-card > input {
+    width: calc(100% - 20px);
+    height: 40px;
+    outline: none;
+    border: 2px solid var(--color-card-2);
+    border-radius: 7px;
+    transition: border .3s;
+    background: transparent;
+    margin: 20px 10px 0 10px;
+    padding: 0 10px;
+}
+.imgadd-pan-card > input:focus {
+    border: 2px solid var(--color-main);
+}
+.imgadd-pan-card > div:last-child {
+    margin-top: 15px;
+}
+.imgadd-pan-card > div:last-child > button {
+    margin: 5px;
+    width: calc(50% - 20px);
+}
+.imgadd-pan-card > div:last-child > button:first-child {
+    background: var(--color-card-1);
+    color: var(--color-font);
+}
+.imgadd-pan-card > div:not(:last-child) {
+    height: 200px;
+    border-radius: 7px;
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-x: hidden;
+}
+
+.imgadd-pan-card > div:not(:last-child) > div {
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+.img-show-item-1 {
+    width: 100%;
+    height: 100%;
+}
+.img-show-item-2 {
+    width: 50%;
+    height: 100%;
+}
+.img-show-item-3,
+.img-show-item-4,
+.img-show-item-5 {
+    width: 50%;
+    height: 50%;
+}
+.img-show-item-add {
+    background-color: var(--color-card-1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.img-show-item-add > svg {
+    width: 30%;
+    fill: var(--color-font-2);
+    opacity: 0.3;
+}
+
+.more-box {
+    border-radius: 7px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background: var(--color-card-1);
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: 0;
+    transition: height .2s;
+}
+.more-box > div {
+    margin: 20px 10px 10px 10px;
+}
+.more-box > div > span {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    width: 100%;
+    text-align: center;
+    color: var(--color-font-2);
+}
+.more-box > div > div,
+.more-box > div > label {
+    background: var(--color-card-2);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+}
+.more-box > div > label {
+    margin: 0 !important;
+}
+.more-box > div > div > svg,
+.more-box > div > label > svg {
+    fill: var(--color-font-2);
+}
+
+.face-show-pan {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: 30vh;
+    overflow-y: scroll;
+    background: var(--color-card-1);
+    padding: 5px;
+    margin: 0 0 20px 0 !important;
+    width: 100% !important;
+}
+
+.face-show-pan > div {
+    background: var(--color-card-2);
+    border-radius: 50%;
+    padding: 10px;
+    margin: 5px;
+    width: 40px;
+    height: 40px;
+}
+.face-show-pan > div > img {
+    width: 20px;
+    height: 20px;
+    margin-top: -9px;
 }

@@ -5,6 +5,9 @@
     --color-card-1: #494949;
     --color-card-2: #5F5F5F;
 
+    --color-bg-rgb: 45, 45, 45;
+    --color-card-rgb: 58, 58, 58;
+
     /* 字体颜色 */
     --color-font: #FFFFFF;
     --color-font-1: #CFCFCF;
@@ -15,7 +18,7 @@
     --color-font-1-r: var(--color-card);
 
     /* 阴影颜色 */
-    --color-shader: var(--color-card-2);
+    --color-shader: #1010109c;
 
     /* 主题色 */
     --color-main: #606E7A;
@@ -26,4 +29,5 @@
     --color-main-2: #ffafaa;
     --color-main-3: #cdb7ff;
     --color-main-4: #f9d27d;
+    --color-main-5: #bcbfc7;
 }
