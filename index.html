@@ -147,13 +147,11 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M447.1 32h-384C28.64 32-.0091 60.65-.0091 96v320c0 35.35 28.65 64 63.1 64h384c35.35 0 64-28.65 64-64V96C511.1 60.65 483.3 32 447.1 32zM111.1 96c26.51 0 48 21.49 48 48S138.5 192 111.1 192s-48-21.49-48-48S85.48 96 111.1 96zM446.1 407.6C443.3 412.8 437.9 416 432 416H82.01c-6.021 0-11.53-3.379-14.26-8.75c-2.73-5.367-2.215-11.81 1.334-16.68l70-96C142.1 290.4 146.9 288 152 288s9.916 2.441 12.93 6.574l32.46 44.51l93.3-139.1C293.7 194.7 298.7 192 304 192s10.35 2.672 13.31 7.125l128 192C448.6 396 448.9 402.3 446.1 407.6z"/></svg>
                                     <input id="choice-pic" type="file" style="display: none;" onchange="selectImgFile(this);showAddImgPan(true)">
                                 </label>
-                                <span>图片</span>
                             </div>
                             <div>
                                 <div onclick="showALoadFacePan()">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM256.3 331.8C208.9 331.8 164.1 324.9 124.5 312.8C112.2 309 100.2 319.7 105.2 331.5C130.1 390.6 188.4 432 256.3 432C324.2 432 382.4 390.6 407.4 331.5C412.4 319.7 400.4 309 388.1 312.8C348.4 324.9 303.7 331.8 256.3 331.8H256.3zM176.4 176C158.7 176 144.4 190.3 144.4 208C144.4 225.7 158.7 240 176.4 240C194 240 208.4 225.7 208.4 208C208.4 190.3 194 176 176.4 176zM336.4 240C354 240 368.4 225.7 368.4 208C368.4 190.3 354 176 336.4 176C318.7 176 304.4 190.3 304.4 208C304.4 225.7 318.7 240 336.4 240z"/></svg>
                                 </div>
-                                <span>表情</span>
                             </div>
                         </div>
                         <!-- 发送控件 -->
@@ -304,7 +302,7 @@
     <!-- 添加表情弹窗 -->
     <div class="login-pan" id="add-face-pan" data-loaded="false" style="display: none;transition: opacity .3s;">
         <div class="login-pan-bg" onclick="showPopPan('add-face-pan', false)" style="opacity: 0;"></div>
-        <div class="imgadd-pan-card ss-card" style="left: auto;right: 0;transform: translate(-40px, -50px);box-shadow: 0 0 5px var(--color-shader);">
+        <div class="imgadd-pan-card ss-card" style="left: auto;right: 40px;bottom: 100px;top: auto;transform: none;box-shadow: 0 0 5px var(--color-shader);">
             <p>添加表情</p>
             <div id="face-show-pan" class="face-show-pan"></div>
             <button class="ss-button" style="width: 100%;height: 35px;" onclick="showPopPan('add-face-pan', false)">关闭</button>

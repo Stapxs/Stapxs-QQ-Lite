@@ -1,4 +1,4 @@
-const version = 'v1.2.5'
+const version = 'v1.2.6'
 
 // SW 设置
 const maxEntries = 100

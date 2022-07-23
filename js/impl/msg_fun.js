@@ -114,7 +114,7 @@ function getMsgRawTxt(message) {
     for(let i=0; i<message.length; i++) {
         switch(message[i].type) {
             case "at":
-            case "text": back += message[i].data.text.replaceAll('\n', ' ');break
+            case "text": back += message[i].data.text.replaceAll('\n', ' ').replaceAll('\r', ' ');break
             case "face": 
             case "bface": back += "[表情]";break
             case "image": back += "[图片]";break

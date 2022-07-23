@@ -353,35 +353,31 @@
 }
 
 .more-box {
-    border-radius: 7px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    background: var(--color-card-1);
-    overflow-x: scroll;
-    overflow-y: hidden;
     height: 0;
     transition: height .2s;
+    overflow: hidden;
 }
 .more-box > div {
-    margin: 20px 10px 10px 10px;
+    width: 60PX;
+    height: 60px;
+    background: var(--color-card-1);
+    border-radius: 7px;
+    margin: 0 10px;
 }
-.more-box > div > span {
-    display: inline-block;
-    margin-top: 5px;
-    font-size: 0.7rem;
-    width: 100%;
-    text-align: center;
-    color: var(--color-font-2);
+.more-box > div:first-child {
+    margin-left: 0;
+}
+.more-box > div:last-child {
+    margin-right: 0;
 }
 .more-box > div > div,
 .more-box > div > label {
-    background: var(--color-card-2);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    padding: 12px;
+    padding: 19px;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
     display: flex;
 }
 .more-box > div > label {

@@ -42,7 +42,7 @@
     background: var(--color-card-1);
     padding: 10px;
     border-radius: 7px;
-    width: fit-content;
+    max-width: max-content;
 }
 .message-space {
     flex: 1;
@@ -105,11 +105,12 @@
     flex-direction: row;
     height: calc(1rem + 20px);
     overflow: hidden;
-    align-items: center;
 }
 .msg-replay span {
     flex: 1;
+    line-height: 1rem;
     overflow: hidden;
+    margin-top: -2px;
 }
 
 .note-base {
@@ -248,6 +249,8 @@
 .msg-link-view div:nth-child(3) {
     display: flex;
     flex-direction: column;
+    max-height: 7rem;
+    overflow: hidden;
 }
 .msg-link-view div:nth-child(3) p {
     font-weight: bold;

@@ -23,6 +23,17 @@
 </div>
 
 <br/>
+
+<div align="center">
+    <h1>Stapxs QQ Lite</h1>
+    <h3>一个兼容 oicq-http 的非官方网页版 QQ 客户端</h3><br><br>
+    <strong>本网页仅供学习交流使用，请勿用于其他用途</strong><br>
+    <strong>版权争议请提出 issue 协商</strong><br>
+    本网页存在大量不规范的写法和操作<br>
+    请不要使用此网页作为 JavaScript 开发参考
+</div>
+
+<br/>
 <br/>
 
 ## 在线演示
@@ -96,28 +107,20 @@
 
 ## 依赖和许可声明
 
-- Stapxs QQ Lite
-    - (C) Stapx Steve [ 林槐 ]. licensed under Apache 2.0
 
-- Border Card UI
-    - (C) Stapx Steve [ 林槐 ]. licensed under Apache 2.0
-
-- Bootstrap
-    - (C) Fathom. licensed under MIT
-
-- Font Awesome
-    - (C) Fonticons, Inc. licensed under SIL OFL 1.1
-
-- JQuery & JQuery UI
-    - (C) OpenJS Foundation. licensed under MIT
-
-- QFace
-    - @koishijs. https://github.com/koishijs/QFace
+|        |       |
+|  ----  | ----  |
+|  Stapxs QQ Lite   | (C) Stapx Steve [ 林槐 ]. licensed under Apache 2.0  |
+| Border Card UI  | (C) Stapx Steve [ 林槐 ]. licensed under Apache 2.0 |
+| Bootstrap  | (C) Fathom. licensed under MIT |
+| Font Awesome  | (C) Fonticons, Inc. licensed under SIL OFL 1.1 |
+| JQuery & JQuery UI  | (C) OpenJS Foundation. licensed under MIT |
+| QFace  | https://github.com/koishijs/QFace |
 
 <div align=right>
     <br/>
     <br/>
-    <font style="font-size: 0.8rem">README v1.2</font>
+    <font style="font-size: 0.8rem">README v1.3</font>
     <br/>
     <font style="font-size: 0.8rem">林槐出品, 必属稽品</font>
 </div>

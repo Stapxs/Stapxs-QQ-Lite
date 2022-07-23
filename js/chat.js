@@ -354,9 +354,12 @@ function sendMsg() {
 
 function selectImgFile(sender) {
     showMoreBox()
-    if(window.cacheImg != undefined && window.cacheImg.length < 4) {
-    const blob = sender.files[0]
-    setSendPic(blob)
+    if(window.cacheImg == undefined) {
+        window.cacheImg = []
+    }
+    if(window.cacheImg.length < 4) {
+        const blob = sender.files[0]
+        setSendPic(blob)
     } else {
         setStatue("error", "最多发送四张图片 ……", true)
     }
@@ -1253,7 +1256,7 @@ function showMoreBox() {
     const body = document.getElementById("more-box")
     const sender = document.getElementById("more-box-button")
     if(body.style.height == 0 || body.style.height == "0px") {
-        body.style.height = "100px"
+        body.style.height = "60px"
         body.style.marginBottom = "10px"
         sender.children[0].style.transform = "rotate(-90deg)"
     } else {

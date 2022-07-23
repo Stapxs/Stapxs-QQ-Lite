@@ -197,6 +197,13 @@ function firstLoadingMsg(msg) {
         }
         document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
         setStatue("ok", "加载历史消息完成！")
+        // 刷新列表框
+        const id = data[data.length-1].message_type == "group" ? data[data.length-1].group_id:data[data.length-1].user_id
+        const raw = getMsgRawTxt(data[data.length-1].message)
+        // 刷新列表显示消息
+        var myDate = new Date();
+        findBodyInList(null, id).children[2].children[0].children[2].innerText = myDate.getHours().toString().padStart(2, "0") + ":" + myDate.getMinutes().toString().padStart(2, "0")
+        findBodyInList(null, id).children[2].children[1].children[0].innerText = raw==""?data[data.length-1].raw_message:raw
     } else {
         // 获取失败
         setStatue("err", "加载历史消息失败，可能是没有历史消息。")
@@ -283,8 +290,11 @@ function updateMsg(msg) {
                     findBodyInList(null, id).style.transform = "translate(0, 0)"
                 }, 10)
                 setTimeout(() => {
-                    findBodyInList(null, id).children[0].style.transform = "scaleY(0.5)"
-                    findBodyInList(null, id).style.transform = "translate(0, 0)"
+                    // 如果当前未打开才显示新消息标记
+                    if(nowSee != id) {
+                        findBodyInList(null, id).children[0].style.transform = "scaleY(0.5)"
+                        findBodyInList(null, id).style.transform = "translate(0, 0)"
+                    }
                 }, 300)
                 break
             }
@@ -345,7 +355,7 @@ function runNotice(msg) {
                 }
             }
             // 尝试撤回通知
-            if(window.notices[msg.message_id] != null && window.notices[msg.message_id] != undefined) {
+            if(window.notices != undefined && window.notices[msg.message_id] != undefined) {
                 window.notices[msg.message_id].close()
             }
             break

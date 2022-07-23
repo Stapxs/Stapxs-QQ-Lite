@@ -96,7 +96,6 @@ function showNotice(msg) {
                 raw = raw==""?msg.raw_message:raw
                 if(msg.message_type == "group") {
                     const msgOut = msg.sender.nickname + ":" + raw
-                    console.log(msgOut)
                     let notification = new Notification(msg.group_name, {"body": msgOut, "tag": msg.group_id + "/" + msg.message_id, "icon": "https://p.qlogo.cn/gh/" + msg.group_id + "/" + msg.group_id + "/0"})
                     window.notices[msg.message_id] = notification
                     notification.onclick = function() { noticeOnClick(event) }

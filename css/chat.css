@@ -104,7 +104,7 @@ select:focus {
 .friend-list {
     background: var(--color-card-1);
     border-radius: 7px;
-    width: 320px;
+    max-width: 320px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
