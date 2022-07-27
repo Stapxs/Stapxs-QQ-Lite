@@ -1,6 +1,6 @@
 'use strict';
 
-window.version = 'v1.2956'
+window.version = 'v1.2957'
 window.loading = true
 document.getElementById("opt-version").innerText = window.version
 waveAnimation(document.getElementById("login-wave"))
