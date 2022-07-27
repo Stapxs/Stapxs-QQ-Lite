@@ -290,19 +290,19 @@
     <div class="login-pan" id="add-img-pan" style="display: none;transition: opacity .3s;">
         <div class="login-pan-bg" onclick="showAddImgPan(false)"></div>
         <div class="imgadd-pan-card ss-card">
-            <p>添加图片</p>
-            <div id="img-show-pan" data-num="0"></div>
-            <input type="text" id="send-img-text" oninput="sendImgTextChange()" ondrop="mainInputDrop(event, this)">
-            <div>
-                <button class="ss-button" onclick="showAddImgPan(false)">取消</button>
-                <button class="ss-button" onclick="sendImgMsg()">发送</button>
-            </div>
+            <form onsubmit="return sendImgMsg();">
+                <p>添加图片</p>
+                <div id="img-show-pan" data-num="0"></div>
+                <input type="text" id="send-img-text" oninput="sendImgTextChange()" ondrop="mainInputDrop(event, this)">
+                <div>
+                    <button class="ss-button" type="button" onclick="showAddImgPan(false)">取消</button>
+                    <button class="ss-button" type="submit">发送</button></div>
+            </form>
         </div>
     </div>
     <!-- 添加表情弹窗 -->
-    <div class="login-pan" id="add-face-pan" data-loaded="false" style="display: none;transition: opacity .3s;">
-        <div class="login-pan-bg" onclick="showPopPan('add-face-pan', false)" style="opacity: 0;"></div>
-        <div class="imgadd-pan-card ss-card" style="left: auto;right: 40px;bottom: 100px;top: auto;transform: none;box-shadow: 0 0 5px var(--color-shader);">
+    <div class="login-pan" id="add-face-pan" data-loaded="false" style="pointer-events: none;display: none;transition: opacity .3s;">
+        <div class="imgadd-pan-card ss-card" style="pointer-events: all;left: auto;right: 40px;bottom: 100px;top: auto;transform: none;box-shadow: 0 0 5px var(--color-shader);">
             <p>添加表情</p>
             <div id="face-show-pan" class="face-show-pan"></div>
             <button class="ss-button" style="width: 100%;height: 35px;" onclick="showPopPan('add-face-pan', false)">关闭</button>
@@ -334,13 +334,13 @@
             </div>
         </div>
     </div>
-    <div id="qe" style="position: absolute;width: 100%;height: 100%;display: none;transition: opacity .3s;">
+    <div id="qe" style="position: absolute;width: 100%;height: 100%;display: none;transition: opacity .3s;opacity: 0;">
         <div style="position: absolute;width: 100%;height: 100%;background: var(--color-shader);opacity: 0.6;"></div>
         <div class="qq-err-card ss-card">
             <div>
                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAADJViUEAAAC5klEQVQokYVSW0hTcRz+1s6Oc8zlbbp5mZa3bkKunA9BWShF9dAVIozCblAUpg/1EGWQDz0IdlG0Rwm0FF+UrGYXL9O0TJtrpltW8zQ1reVmx7Odc/zHDGUK0Q8++P//fB/fn+/3gRCyBMYWY44gCNTCm9VqXeccc8Ys5/mxAgHT19+nf/ykeU/Pmx7D0NDQmvaO9q0+n5eurKo6SwhZwvUPFXjxeDzKka+fC2rrawtaTc8hCiLy887AMvgBPM+X0DTt+6fYkGnocf12wdJkAiuKkGEO1fXV2Je7HxRFCf9xdqsShHEcP5SL1M3Z4H570PasAZSEX677O4EBlN8qLG2uuEKc9gHi8MM2QJiPb0nxyRzS3/9O/8/AzOY+vdX48EhaVjxA3sBuacME0wlVqAVbDPEou1NaNDvLKgKN58VPnj7efb6o8LYuIygmWtuKlcouEKYDStIJidCBjGwbbDbb0QuFBXfHnd/iFsTScHXExV+u6dDLhZdKxxxDmqhg03rW9R1MjwMS2RgI/wX2uhFEOrVIDlFlNJk6VGp11KQmLo6hDh84VK9Wq7/70wwLTx2echgxJ7IQpn1wjUohlLHQjwrYfM6A0UcPsIqbOzW9c1fz/Le1Wq1zYQ0Op0c5bvdh0sFD4iNwmzhkMiJUCgX7M3nt2UGZwhE+/QOu0luXea9XvqQ1dcZX2e7PAqZGefi4OQQ5BNASQFSq3LoTp++rExK/iAA0YUoDY7FsWNzze3P/RsbljhyR05BLZqALksEtErgJQfDkuEYKYIIAQTQNb2Q0pErlzKJze/vLHYkRsXFceh7YGSkSgqVQ6WgMBqswpolnWm8W35gVgZC8fAyERZfFJiXZ551FUaRMXa+zKssr0lNS0oYf1mzKq2lpOMjGKthtu7O6Pa0vtqut5mu61UloEWX3jl2/WiL15+RvCs/zVHd3tyGwPRzHyb0cJ/effRwn/9Tbq3/W2Lh3lmUV8xxC8AeV8pvsqY2H6AAAAABJRU5ErkJggg==">
                 <span>错误报告<span>(这是彩蛋)</span></span>
-                <svg onclick="closeQe(this)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full"
+                <svg onclick="closeQe()" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full"
                     width="76" height="76" viewBox="0 0 76.00 76.00" enable-background="new 0 0 76.00 76.00" xml:space="preserve">
                     <path fill-opacity="1" stroke-width="0.2" stroke-linejoin="round"
                         d="M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z " />
@@ -360,9 +360,9 @@
                     <div class="qq-err-card-err"><span>错误模块：</span><span>function printMsg()</span></div>
                     <hr>
                     <div style="margin-bottom: -5px;">
-                        <input type="checkbox" checked><span>刷新页面(R)</span>
+                        <input id="qe-checkbox" type="checkbox" checked><span>刷新页面(R)</span>
                         <div style="flex: 1;"></div>
-                        <button onclick="location.reload()">确定(O)</button>
+                        <button onclick="acceptQe()">确定(O)</button>
                     </div>
                 </div>
             </div>
@@ -470,12 +470,12 @@
                             <a>换个心情 🎵 ~</a>
                         </div>
                         <div style="display: flex;flex: 0;margin-right: 5px;">
-                            <!-- <label class="ss-radio" data-id="-1">
-                                <input type="radio" name="opt_color" id="opt_color_user" onclick="changeOpt(this);setUserColor();">
-                                <div style="background: var(--color-main);background-image: -webkit-linear-gradient(309deg, #ff0000, #e99f07, #dbe729, #61eb58, #3c8ee3, #221bdd, #8712df);--radio-size: 30px;margin-top: 1px;"><div style="margin-top: 1px;margin-right: 1px;"></div></div>
+                            <label class="ss-radio" data-id="-1">
+                                <input type="radio" name="opt_color" id="opt_color_user" onclick="setUserColor(this);">
+                                <div id="user_color_dot" style="background: var(--color-main);background-image: -webkit-linear-gradient(309deg, #ff0000, #e99f07, #dbe729, #61eb58, #3c8ee3, #221bdd, #8712df);--radio-size: 30px;margin-top: 1px;"><div></div></div>
                             </label>
                             <input type="color" id="user_color_picker" onchange="colorPickChange(this)" style="opacity: 0;width: 0;height: 0;margin-top: 30px;margin-left: 10px;">
-                            <div style="margin: 0 10px 0 -1px;width: 1px;background: var(--color-font-1);transform: scaleY(.5);opacity: 0.7;border-radius: 1px;"></div> -->
+                            <div style="margin: 0 10px 0 -1px;width: 1px;background: var(--color-font-1);transform: scaleY(.5);opacity: 0.7;border-radius: 1px;"></div>
                             <label class="ss-radio" data-id="5">
                                 <input type="radio" name="opt_color" id="opt_color_5" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-5);"><div></div></div>
@@ -496,7 +496,7 @@
                                 <input type="radio" name="opt_color" id="opt_color_1" onclick="changeOpt(this);setMainColor(this);">
                                 <div style="background: var(--color-main-1);"><div></div></div>
                             </label>
-                            <label class="ss-radio" data-id="0">
+                            <label class="ss-radio" data-id="0" id="theme_fist">
                                 <input type="radio" name="opt_color" id="opt_color_0" onclick="changeOpt(this);setMainColor(this);" checked>
                                 <div style="background: var(--color-main-0);"><div></div></div>
                             </label>

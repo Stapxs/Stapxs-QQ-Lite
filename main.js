@@ -1,6 +1,6 @@
 'use strict';
 
-window.version = 'v1.2955'
+window.version = 'v1.2956'
 window.loading = true
 document.getElementById("opt-version").innerText = window.version
 waveAnimation(document.getElementById("login-wave"))
@@ -114,7 +114,7 @@ if(datey.getMonth === 5 && datey.getDate() === 1) {
     document.getElementById("opt_debug_fk").click()
 }
 // 覆写粘贴事件，提供粘贴图片的功能
-document.getElementById("send-box").addEventListener("paste", function(e) {
+const pasteEvent = function(e) {
     // 判断粘贴类型
     if (!(e.clipboardData && e.clipboardData.items)) {
         return
@@ -135,7 +135,11 @@ document.getElementById("send-box").addEventListener("paste", function(e) {
                         if (window.cacheImg == undefined) {
                             window.cacheImg = []
                         }
-                        window.cacheImg.push(base64data)
+                        if(window.cacheImg.length < 4) {
+                            window.cacheImg.push(base64data)
+                        } else {
+                            setStatue("err", "最多发送四张图片 ……", true)
+                        }
                         // 完成
                         setStatue("ok", "图片处理完成！")
                         // 显示弹窗
@@ -148,10 +152,12 @@ document.getElementById("send-box").addEventListener("paste", function(e) {
             e.preventDefault();
         }
     }
-})
+}
+document.getElementById("send-box").addEventListener("paste", pasteEvent)
+document.getElementById("send-img-text").addEventListener("paste", pasteEvent)
 // 复制消息
 let clipboard = new ClipboardJS(document.getElementById("menuCopy"), {
-    text: function(trigger) {
+    text: function() {
         return (window.msgInMenu != undefined && window.msgInMenu != null)? window.msgInMenu.dataset.raw: ""
     }
 });

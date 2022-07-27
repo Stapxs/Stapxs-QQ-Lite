@@ -281,10 +281,10 @@
     transform: translate(-50%, -50%);
     text-align: center;
 }
-.imgadd-pan-card > p {
+.imgadd-pan-card > form > p {
     color: var(--color-main);
 }
-.imgadd-pan-card > input {
+.imgadd-pan-card > form > input {
     width: calc(100% - 20px);
     height: 40px;
     outline: none;
@@ -295,21 +295,22 @@
     margin: 20px 10px 0 10px;
     padding: 0 10px;
 }
-.imgadd-pan-card > input:focus {
+.imgadd-pan-card > form > input:focus {
     border: 2px solid var(--color-main);
 }
-.imgadd-pan-card > div:last-child {
+.imgadd-pan-card > form > div:last-child {
     margin-top: 15px;
 }
-.imgadd-pan-card > div:last-child > button {
+.imgadd-pan-card > form > div:last-child > button {
     margin: 5px;
     width: calc(50% - 20px);
 }
-.imgadd-pan-card > div:last-child > button:first-child {
+.imgadd-pan-card > form > div:last-child > button:first-child {
     background: var(--color-card-1);
     color: var(--color-font);
 }
-.imgadd-pan-card > div:not(:last-child) {
+.imgadd-pan-card > form > div:not(:last-child) {
+    border: 2px solid var(--color-card-2);
     height: 200px;
     border-radius: 7px;
     width: calc(100% - 20px);
@@ -320,9 +321,12 @@
     overflow-x: hidden;
 }
 
-.imgadd-pan-card > div:not(:last-child) > div {
+.imgadd-pan-card > form > div:not(:last-child) > div {
+    border: 2px solid var(--color-card-2);
+    background: var(--color-card-1);
     background-repeat: no-repeat;
     background-position: center;
+    background-size: 100%, auto;
     cursor: pointer;
 }
 .img-show-item-1 {
@@ -412,4 +416,12 @@
     width: 20px;
     height: 20px;
     margin-top: -9px;
+}
+
+/* 双屏设备兼容 */
+@media (horizontal-viewport-segments: 2) {
+    .imgadd-pan-card {
+        left: unset;
+        right: 0;
+    }
 }

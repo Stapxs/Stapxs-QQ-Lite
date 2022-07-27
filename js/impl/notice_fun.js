@@ -328,12 +328,15 @@ function updateMsg(msg) {
         }
     }
     // 抽个签
-    const num = parseInt(Math.random()*(1-10000+1)+1, 10)
-    if(num === 5000) {
+    const num = randomNum(0, 5000)
+    if(num >= 4500 && num <= 5500) {
+        showLog("99b3db", "fff", "SS", num)
+    }
+    if(num === 2500) {
         document.getElementById("qe").style.display = "block"
         setTimeout(() => {
-            document.getElementById("qe").style.opacity = "0.6"
-        })
+            document.getElementById("qe").style.opacity = "1"
+        }, 300)
     }
 }
 
@@ -344,7 +347,6 @@ function runNotice(msg) {
         case "recall": {
             // 判断目标
             const id = msg.notice_type == "group"?msg.group_id:msg.user_id
-            console.log(id + " / " + document.getElementById("msg-hander").dataset.id)
             if(Number(id) == Number(document.getElementById("msg-hander").dataset.id)) {
                 // 如果是自己的消息则只降低透明的不隐藏
                 if(Number(msg.user_id) == Number(window.login_id)) {

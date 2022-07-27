@@ -361,7 +361,7 @@ function selectImgFile(sender) {
         const blob = sender.files[0]
         setSendPic(blob)
     } else {
-        setStatue("error", "最多发送四张图片 ……", true)
+        setStatue("err", "最多发送四张图片 ……", true)
     }
 }
 
@@ -1054,11 +1054,19 @@ function addAtStr(sender, id) {
 }
 
 function closeQe(sender) {
-    const card = sender.parentNode.parentNode.parentNode
+    const card = document.getElementById("qe")
     card.style.opacity = "0"
     setTimeout(() => {
         card.style.display = "none"
     }, 300)
+}
+
+function acceptQe() {
+    if(document.getElementById("qe-checkbox").checked) {
+        location.reload()
+    } else {
+        closeQe()
+    }
 }
 
 // 通知所有消息开关的后续操作
@@ -1246,6 +1254,7 @@ function showAddImgPan(what) {
 function sendImgMsg() {
     document.getElementById("send-box-button").click()
     showAddImgPan(false)
+    return false
 }
 
 function sendImgTextChange() {
@@ -1264,6 +1273,13 @@ function showMoreBox() {
         body.style.marginBottom = 0
         sender.children[0].style.transform = "rotate(90deg)"
     }
+}
+
+function moYuPlus() {
+    // 这是个全新升级版本
+    moYu()
+    showLog("99b3db", "fff", "SS", "摸大鱼")
+    return true
 }
 
 function showPopPan(id, how) {
@@ -1306,22 +1322,33 @@ function choiceFace(id) {
     document.getElementById("send-box").value += "[CQ:face,id=" + id + "]"
 }
 
-function setUserColor() {
-    document.getElementById("user_color_picker").click()
+function setUserColor(sender) {
+    if(!window.loading) {
+        changeOpt(sender)
+        document.getElementById("user_color_picker").click()
+    } else {
+        // 加载主题色
+        if(window.optCookie["opt_color_user"] != undefined && window.optCookie["opt_color"] == "-1") {
+            const color = window.optCookie["opt_color_user"]
+            document.getElementById("user_color_dot").style.background = color
+            document.getElementById("user_color_dot").style.backgroundImage = "none"
+            // 设置主题色
+            document.documentElement.style.setProperty('--color-main', color)
+        }
+    }
 }
 
 function colorPickChange(sender) {
-    if(!window.loading) {
-        const button = document.getElementById("opt_color_user")
-        button.parentNode.children[1].style.background = sender.value
-        // 保存
-        const id = button.parentNode.dataset.id
-        const name = button.name
-        button.parentNode.dataset.id = sender.value
-        button.name = button.id
-        changeOpt(button)
-        button.parentNode.dataset.id = id
-        button.name = name
-        // 设置主题色
-    }
+    const button = document.getElementById("opt_color_user")
+    button.parentNode.children[1].style.background = sender.value
+    // 保存
+    const id = button.parentNode.dataset.id
+    const name = button.name
+    button.parentNode.dataset.id = sender.value
+    button.name = button.id
+    changeOpt(button)
+    button.parentNode.dataset.id = id
+    button.name = name
+    // 设置主题色
+    document.documentElement.style.setProperty('--color-main', sender.value)
 }
