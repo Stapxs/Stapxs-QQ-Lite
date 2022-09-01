@@ -42,7 +42,7 @@
     background: var(--color-card-1);
     padding: 10px;
     border-radius: 7px;
-    max-width: max-content;
+    width: fit-content;
 }
 .message-space {
     flex: 1;
