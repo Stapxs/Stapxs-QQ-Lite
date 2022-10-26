@@ -70,6 +70,8 @@ if(x != "") {
     // 设置后端
     if(window.optCookie["api_backend"] !== undefined) {
         changeApiBackend(window.optCookie["api_backend"])
+    } else {
+        window.currentApi = oicqApi
     }
     // 检查缓存版本
     if(window.cookie["version"] == undefined || Number(window.cookie["version"].substring(1)) < Number(window.version.substring(1))) {
