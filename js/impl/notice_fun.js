@@ -102,7 +102,7 @@ function getBotInfo(msg) {
         }
         case "go-cqhttp": {
             document.getElementById("bot-icon").innerHTML = "<img src='https://user-images.githubusercontent.com/25968335/120111974-8abef880-c139-11eb-99cd-fa928348b198.png' style='width: calc(70% - 20px);margin-left: 20px;border-radius: 7px;'>"
-            document.getElementById("not-allow-info").children[0].innerText = "您使用了 GO-CQHTTP，但是我们并不完全支持它。你将无法加载历史消息同时也无法完美的显示消息，唯一可以正常使用的是发送消息功能。"
+            document.getElementById("not-allow-info").children[0].innerText = "您使用了 GO-CQHTTP，但是我们并不完全支持它。你将无法无法正常显示 @ 消息。"
             span = document.createElement("span")
             span.style.color = "var(--color-font-1)"
             span.innerText = "程序引擎：" + msg.runtime_version
