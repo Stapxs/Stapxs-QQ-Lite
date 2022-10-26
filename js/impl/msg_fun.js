@@ -47,7 +47,7 @@ function printMsg(obj, addTo, addAt) {
         <code style="display: none;">{raw}</code>`
             html = html.replace("{id}", user_id)
             let name = nickname
-            if(obj.message_type=="group" && card!=nickname && card!="") {
+            if(obj.message_type=="group" && card!=nickname && card!="" && card !== undefined) {
                 name = card
             }
             html = html.replace("{name}", name)
