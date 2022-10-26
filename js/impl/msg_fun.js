@@ -35,7 +35,9 @@ function printMsg(obj, addTo, addAt) {
             div.dataset.raw = raw == ""?obj.raw_message:raw     // 纯文本消息
             div.dataset.id = obj.message_id                     // 消息编号
             div.dataset.sender = user_id                         // 用户 ID
+            div.dataset.type = obj.message_type                 // 是否是群消息
             div.dataset.time = obj.time                         // 消息时间
+            div.dataset.group_id = obj.message_type == "group" ? obj.group_id : 0
             let html = String.raw`<img src="https://q1.qlogo.cn/g?b=qq&s=0&nk={id}" style="{hidden}">
         <div class="message-space" style="{space}"></div>
         <div class="message-body">
@@ -58,7 +60,7 @@ function printMsg(obj, addTo, addAt) {
             if(typeof obj.message == "string") {
                 body = printText(obj.message, obj.message_id)
             } else {
-            // 遍历消息体
+                // 遍历消息体
                 for(let i=0; i<obj.message.length; i++) {
                     let nowBreak = false
                     switch(obj.message[i].type) {
@@ -150,24 +152,24 @@ function printText(txt, msgid) {
         let url = txt.match(reg)[0]
         // 尝试通过 API 获取链接预览
         fetch('https://api.stapxs.cn/Page-Info?address=' + url)
-        .then(res => res.json())
-        .then(res => {
-            if (res.status == undefined && Object.keys(res).length > 0) {
-                showLog("b573f7", "fff", "UI", "获取链接预览成功：" + res['og:title'])
-                const div = document.createElement("div")
-                div.className = "msg-link-view"
-                let hasImg = res['og:image'] == undefined ? "display: none;" : ""
-                let site = res['og:site_name'] == undefined ? "" : res['og:site_name']
-                let title = res['og:title'] == undefined ? "" : res['og:title']
-                let desc = res['og:description'] == undefined ? "" : res['og:description']
-                div.innerHTML = '<div></div><img alt="预览图片" title="查看图片" onclick="openImgView(\'' + res['og:image'] + '\');" onerror="this.style.display=\'none\';" src="' + res['og:image'] + '" style="' + hasImg + '">' +
-                    '<div><p>' + site + '</p><span href="' + res['og:url'] + '">' + title + '</span><span>' + desc + '</span></div>'
-                // 添加到消息内
-                document.getElementById("link-" + msgid).parentNode.appendChild(div)
-            } else {
-                showLog("b573f7", "fff", "UI", "获取链接预览失败：" + res)
-            }
-        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status == undefined && Object.keys(res).length > 0) {
+                    showLog("b573f7", "fff", "UI", "获取链接预览成功：" + res['og:title'])
+                    const div = document.createElement("div")
+                    div.className = "msg-link-view"
+                    let hasImg = res['og:image'] == undefined ? "display: none;" : ""
+                    let site = res['og:site_name'] == undefined ? "" : res['og:site_name']
+                    let title = res['og:title'] == undefined ? "" : res['og:title']
+                    let desc = res['og:description'] == undefined ? "" : res['og:description']
+                    div.innerHTML = '<div></div><img alt="预览图片" title="查看图片" onclick="openImgView(\'' + res['og:image'] + '\');" onerror="this.style.display=\'none\';" src="' + res['og:image'] + '" style="' + hasImg + '">' +
+                        '<div><p>' + site + '</p><span href="' + res['og:url'] + '">' + title + '</span><span>' + desc + '</span></div>'
+                    // 添加到消息内
+                    document.getElementById("link-" + msgid).parentNode.appendChild(div)
+                } else {
+                    showLog("b573f7", "fff", "UI", "获取链接预览失败：" + res)
+                }
+            })
         // 将所有链接替换为可点击的链接
         txt = txt.replaceAll(reg, '<a href="$&" target="_blank">$&</a>')
         return "<span id='link-" + msgid + "' style='overflow-wrap: anywhere;'>" + txt + "</span>"
@@ -220,9 +222,9 @@ function printImg(url, num, where, sender, time) {
         loaded = "imgLoaded()"
     }
     // 判断是否需要去除消息框边距
-     if(num == 1) {
-         return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
-     } else {
+    if(num == 1) {
+        return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='max-width: calc(100% + 20px);transform: unset;width: calc(100% + 20px);margin: -10px;border: 1px solid var(--color-main);' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
+    } else {
         // 判断上下边距的添加
         if(where == 0) {
             return "<img title='查看图片' alt='群图片' onload='" + loaded + "' style='margin-bottom: 5px;' onclick='openImgView(\"" + url + "\");' class='msg-img' src='" + url + "'>"
@@ -363,16 +365,16 @@ function printJSON(data, typeId) {
     let desc = body.desc
 
     let preview = body.preview
-        if (preview != undefined && preview.indexOf("http") == -1) preview = "//" + preview
+    if (preview != undefined && preview.indexOf("http") == -1) preview = "//" + preview
 
     let url = body.qqdocurl == undefined ? body.jumpUrl : body.qqdocurl
     // 构建 HTML
     let html = '<div class="msg-json" onclick="xmlClick(this)" data-url="' + url + '">' +
-               '<p>' + title + '</p>' +
-               '<span>' + desc + '</span>' + 
-               '<img src="' + preview + '">' + 
-               '<div><img src="' + icon + '"><span>' + name + '</span></div>' +
-               '</div>'
+        '<p>' + title + '</p>' +
+        '<span>' + desc + '</span>' +
+        '<img src="' + preview + '">' +
+        '<div><img src="' + icon + '"><span>' + name + '</span></div>' +
+        '</div>'
     // 返回
     return html
 }

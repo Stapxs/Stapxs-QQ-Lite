@@ -67,6 +67,10 @@ if(x != "") {
     if(window.optCookie["opt_auto_connect"] == "true") {
         document.getElementById("connect_btn").click()
     }
+    // 设置后端
+    if(window.optCookie["api_backend"] !== undefined) {
+        changeApiBackend(window.optCookie["api_backend"])
+    }
     // 检查缓存版本
     if(window.cookie["version"] == undefined || Number(window.cookie["version"].substring(1)) < Number(window.version.substring(1))) {
         // 刷新 Cookie
