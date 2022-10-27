@@ -57,13 +57,7 @@ function runJSON(json) {
             }
         }
     } else {
-        switch(msg.post_type) {
-            case "message": updateMsg(msg); break                                                           // 通知消息
-            case "notice": runNotice(msg); break                                                            // 服务端通知
-            // gocqhttp
-            case "meta_event": metaEvent(msg); break
-            case "message_sent": updateMsg(msg); break
-        }
+        window.currentApi.parseMsg(msg)
     }
 }
 
@@ -147,6 +141,7 @@ function setFriendList(data) {
             "<div><div><p>" + div.dataset.allname + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
+        window.friends[''+data[i].user_id] = {id: data[i].user_id, name: data[i].nickname, allname: data[i].remark === data[i].nickname ? data[i].nickname : data[i].remark + "（" + data[i].nickname + "）"}
     }
     // 加载置顶
     if(window.cookie["top_bodys"] != undefined) {
@@ -171,6 +166,8 @@ function setGroupList(data) {
             "<div><div><p>" + data[i].group_name + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
+        window.groups[''+data[i].group_id] = {id: data[i].group_id, name: data[i].group_name, allname: data[i].group_name}
+        window.groups[''+data[i].group_id].members = []
     }
     // 加载置顶
     if(window.cookie["top_bodys"] != undefined) {
@@ -201,6 +198,7 @@ function firstLoadingMsg(msg) {
         document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
         setStatue("ok", "加载历史消息完成！")
         // 刷新列表框
+        if (data.length === 0) {return}
         const id = data[data.length-1].message_type == "group" ? data[data.length-1].group_id:data[data.length-1].user_id
         const raw = getMsgRawTxt(data[data.length-1].message)
         // 刷新列表显示消息
@@ -407,7 +405,13 @@ function printForwardMsg(msg) {
 }
 
 function saveGroupMemberList(data) {
-    window.nowGroupMumber = []
+    if (data.length === 0) { return }
+    let group_id = ''+data[0].group_id
+    data.forEach((e) => {
+        window.groups[group_id].members.push({id: e.user_id, name: e.card == "" ? e.nickname : e.nickname + "(" + e.card + ")", card: e.card, nickname: e.nickname, title: e.title} )
+    })
+    window.nowGroupMumber = window.groups[group_id].members
+    return
     for(let i=0; i<data.length; i++) {
         let dataIn = {}
         dataIn.id = data[i].user_id

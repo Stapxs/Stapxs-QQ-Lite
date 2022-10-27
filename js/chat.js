@@ -188,6 +188,9 @@ function btnChangeColor() {
 function onListClick(sender) {
     setStatue("load", "正在加载历史消息 ……")
     const type = sender.dataset.type
+    if (type === 'group' && window.groups[''+sender.dataset.id].members.length === 0) {
+        window.currentApi.sendWs('get_group_member_list', {group_id: sender.dataset.id}, 'get_group_member_list')
+    }
     // 清除和显示高亮
     const lastBody = findBodyInList(null, document.getElementById("msg-hander").dataset.id)
     if(lastBody != null) {
@@ -204,8 +207,8 @@ function onListClick(sender) {
     // 去除禁言状态
     document.getElementById("send-box").disabled = false
     document.getElementById("send-box").placeholder = ""
-    // 清空群员列表
-    window.nowGroupMumber = null
+    // 更新群员列表
+    if (type === 'group') {window.nowGroupMumber = window.groups[''+sender.dataset.id].members}
     // 显示顶栏
     document.getElementById("msg-hander").getElementsByTagName("a")[0].innerText = sender.dataset.name
     document.getElementById("msg-hander").dataset.id = sender.dataset.id
@@ -319,8 +322,8 @@ function sendMsg() {
         if(msg != "" && msg != undefined && msg != null && type != undefined && id != undefined && window.connect) {
             // 构建 JSON
             switch(type) {
-                case "group": json = createAPI("send_msg", {"group_id": id, "message": msg}, null); break
-                case "friend": json = createAPI("send_msg", {"user_id": id, "message": msg}, null); break
+                case "group": json = window.currentApi.createApi("send_msg", {"group_id": id, "message": msg}, null); break
+                case "friend": json = window.currentApi.createApi("send_msg", {"user_id": id, "message": msg}, null); break
             }
             if(json != null) {
                 // 清空输入框
@@ -953,10 +956,10 @@ function mainInputChange(sender) {
     const lastInput = value.substring(value.length - 1)
     // 匹配群成员列表
     if(lastInput == "@" && document.getElementById("msg-hander").dataset.type == "group") {
-        if(window.nowGroupMumber == undefined || window.nowGroupMumber == null) {
-            // 尝试获取群友列表
-            sendWs(createAPI("get_group_member_list", {"group_id": document.getElementById("msg-hander").dataset.id}, null))
-        }
+        // if(window.nowGroupMumber == undefined || window.nowGroupMumber == null) {
+        //     // 尝试获取群友列表
+        //     sendWs(createAPI("get_group_member_list", {"group_id": document.getElementById("msg-hander").dataset.id}, null))
+        // }
         // 设置标记
         showLog("b573f7", "fff", "UI", "开始匹配群成员列表 ……")
         window.onAtFind = true

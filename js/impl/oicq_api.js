@@ -1,6 +1,12 @@
 // 构造 API 传参 JSON
 const oicqApi = {
     name: "oicq",
+    parseMsg: function (msg) {
+        switch (msg.post_type) {
+            case "message": updateMsg(msg); break                                                           // 通知消息
+            case "notice": runNotice(msg); break                                                            // 服务端通知
+        }
+    },
     createApi: function (action, params = {}, echo) {
         let apiObj = {}
         switch (action) {
