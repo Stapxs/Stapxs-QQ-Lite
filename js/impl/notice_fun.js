@@ -57,10 +57,7 @@ function runJSON(json) {
             }
         }
     } else {
-        switch(msg.post_type) {
-            case "message": updateMsg(msg); break                                                           // 通知消息
-            case "notice": runNotice(msg); break                                                            // 服务端通知
-        }
+        window.currentApi.parseMsg(msg)
     }
 }
 
@@ -99,7 +96,7 @@ function getBotInfo(msg) {
         }
         case "go-cqhttp": {
             document.getElementById("bot-icon").innerHTML = "<img src='https://user-images.githubusercontent.com/25968335/120111974-8abef880-c139-11eb-99cd-fa928348b198.png' style='width: calc(70% - 20px);margin-left: 20px;border-radius: 7px;'>"
-            document.getElementById("not-allow-info").children[0].innerText = "您使用了 GO-CQHTTP，但是我们并不完全支持它。你将无法加载历史消息同时也无法完美的显示消息，唯一可以正常使用的是发送消息功能。"
+            document.getElementById("not-allow-info").children[0].innerText = "您使用了 GO-CQHTTP，但是我们并不完全支持它。你将无法无法正常显示 @ 消息。"
             span = document.createElement("span")
             span.style.color = "var(--color-font-1)"
             span.innerText = "程序引擎：" + msg.runtime_version
@@ -141,9 +138,10 @@ function setFriendList(data) {
         div.onclick = function() { onListClick(div) }
         // 添加内容
         div.innerHTML = "<div></div><img loading='lazy' src='https://q1.qlogo.cn/g?b=qq&s=0&nk=" + data[i].user_id + "'>" +
-                        "<div><div><p>" + div.dataset.allname + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
+            "<div><div><p>" + div.dataset.allname + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
+        window.friends[''+data[i].user_id] = {id: data[i].user_id, name: data[i].nickname, allname: data[i].remark === data[i].nickname ? data[i].nickname : data[i].remark + "（" + data[i].nickname + "）"}
     }
     // 加载置顶
     if(window.cookie["top_bodys"] != undefined) {
@@ -165,9 +163,11 @@ function setGroupList(data) {
         div.onclick = function() { onListClick(div) }
         // 添加内容
         div.innerHTML = "<div></div><img loading='lazy' src='https://p.qlogo.cn/gh/" + data[i].group_id + "/" + data[i].group_id + "/0'>" +
-                        "<div><div><p>" + data[i].group_name + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
+            "<div><div><p>" + data[i].group_name + "</p><div style='flex:1'></div><a class='time'></a></div><div><a></a><div style='margin-left:10px'></div></div></div>"
         // 添加到元素内
         document.getElementById("friend-list-body").appendChild(div)
+        window.groups[''+data[i].group_id] = {id: data[i].group_id, name: data[i].group_name, allname: data[i].group_name}
+        window.groups[''+data[i].group_id].members = []
     }
     // 加载置顶
     if(window.cookie["top_bodys"] != undefined) {
@@ -189,8 +189,8 @@ function setUserInfo(data) {
 }
 
 function firstLoadingMsg(msg) {
-    if(msg.retcode === 0) {
-        const data = msg.data
+    if (msg.retcode === 0) {
+        let data = window.currentApi.sortMsg(msg.data)
         // 遍历消息
         for(let i=0; i<data.length; i++) {
             printMsg(data[i], null)
@@ -198,6 +198,7 @@ function firstLoadingMsg(msg) {
         document.getElementById("msg-body").scrollTop = document.getElementById("msg-body").scrollHeight
         setStatue("ok", "加载历史消息完成！")
         // 刷新列表框
+        if (data.length === 0) {return}
         const id = data[data.length-1].message_type == "group" ? data[data.length-1].group_id:data[data.length-1].user_id
         const raw = getMsgRawTxt(data[data.length-1].message)
         // 刷新列表显示消息
@@ -213,9 +214,9 @@ function firstLoadingMsg(msg) {
 function loadingMoreMsg(msg) {
     if(msg.retcode === 0) {
         const where = document.getElementById("msg-body").firstChild
-        const data = msg.data
+        const data = window.currentApi.sortMsg(msg.data)
         // 遍历消息
-        for(let i=data.length-2; i>0; i--) {
+        for (let i = data.length - 2; i > 0; i--) { // 包含最后一条消息，重复
             // 获取插入位置
             printMsg(data[i], document.getElementById("msg-body").firstChild)
         }
@@ -253,12 +254,15 @@ function sendMsgBack(msg) {
 // 刷新消息
 function updateMsg(msg) {
     const list = document.getElementById("friend-list-body")
-    const id = msg.message_type == "group" ? msg.group_id:msg.user_id
+    let id = msg.message_type == "group" ? msg.group_id : msg.user_id;
+    if (msg.post_type == "message_sent" && msg.message_type == "private") {
+        id = msg.target_id;
+    }
     const raw = getMsgRawTxt(msg.message)
     // 刷新列表显示消息
     var myDate = new Date();
-    findBodyInList(null, id).children[2].children[0].children[2].innerText = myDate.getHours().toString().padStart(2, "0") + ":" + myDate.getMinutes().toString().padStart(2, "0")
-    findBodyInList(null, id).children[2].children[1].children[0].innerText = raw==""?msg.raw_message:raw
+    findBodyInList(null, id).children[2].children[0].children[2].innerText = myDate.getHours().toString().padStart(2, "0") + ":" + myDate.getMinutes().toString().padStart(2, "0") // 获取 id 项的时间
+    findBodyInList(null, id).children[2].children[1].children[0].innerText = raw==""?msg.raw_message:raw // 设置 id 项的最新消息
     // 获取当前打开的窗口 ID
     const nowSee = document.getElementById("msg-hander").dataset.id
     // 刷新当前打开的窗口
@@ -377,6 +381,13 @@ function runNotice(msg) {
     }
 }
 
+function metaEvent(msg) {
+    switch (msg.Meta_event_type) {
+        case "heartbeat": { // 心跳消息
+        }
+    }
+}
+
 function updateReplyBody(name, raw) {
     const svg = String.raw`<svg style="height: 1rem;display: inline-block;margin-right: 5px;fill: var(--color-font-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M8.31 189.9l176-151.1c15.41-13.3 39.69-2.509 39.69 18.16v80.05C384.6 137.9 512 170.1 512 322.3c0 61.44-39.59 122.3-83.34 154.1c-13.66 9.938-33.09-2.531-28.06-18.62c45.34-145-21.5-183.5-176.6-185.8v87.92c0 20.7-24.31 31.45-39.69 18.16l-176-151.1C-2.753 216.6-2.784 199.4 8.31 189.9z"></path></svg>`
     document.getElementById(name).innerHTML = svg + raw
@@ -394,7 +405,13 @@ function printForwardMsg(msg) {
 }
 
 function saveGroupMemberList(data) {
-    window.nowGroupMumber = []
+    if (data.length === 0) { return }
+    let group_id = ''+data[0].group_id
+    data.forEach((e) => {
+        window.groups[group_id].members.push({id: e.user_id, name: e.card == "" ? e.nickname : e.nickname + "(" + e.card + ")", card: e.card, nickname: e.nickname, title: e.title} )
+    })
+    window.nowGroupMumber = window.groups[group_id].members
+    return
     for(let i=0; i<data.length; i++) {
         let dataIn = {}
         dataIn.id = data[i].user_id

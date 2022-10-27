@@ -95,7 +95,7 @@
 - 如果它兼容 [OneBot 11 协议](<https://github.com/botuniverse/onebot-11>), 你可以尝试连接它, 但是由于消息体格式和接口扩展的差异，大部分情况下都不能完全正常使用。以下是已经经过兼容的 Bot:
 
     - [oicq http v1](https://github.com/takayama-lily/oicq/tree/master/http-api)：完全兼容
-    - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)：最低兼容，仅保证消息查看基本可用
+    - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)：基本兼容，目前 @ 消息不能正常显示
 
 ### 使用 Bot 是否有风险
 

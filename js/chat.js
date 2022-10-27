@@ -41,14 +41,14 @@ function setStatue(type, msg, stay) {
     }, 100)
     if (stay == true) {
         div.style.cursor = "pointer"
-        div.onclick = function() { 
+        div.onclick = function() {
             div.style.height = "0"
             div.style.opacity = "0"
             div.style.margin = "0"
             setTimeout(() => {
                 body.removeChild(div)
             }, 350)
-         }
+        }
     } else {
         setTimeout(() => {
             div.style.height = "0"
@@ -117,9 +117,9 @@ function openImgView(url) {
         // 赋值图片
         document.getElementById("img-view").getElementsByTagName("img")[0].src = url
         document.getElementById("img-view").style.display = "block"
-            setTimeout(() => {
-                document.getElementById("img-view").style.opacity = "1"
-            }, 100)
+        setTimeout(() => {
+            document.getElementById("img-view").style.opacity = "1"
+        }, 100)
     }
     // 尝试加载前后文
     let control = document.getElementById("img-control")
@@ -188,6 +188,9 @@ function btnChangeColor() {
 function onListClick(sender) {
     setStatue("load", "正在加载历史消息 ……")
     const type = sender.dataset.type
+    if (type === 'group' && window.groups[''+sender.dataset.id].members.length === 0) {
+        window.currentApi.sendWs('get_group_member_list', {group_id: sender.dataset.id}, 'get_group_member_list')
+    }
     // 清除和显示高亮
     const lastBody = findBodyInList(null, document.getElementById("msg-hander").dataset.id)
     if(lastBody != null) {
@@ -204,8 +207,8 @@ function onListClick(sender) {
     // 去除禁言状态
     document.getElementById("send-box").disabled = false
     document.getElementById("send-box").placeholder = ""
-    // 清空群员列表
-    window.nowGroupMumber = null
+    // 更新群员列表
+    if (type === 'group') {window.nowGroupMumber = window.groups[''+sender.dataset.id].members}
     // 显示顶栏
     document.getElementById("msg-hander").getElementsByTagName("a")[0].innerText = sender.dataset.name
     document.getElementById("msg-hander").dataset.id = sender.dataset.id
@@ -247,13 +250,7 @@ function onListClick(sender) {
     }
     if(msgid != null) {
         // 发送请求
-        sendWs(
-            createAPI(
-                "get_chat_history",
-                {"message_id":msgid},
-                "get_chat_history_fist"
-            )
-        )
+        window.currentApi.sendWs("get_chat_history", { "target_id": sender.dataset.id, "message_id": msgid, "group": type == "group" }, "get_chat_history_fist")
     } else {
         return false
     }
@@ -286,7 +283,7 @@ function onListClick(sender) {
 
 function scrollToMsg(obj) {
     let wrapper = document.getElementById("msg-body")
-    wrapper.scrollTo(0 , obj.offsetTop - 89*2);
+    wrapper.scrollTo(0, obj.offsetTop - 89*2);
 }
 
 function msgBodyScroll() {
@@ -294,14 +291,10 @@ function msgBodyScroll() {
     // 获取更多历史消息
     if(msgBody.scrollTop == 0 && msgBody.children.length > 0) {
         setStatue("load", "正在加载历史消息 ……")
-        const msgId = document.getElementById("msg-body").children[0].dataset.id
+        const data = document.getElementById("msg-body").children[0].dataset
+        const group = data.type == "group"
         // 发送请求
-        sendWs(
-            createAPI(
-                "get_chat_history",
-                {"message_id":msgId}
-            )
-        )
+        window.currentApi.sendWs("get_chat_history", { "target_id": group ? data.group_id : data.sender, "message_id": data.id, "group": group }, "get_chat_history")
     }
 }
 
@@ -316,7 +309,7 @@ function sendMsg() {
         if(window.cacheImg != undefined && window.cacheImg.length > 0) {
             for(let i = 0; i < window.cacheImg.length; i++) {
                 // 构建图片 CQ 码
-                msg  = "[CQ:image,file=base64://" + window.cacheImg[i].substring(window.cacheImg[i].indexOf("base64") + 7)  + "]" + msg
+                msg = "[CQ:image,file=base64://" + window.cacheImg[i].substring(window.cacheImg[i].indexOf("base64") + 7) + "]" + msg
             }
             // 清除图片缓存
             window.cacheImg = []
@@ -329,8 +322,8 @@ function sendMsg() {
         if(msg != "" && msg != undefined && msg != null && type != undefined && id != undefined && window.connect) {
             // 构建 JSON
             switch(type) {
-                case "group": json = createAPI("send_msg", {"group_id": id, "message": msg}, null); break
-                case "friend": json = createAPI("send_msg", {"user_id": id, "message": msg}, null); break
+                case "group": json = window.currentApi.createApi("send_msg", {"group_id": id, "message": msg}, null); break
+                case "friend": json = window.currentApi.createApi("send_msg", {"user_id": id, "message": msg}, null); break
             }
             if(json != null) {
                 // 清空输入框
@@ -376,7 +369,7 @@ function searchInList() {
     }
     const what = document.getElementById("seach-input").value
     if(what != null && what != "") {
-        const childs =  document.getElementById("friend-list-body").children
+        const childs = document.getElementById("friend-list-body").children
         for(let i=0; i<childs.length; i++) {
             if(childs[i].dataset.id == what || (childs[i].dataset.allname.toLowerCase()).indexOf(what.toLowerCase()) >= 0) {
                 document.getElementById("friend-search-body").style.display = "block"
@@ -517,7 +510,7 @@ function msgTouchMove(sender, event) {
                     sender.style.transform = "translate(-" + dx + "px)"
                     sender.style.transition = "transform 0s"
                 }
-            } 
+            }
         }else {
             window.msgOnMove = null
             sender.style.transform = "translate(0px)"
@@ -963,10 +956,10 @@ function mainInputChange(sender) {
     const lastInput = value.substring(value.length - 1)
     // 匹配群成员列表
     if(lastInput == "@" && document.getElementById("msg-hander").dataset.type == "group") {
-        if(window.nowGroupMumber == undefined || window.nowGroupMumber == null) {
-            // 尝试获取群友列表
-            sendWs(createAPI("get_group_member_list", {"group_id": document.getElementById("msg-hander").dataset.id}, null))
-        }
+        // if(window.nowGroupMumber == undefined || window.nowGroupMumber == null) {
+        //     // 尝试获取群友列表
+        //     sendWs(createAPI("get_group_member_list", {"group_id": document.getElementById("msg-hander").dataset.id}, null))
+        // }
         // 设置标记
         showLog("b573f7", "fff", "UI", "开始匹配群成员列表 ……")
         window.onAtFind = true
@@ -995,9 +988,9 @@ function mainInputChange(sender) {
                         div.onclick = function() { addAtStr(sender, window.nowGroupMumber[i].id) }
                         div.className = "at-mb-body"
                         div.innerHTML = "<img src='https://q1.qlogo.cn/g?b=qq&s=0&nk=" + window.nowGroupMumber[i].id + "'><i>" +
-                                         window.nowGroupMumber[i].name + "</i><a>" + window.nowGroupMumber[i].id + "</a>"
+                            window.nowGroupMumber[i].name + "</i><a>" + window.nowGroupMumber[i].id + "</a>"
                         document.getElementById("sender-view-box").appendChild(div)
-                        num ++
+                        num++
                     }
                 }
                 if(num == 0) {
@@ -1111,6 +1104,10 @@ function changeOpt(sender) {
             break
         }
     }
+    // 改变后端 api
+    if (name !== undefined && name === 'api_backend' && value !== '') {
+        changeApiBackend(value)
+    }
     // 保存设置
     if(name != undefined && name != "" && value != "") {
         window.optCookie[name] = value
@@ -1130,13 +1127,20 @@ function changeOpt(sender) {
     }
 }
 
+function changeApiBackend(value) {
+    switch (value) {
+        case "oicq": window.currentApi = oicqApi; break
+        case 'gcqhttp': window.currentApi = gocqhttpApi; break
+    }
+}
+
 function setSendPic(blob) {
     if(blob.type.indexOf("image/") >= 0 && blob.size != 0) {
         setStatue("load", "正在处理图片 ……")
         if(blob.size < 3145728) {
             // 转换为 Base64
             var reader = new FileReader();
-            reader.readAsDataURL(blob); 
+            reader.readAsDataURL(blob);
             reader.onloadend = function() {
                 var base64data = reader.result
                 // 记录图片信息
@@ -1231,7 +1235,7 @@ function showAddImgPan(what) {
         if(window.cacheImg.length < 4) {
             const div = document.createElement("div")
             div.className = "img-show-item-add img-show-item-" + (window.cacheImg.length + 1)
-            div.onclick = function() { div.lastChild.click() }
+            div.onclick = function () { div.lastChild.click() }
             const input = document.createElement("input")
             input.id = "choice-pic"
             input.type = "file"
@@ -1301,8 +1305,8 @@ function showALoadFacePan() {
     showPopPan("add-face-pan", true)
     // 表情信息
     const maxId = 323;
-    const passId = [17, 40, 44, 45, 47, 48, 50, 51, 52, 58, 65, 68, 70, 71, 73, 80 ,81, 82, 83, 84, 87, 88,
-                    92, 93, 94, 95, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 275, 276]
+    const passId = [17, 40, 44, 45, 47, 48, 50, 51, 52, 58, 65, 68, 70, 71, 73, 80, 81, 82, 83, 84, 87, 88,
+        92, 93, 94, 95, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 275, 276]
     if(document.getElementById("add-face-pan").dataset.loaded == "false") {
         // 加载表情列表
         for(let i=0; i<=maxId; i++) {

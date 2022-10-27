@@ -1,6 +1,6 @@
 'use strict';
 
-window.version = 'v1.2957'
+window.version = 'v1.3'
 window.loading = true
 document.getElementById("opt-version").innerText = window.version
 waveAnimation(document.getElementById("login-wave"))
@@ -66,6 +66,12 @@ if(x != "") {
     // 自动连接
     if(window.optCookie["opt_auto_connect"] == "true") {
         document.getElementById("connect_btn").click()
+    }
+    // 设置后端
+    if(window.optCookie["api_backend"] !== undefined) {
+        changeApiBackend(window.optCookie["api_backend"])
+    } else {
+        window.currentApi = oicqApi
     }
     // 检查缓存版本
     if(window.cookie["version"] == undefined || Number(window.cookie["version"].substring(1)) < Number(window.version.substring(1))) {

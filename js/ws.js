@@ -84,13 +84,13 @@ function showNotice(msg) {
                 // 请求权限
                 Notification.requestPermission(function (status) {
                     if (Notification.permission !== status) {
-                      Notification.permission = status
+                        Notification.permission = status
                     }
-                  });
+                });
             } else if(Notification.permission == "denied") {
                 // 用户拒绝了权限
                 return
-            } else {     
+            } else {
                 // 显示通知，不管之前有没有同意，反正我是发了（大声
                 let raw = getMsgRawTxt(msg.message)
                 raw = raw==""?msg.raw_message:raw
@@ -108,7 +108,7 @@ function showNotice(msg) {
                 }
             }
         }
-        catch(e) {
+        catch (e) {
             console.log(e)
         }
     }
@@ -117,15 +117,9 @@ function showNotice(msg) {
 // 加载基础数据
 function loadInfo() {
     // 加载 Bot 信息
-    sendWs(createAPI(
-        "get_version_info",
-        null, null
-    ))
+    sendWs(createAPI("get_version_info", null, null))
     // 加载用户信息
-    sendWs(createAPI(
-        "get_login_info",
-        null, null
-    ))
+    sendWs(createAPI("get_login_info", null, null))
     if (window.isFistUse == undefined || window.isFistUse == true) {
         sendWs(createAPI(
             "get_csrf_token",
@@ -151,7 +145,7 @@ function loadInfo() {
 // ----------------------------------------
 
 function findBodyInList(name, id) {
-    const childs =  document.getElementById("friend-list-body").children
+    const childs = document.getElementById("friend-list-body").children
     for(let i=0; i<childs.length; i++) {
         if(id != null && childs[i].dataset.id == id || name != null && childs[i].dataset.name == name) {
             return childs[i]
