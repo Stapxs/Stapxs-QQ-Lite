@@ -14,7 +14,14 @@ function runWs(protocol) {
         protocol = "ws://"
     }
     showLog("4a93c3", "fff", "WS", "尝试使用 " + protocol + " 连接 ……")
-    window.ws = new WebSocket(protocol + address + "?access_token=" + token)
+    
+    try{    
+        window.ws = new WebSocket(protocol + address + "?access_token=" + token)
+    }catch(e){
+        // ws 连接不上时尝试 wss 连接
+        protocol = "wss://"
+        window.ws = new WebSocket(protocol + address + "?access_token=" + token)
+    }
 
     window.ws.onopen = function (evt) {
         setStatue("ok", "成功连接 ……")
