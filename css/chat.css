@@ -27,7 +27,7 @@ input::-webkit-input-placeholder {
 
 select {
     height: 33px;
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
     background: var(--color-card-2);
     border: 0;
     border-radius: 7px;
@@ -145,7 +145,7 @@ select:focus {
 .login-pan-card p {
     color: var(--color-main);
     font-size: 1rem;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 .login-pan-card label {
     width: 100%;
