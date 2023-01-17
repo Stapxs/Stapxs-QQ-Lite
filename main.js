@@ -194,3 +194,42 @@ fetch('https://api.github.com/repos/stapxs/stapxs-qq-lite/contributors')
         }
     })
     .catch(console.error)
+// 加载通知信息
+const url = 'https://lib.stapxs.cn/download/stapxs-qq-lite/notice-config.json'
+fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        // 获取已显示过的公告 ID
+        let noticeShow = []
+        if (window.cookie['notice_show'] !== undefined) {
+            noticeShow = window.cookie['notice_show'].split(',')
+        }
+        // 解析公告列表
+        data.forEach((notice) => {
+            if (notice.version == 1 && noticeShow.indexOf((notice.id).toString()) < 0 && (!notice.show_date || new Date().toDateString() === new Date(notice.show_date).toDateString())) {
+                // PS：这边借用更新记录的面板 …… 懒得再写一个了
+                // 不打算做多弹窗支持所以这边只会显示最后一次刷新的内容
+                const info = notice.pops[notice.pops.length - 1]
+                console.log(info)
+                showUpdatePan(true)
+                let clickFun = `
+                showUpdatePan(false);
+                const id = ${notice.id};
+                // 在点击事件中保存 cookie
+                let data = '';
+                if (window.cookie['notice_show'] !== undefined)
+                    data = window.cookie['notice_show'] + ',' + id;
+                else
+                    data = id;
+                console.log(data);
+                var date = new Date();
+                date.setDate(date.getDate() + 30);
+                const cookie = 'notice_show=' + data + '; expires=' + date.toUTCString();
+                document.cookie = cookie;
+                `
+                clickFun += `const a = 'notice_show';`
+                document.getElementById("update-info").parentNode.parentNode.innerHTML = (info.html ? info.html : '') + '<button class="ss-button" onclick="' + clickFun + '">知道了</button>'
+
+            }
+        })
+    })
