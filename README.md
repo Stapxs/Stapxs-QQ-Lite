@@ -1,4 +1,8 @@
 # Stapxs-QQ-Lite
+### 去看看 2.0 版本吧 ——
+Stapxs QQ Lite 1.0 已停止维护，如果你对它感兴趣 —— 不如来看看 [2.0](https://github.com/Stapxs/Stapxs-QQ-Lite-2.0) 版本。
+
+<br>
 
 ![logo](https://raw.githubusercontent.com/Stapxs/Stapxs-QQ-Lite/main/topbar.png)
 
