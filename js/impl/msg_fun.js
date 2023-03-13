@@ -151,7 +151,7 @@ function printText(txt, msgid) {
         // 获取第一个匹配的结果
         let url = txt.match(reg)[0]
         // 尝试通过 API 获取链接预览
-        fetch('https://api.stapxs.cn/Page-Info?address=' + url)
+        fetch('https://api.stapxs.cn/tool/page-info/' + encodeURIComponent(url))
             .then(res => res.json())
             .then(res => {
                 if (res.status == undefined && Object.keys(res).length > 0) {
